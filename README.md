@@ -1,6 +1,6 @@
 # coloredLids
 
-_coloredLids_ extends the _grayBoxes_ project by deriving classes from _grayboxes.Model_. That class provides just an interface to empty white boxes which are now filled and "closed with colored lids". The lid color of the white boxes in [Fig. 1](#figure-1-gray-box-models) indicates functionality for simulating heat transfer, fluid flow, mass transfer and structural mechanics.
+_coloredLids_ extends the _grayBoxes_ project by deriving classes from _grayboxes.Model_. That class provides just an interface to empty white boxes which are now filled and closed with "multi-colored lids". The lid color of the white boxes in [Fig. 1](#figure-1-gray-box-models) indicates functionality for simulating  <font color="red">heat transfer</font>, <font color="blue">fluid flow</font>, <font color="green">mass transfer</font> and <font color="yellow">structural mechanics</font>.
 
 <br>
 
