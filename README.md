@@ -1,6 +1,6 @@
 # coloredLids
 
-_coloredLids_ extends the [_grayBoxes_](grayBoxes) project by deriving objects from the _grayboxes.Theoretical_ class. That class is merely an interface to an empty white box model. It defines the contract between the gray box and subsets of white boxes models. The lid color of the subsets of white boxes in [Fig. 1](#figure-1-gray-box-model-comprising-white-boxes-with-colored-lids-and-black-boxes) indicates functionality for simulating  <font color="red">heat transfer</font>, <font color="blue">fluid flow</font>, <font color="green">mass transfer</font> and <font color="yellow">structural mechanics</font>.
+_coloredLids_ extends the [_grayBoxes_](grayBoxes) project by deriving objects from the _grayboxes.Theoretical_ class. That class is merely an interface to an empty white box model. It defines the contract between the gray box and subsets of the white boxes model. The lid color of the subsets in [Fig. 1](#figure-1-gray-box-model-comprising-white-boxes-with-colored-lids-and-black-boxes) indicates functionality for simulating  <font color="red">heat transfer</font>, <font color="blue">fluid flow</font>, <font color="green">mass transfer</font> and <font color="yellow">structural mechanics</font>.
 
 <br>
 
@@ -12,38 +12,17 @@ _coloredLids_ extends the [_grayBoxes_](grayBoxes) project by deriving objects f
 
 ## Table of Contents 
 
-    src/data
-        Conversion of data, operations on data frames
-        
-    src/empirical 
-        Data-driven models
-        
-    src/flow 
-        Analytical solutions to velocity distribution and pressure loss
-        
-    src/heat 
-        Analytical solutions to heat transfer
-        
-    src/matter
-        Physical and chemical properties of solids, liquids and gases
-        
-    src/mass     
-        Mass transfer (diffusion)
-
-    src/mechanics     
-        Structural mechanics
-
-    src/mesh     
-        Primitives for building geometries and meshes
-        
-    src/numeric 
-        Numerical solution of differential and integral equations
-        
-    src/tests  
-        Selected test cases
-        
-    src/tools
-        Tools for data manipulation
+    src/data        Conversion of data, operations on data frames
+    src/empirical   Data-driven models
+    src/flow        Solutions to velocity and pressure distribution
+    src/heat        Solutions to heat transfer
+    src/matter      Properties of solids, liquids and gases
+    src/mass        Mass transfer (diffusion)
+    src/mechanics   Structural mechanics
+    src/mesh        Primitives for building geometries and meshes
+    src/numeric     Numerical solution of differential and integral equations
+    src/tests       Selected test cases
+    src/tools       Tools for data manipulation
         
 
 ## Installation
