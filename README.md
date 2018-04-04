@@ -16,9 +16,9 @@ _coloredLids_ extends the [_grayBoxes_](grayBoxes) project by deriving objects f
     src/empirical   Data-driven models
     src/flow        Solutions to velocity and pressure distribution
     src/heat        Solutions to heat transfer
-    src/matter      Properties of solids, liquids and gases
     src/mass        Mass transfer (diffusion)
-    src/mechanics   Structural mechanics
+    src/matter      Properties of solids, liquids and gases
+    src/mech        Structural mechanics
     src/mesh        Primitives for building geometries and meshes
     src/numeric     Numerical solution of differential and integral equations
     src/tests       Selected test cases
