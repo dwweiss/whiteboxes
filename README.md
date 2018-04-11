@@ -35,4 +35,4 @@ _coloredLids_ extends the [_grayBoxes_](grayBoxes) project by deriving objects f
 _coloredLids_ is dependent on _grayBoxes_, install with:
 
     $ wget https://github.com/dwweiss/grayBoxes.git
-    $ cp -r PATH/grayBoxes/scr PATH/coloredLids
+    $ cp DOWNLOAD_PATH/grayBoxes/scr/*.py ./coloredLids/scr
