@@ -91,8 +91,7 @@ from Base import Base
 
     Note:
         Function temperatureInWallForActualTimeStep() is compiled just-in-time
-        with the @autojit decorator. It inceases the execution speed by factor
-        50 in comparison to the execution without just-in-time compilation.
+        with the @autojit decorator.
 """
 
 
@@ -131,7 +130,7 @@ def temperatureInWallForActualTimeStep(X, T, T_old, Fo, alpha_in, alpha_out,
             thermal conductivity of wall [W/(m K)]
 
         isCylinder (bool):
-            if True, space discretisation for cylinder geometry
+            if True then space discretisation for cylinder geometry
 
 
     Note:
@@ -143,7 +142,7 @@ def temperatureInWallForActualTimeStep(X, T, T_old, Fo, alpha_in, alpha_out,
     # space step size
     dx = X[1] - X[0]
 
-    # surface temperatures are mean of the values close to the surface
+    # surface temperatures are mean of the values close to the surface,
     # [-1] is index of last array element and [-2] of second last element
     T_wal_in = (T_old[1] + T_old[0]) * 0.5
     T_wal_out = (T_old[-1] + T_old[-2]) * 0.5
@@ -153,8 +152,8 @@ def temperatureInWallForActualTimeStep(X, T, T_old, Fo, alpha_in, alpha_out,
     q_dot_out = alpha_out * (T_out - T_wal_out)
 
     # updates the old temperatures in the nodes outside the wall
-    #     heat flux by convective heat transfer equals heat flux by conduction
-    #     in wall: q_dot_in = alpha * (T - T_wal) = lambda_wal * dT/dx_wal
+    #   -heat flux by convective heat transfer equals heat flux by conduction
+    #   -in wall: q_dot_in = alpha * (T - T_wal) = lambda_wal * dT/dx_wal
     T_old[0] = T_old[1] + q_dot_in * dx / lambda_wal
     T_old[-1] = T_old[-2] + q_dot_out * dx / lambda_wal
     for i in range(1, X.size-1):
