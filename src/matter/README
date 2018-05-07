@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-01-16 DWW
+      2018-05-07 DWW
 """
 
 """
@@ -27,7 +27,7 @@
                                Parameter
                                    ^
                                    |
-                                Property  <==aggregation=== Parameter
+                                Property  <==composition== Parameter
                                    ^
                                    |
                               GenericMatter
@@ -53,7 +53,7 @@
                 ^
                 |
              ======
-             Matter  <==aggregation=== [Air, Copper, Diesel, ..., Water]
-             ======                     (all children of: Metal, NonMetal, 
-                                         Liquid, Gas and Mixture) 
+             Matter  <==composition== [Air, Copper, Diesel, ..., Water]
+             ======                    (all children of: Metal, NonMetal, 
+                                        Liquid, Gas and Mixture) 
 """
