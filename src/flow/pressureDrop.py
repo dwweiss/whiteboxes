@@ -1,5 +1,5 @@
 """
-  Copyright (c) 2016-17 by Dietmar W Weiss
+  Copyright (c) 2016- by Dietmar W Weiss
 
   This is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as
@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version
-      2016-12-06 DWW
+      2018-05-10 DWW
 
   Reference
       Blevins: Applied fluid dynamics handbook, table 6-5, p. 57
@@ -29,8 +29,8 @@ from math import log10, fabs, sqrt, sin, radians
 from scipy.optimize import fsolve
 import numpy as np
 
-
-REYNOLDS_LAMINAR = 2300
+# upper limit of laminar pipe flow range of Reynolds numbers
+REYNOLDS_PIPE_LAMINAR = 2300
 
 
 def pressureDrop(k, v, rho):
@@ -68,18 +68,19 @@ def poiseulleColebrook(Re, D, eps_rough, biSectionalSearch=False):
         eps_rough (float):
             inner pipe roughness [m]
 
-        biSectionalSearch (bool):
-            if True, use bisectional cut for root finding instead of Netwon
+        biSectionalSearch (bool, optional):
+            if True then bisectional cut for root finding instead of
+            Netwon-like method
 
     Returns:
         f (float):
             friction factor after Poiseulle and Colebrook [/]
     """
-    if Re < REYNOLDS_LAMINAR:
-        # Poiseulle's law
+    if Re <= REYNOLDS_PIPE_LAMINAR:
+        # Laminar: Poiseulle's law
         return 64. / Re
     else:
-        # Colebrook approximation
+        # Turbulent: Colebrook approximation
         if biSectionalSearch:
             assert 0, 'not implemented'
         else:
@@ -111,7 +112,7 @@ def resistancePipe(v, D, L=1.0, nu=1e-6, eps_rough=10e-6):
         v (float):
             axial component of velocity at inlet [m/s]
 
-        D (float, optional):
+        D (float):
             inner pipe diameter at inlet [m]
 
         L (float, optional):
@@ -135,15 +136,27 @@ def _resistanceModerateBend(v, D, rBend, phiBendDeg, nu, eps_rough):
     Resistance coefficient of moderate pipe bend with: rBend/D >= 1.8
 
     Args:
-        v          axial component of velocity at inlet [m/s]
-        D          inner pipe diameter at inlet and outlet [m]
-        rBend      bending radius [m]
-        phiBendDeg bending angle [deg]
-        nu         kinematic viscosity [m^2/s]
-        eps_rough  inner pipe roughness [m]
+        v (float):
+            axial component of velocity at inlet [m/s]
+
+        D (float):
+            inner pipe diameter at inlet and outlet [m]
+
+        rBend (float):
+            bending radius [m]
+
+        phiBendDeg (float):
+            bending angle [deg]
+
+        nu (float):
+            kinematic viscosity [m^2/s]
+
+        eps_rough (float):
+            inner pipe roughness [m]
 
     Returns:
-                   resistance coefficient  [/]
+        (float):
+            resistance coefficient  [/]
     """
     ratio = rBend / D
     assert ratio >= 1.8, 'not moderate bend'
@@ -171,15 +184,27 @@ def _resistanceSharpBend(v, D, rBend, phiBendDeg, nu, eps_rough):
     Resistance coefficient of sharp pipe bend with: rBend/DPipe < 1.8
 
     Args:
-        v          axial component of velocity at inlet [m/s]
-        D          inner pipe diameter at inlet and outlet [m]
-        rBend      bending radius [m]
-        phiBendDeg bending angle [deg]
-        nu         kinematic viscosity [m^2/s]
-        eps_rough  inner pipe roughness [m]
+        v (float):
+            axial component of velocity at inlet [m/s]
+
+        D (float):
+            inner pipe diameter at inlet and outlet [m]
+
+        rBend (float):
+            bending radius [m]
+
+        phiBendDeg (float):
+            bending angle [deg]
+
+        nu (float):
+            kinematic viscosity [m^2/s]
+
+        eps_rough (float):
+            inner pipe roughness [m]
 
     Returns:
-                   resistance coefficient  [/]
+        (float):
+            resistance coefficient  [/]
     """
     Re = v * D / nu
     x = rBend / D         # example: x(D=80mm, rBend=112.5mm) = 2.81
@@ -231,18 +256,30 @@ def _resistanceSharpBend(v, D, rBend, phiBendDeg, nu, eps_rough):
 
 def resistancePipeBend(v, D, rBend, phiBendDeg, nu=1e-6, eps_rough=10e-6):
     """
-    Resistance coefficient of general pipe bend
+    Resistance coefficient of pipe bend
 
     Args:
-        v          axial component of velocity at inlet [m/s]
-        D          inner pipe diameter at inlet and outlet [m]
-        rBend      bending radius [m]
-        phiBendDeg bending angle [degrees]
-        nu         kinematic viscosity [m^2/s]
-        eps_rough  inner pipe roughness [m]
+        v (float):
+            axial component of velocity at inlet [m/s]
+
+        D (float):
+            inner pipe diameter at inlet and outlet [m]
+
+        rBend (float):
+            bending radius [m]
+
+        phiBendDeg (float):
+            bending angle [degrees]
+
+        nu (float, optional):
+            kinematic viscosity [m^2/s]
+
+        eps_rough (float, optional):
+            inner pipe roughness [m]
 
     Returns:
-                   resistance coefficient  [/]
+        (float):
+            resistance coefficient  [/]
     """
     if rBend / D >= 1.8:
         return _resistanceModerateBend(v, D, rBend, phiBendDeg, nu, eps_rough)
@@ -252,6 +289,8 @@ def resistancePipeBend(v, D, rBend, phiBendDeg, nu=1e-6, eps_rough=10e-6):
 
 def resistanceSquarePipeReduction(v1, D1, D2, nu=1e-6, eps_rough=10e-6):
     """
+    Resistance coefficient of squared pipe reduction
+
     -----------------+
                      |
           v1         +----------
@@ -282,14 +321,14 @@ def resistanceSquarePipeReduction(v1, D1, D2, nu=1e-6, eps_rough=10e-6):
 
     Note
         Use v1 as velocity in pressure drop calculations
-        Switching from laminar to turbulent flow is at REYNOLDS_LAMINAR
+        Switching from laminar to turbulent flow is at REYNOLDS_PIPE_LAMINAR
         Transition range is neglected
     """
 
     # correction of possibly confused inlet and outlet values
     (d1, d2) = (D1, D2) if D1 > D2 else (D2, D1)
     Re1 = v1 * d1 / nu   # Reynolds number at inlet
-    if Re1 < REYNOLDS_LAMINAR:
+    if Re1 < REYNOLDS_PIPE_LAMINAR:
         # laminar
         return (1.2 + 160 / Re1) * ((d1 / d2)**4 - 1)
     else:
@@ -302,6 +341,8 @@ def resistanceSquarePipeReduction(v1, D1, D2, nu=1e-6, eps_rough=10e-6):
 def resistanceTaperedPipeReduction(v1, D1, D2, nu=1e-6, eps_rough=10e-6,
                                    alphaDeg=90.):
     """
+    Resistance coefficient of tapered pipe reduction
+
     ---------------+
                     \
          v1       /  +----------
@@ -326,7 +367,7 @@ def resistanceTaperedPipeReduction(v1, D1, D2, nu=1e-6, eps_rough=10e-6,
         eps_rough (float, optional):
             inner pipe roughness [m]
 
-        alphaDeg  (float, optional):
+        alphaDeg (float, optional):
             opening angle (over both sides) [deg]
 
     Returns:
@@ -348,6 +389,8 @@ def resistanceTaperedPipeReduction(v1, D1, D2, nu=1e-6, eps_rough=10e-6,
 
 def resistanceSquarePipeExpansion(v1, D1, D2, nu=1e-6, eps_rough=10e-6):
     """
+    Resistance coefficient of squared pipe expansion
+
     -----------------+
                      |
                      +----------
@@ -381,7 +424,7 @@ def resistanceSquarePipeExpansion(v1, D1, D2, nu=1e-6, eps_rough=10e-6):
     # correction of possibly confused inlet and outlet values
     d1, d2 = (D1, D2) if D1 < D2 else (D2, D1)
     Re1 = v1 * d1 / nu   # Reynolds number at inlet
-    if Re1 < REYNOLDS_LAMINAR:
+    if Re1 < REYNOLDS_PIPE_LAMINAR:
         # laminar
         return 2 * (1 - (d1 / d2)**4)
     else:
@@ -393,6 +436,8 @@ def resistanceSquarePipeExpansion(v1, D1, D2, nu=1e-6, eps_rough=10e-6):
 def resistanceTaperedPipeExpansion(v1, D1, D2, nu=1e-6, eps_rough=10e-6,
                                    alphaDeg=90.):
     """
+    Resistance coefficient of tapered pipe expansion
+
     ---------------+
                     \
                   /  +----------
@@ -433,13 +478,12 @@ def resistanceTaperedPipeExpansion(v1, D1, D2, nu=1e-6, eps_rough=10e-6,
     return x * resistanceSquarePipeExpansion(v1, D1, D2, nu, eps_rough)
 
 
-def dp_inlet_reduce_middle_expand_outlet(v1, D1, L1, D2, L2, D3, L3,
-                                         nu=1e-6, rho=1e3, eps_rough=10e-6,
-                                         a=1., b=1., c=1., d=1.):
+def dp_in_red_mid_exp_out(v1, D1, L1, D2, L2, D3, L3, nu=1e-6, rho=1e3, 
+                          eps_rough=10e-6, c0=1., c1=1., c2=1., c3=1.):
     """
     Pressure drop of the combination:
-        1.straight pipe -> 1/2.square reduction -> 2.thin straight pipe ->
-        2/3.square expansion -> 3.straight pipe
+        1) straight pipe ==> 1/2) square reduction ==> 2) thin straight pipe
+        ==> 2/3) square expansion ==> 3) straight pipe
 
     Resistance series:
 
@@ -483,10 +527,17 @@ def dp_inlet_reduce_middle_expand_outlet(v1, D1, L1, D2, L2, D3, L3,
         eps_rough (float, optional):
             inner pipe roughness [m]
 
+        c0, c1, c2, c3 (multiple float, optional):
+            tuning parameters, see '# tuning' comment in source code below
+
     Returns:
-        dp, dp1, dp12, dp2, dp23, dp3 (float):
+        (6-tuple of float):
+            (dp, dp1, dp12, dp2, dp23, dp3)
             total pressure drop and pressure drops over sections in figure [Pa]
     """
+    if np.abs(v1) < 1e-20:
+        return 0.
+
     pars = [v1, D1, L1, D2, L2, D3, L3, nu, rho, eps_rough]
     assert all([isinstance(x, (int, float, bool)) for x in pars])
     assert D1 > D2 and D2 < D3
@@ -503,24 +554,52 @@ def dp_inlet_reduce_middle_expand_outlet(v1, D1, L1, D2, L2, D3, L3,
     k3 = resistancePipe(v=v3, D=D3, L=L3, nu=nu, eps_rough=eps_rough)
 
     dp1  = pressureDrop(k1,  v1, rho)
-    dp12 = pressureDrop(k12, v1, rho) * a
-    dp2  = pressureDrop(k2,  v2, rho) * b
-    dp23 = pressureDrop(k23, v2, rho) * c
+    dp12 = pressureDrop(k12, v1, rho)         * (c0) # tuning
+    dp2  = pressureDrop(k2,  v2, rho)         * (c1) # tuning
+    dp23 = pressureDrop(k23, v2, rho)         * (c2) # tuning
     dp3  = pressureDrop(k3,  v3, rho)
-    dpTotal = dp1 + dp12 + dp2 + dp23 + dp3
+    dpTotal = (dp1 + dp12 + dp2 + dp23 + dp3) * (c3) # tuning
     return dpTotal, dp1, dp12, dp2, dp23, dp3
 
 
 # Examples ####################################################################
 
 if __name__ == '__main__':
+    ALL = 1
+
     import matplotlib.pyplot as plt
 
     fontsize = 10
     plt.rcParams.update({'font.size': fontsize})
     plt.rcParams['legend.fontsize'] = fontsize
 
-    if 1:
+    if 0 or ALL:
+        s = 'Pressure loss in straight pipe'
+        print('-' * len(s) + '\n' + s + '\n' + '-' * len(s))
+
+        def f():
+            rho = 1000
+            nu = 1e-6
+            D = 50e-3
+            L = 1
+            eps_rough = 10e-6
+            v = 1
+            Re = v * D / nu
+
+            k = resistancePipe(v=v, D=D, L=L, nu=nu, eps_rough=eps_rough)
+            dp = pressureDrop(k=k, v=v, rho=rho)
+
+            maxKey = max(map(len, locals()))
+            for key, val in locals().items():
+                if key != 'maxKey':
+                    s = '{:>' + str(maxKey + 4) + '}: {}'
+                    print(s.format(key, val))
+        f()
+
+    if 0 or ALL:
+        s = 'Pressure loss in straight->reduct->straight->expansion->straight'
+        print('-' * len(s) + '\n' + s + '\n' + '-' * len(s))
+
         D1, L1 = 20e-3, 20e-3
         D2, L2 = 5e-3, 200e-3
         D3, L3 = D1, L1
@@ -531,10 +610,10 @@ if __name__ == '__main__':
         v1 = 1
         v1_seq = [0.5, 1, 2, 3, 4, 5, 6, 7, 8, 10]
 
-        print('*** straight->redu->straig->expan->straig, nu:', nu)
+        print('+++ nu:', nu)
 
         # dp_set is array of [dp_total, dp1, ..., dp3]
-        dp_set = [dp_inlet_reduce_middle_expand_outlet(v1=v1, D1=D1, L1=L1,
+        dp_set = [dp_in_red_mid_exp_out(v1=v1, D1=D1, L1=L1,
                   D2=D2, L2=L2, D3=D3, L3=L3, nu=nu, rho=rho,
                   eps_rough=eps_rough) for v1 in v1_seq]
         dp_set = 1e-6 * np.atleast_2d(dp_set)
@@ -563,7 +642,7 @@ if __name__ == '__main__':
                    resistanceTaperedPipeReduction,
                    resistanceSquarePipeExpansion,
                    resistanceTaperedPipeExpansion]
-    if 0:
+    if 0 or ALL:
         Re_seq = np.linspace(1e0, 1e4, 10000)
         k = [poiseulleColebrook(Re, D1, eps_rough) for Re in Re_seq]
         plt.plot(Re_seq, k)
@@ -571,7 +650,7 @@ if __name__ == '__main__':
         plt.ylabel('$k_{straight}$ [/]')
         plt.show()
 
-    if 0:
+    if 0 or ALL:
         # plot of k(rBend), phiBend=const
         k = resistancePipeBend
 
@@ -590,11 +669,11 @@ if __name__ == '__main__':
 
         x = np.linspace(0.0, 90.0, 100)
         y = [k(v=5.0, D=D1, rBend=100e-3, phiBendDeg=phi) for phi in x]
-        plt.xlabel('$\varphi_{bend}$')
+        plt.xlabel(r'$\varphi_{bend}$')
         plt.plot(x, y)
         plt.show()
 
-    if 0:
+    if 0 or ALL:
         # plot dp(nu)  for v-sequence
         for v in [0.05, 0.1, 0.2, 1, 10]:
             plt.xlabel(r'$\nu$ [mm$^2$/s]')
@@ -615,7 +694,7 @@ if __name__ == '__main__':
                 plt.plot(nu_seq*1e6, dp1*1e-3, label=s)
             plt.show()
 
-    if 0:
+    if 0 or ALL:
         # dp(nu)  for a v-sequence
         for k in k_functions:
             print('\n\n***', k.__name__)
@@ -648,7 +727,7 @@ if __name__ == '__main__':
                 plt.show()
 
             if 0:
-                plt.xlabel('$Re \cdot 10^{-3}$ [/]')
+                plt.xlabel(r'$Re \cdot 10^{-3}$ [/]')
                 plt.ylabel('$p$ [kPa]')
                 v1_seq = np.array([.1, .2, .4, .6, .8, 1, 2, 3, 4, 5, 6, 7, 8,
                                    9, 10])
