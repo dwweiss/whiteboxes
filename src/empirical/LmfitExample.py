@@ -21,7 +21,11 @@
 """
 
 import numpy as np
-from lmfit import Minimizer, Parameters, report_fit
+try:
+    from lmfit import Minimizer, Parameters, report_fit
+    # TODO from lmfit import conf_interval, printfuncs
+except ImportError:
+    print('??? package lmfit not imported')
 
 
 def f(x, **kwargs):
@@ -43,7 +47,7 @@ def f(x, **kwargs):
                 coefficients
 
     Returns:
-        (1D array_like of float or float):
+        (1D array_like of float, or float):
             output, shape: (nOut) if 'define' is False
         or
         (dict):
@@ -51,7 +55,8 @@ def f(x, **kwargs):
     """
     if 'define' in kwargs:
         # dict of values of lmfit.Parameters: {'key': (value, min, max), ...}
-        return {'c0': (5, -10, 100), 'c1': 0.2, 'c2': (3, None, 9), 'c3': .007}
+        return {'c0': (5, -10, 100), 'c1': (0.2, -10, 10), 'c2': (3, -10, 9), 
+                'c3': (.007, -10, 10)}
 
     c0, c1, c2, c3 = kwargs.get('c0', 1), kwargs.get('c1', 1), \
         kwargs.get('c2', 1), kwargs.get('c3', 1)
@@ -72,7 +77,7 @@ class LmfitExample(object):
         self.X = None
         self.Y = None
         self.ready = True
-        self._weights = None
+        self._weights = None  # dictionary {str: float} of fit parameters
         self.best = None
 
         self.f = f  # assign externally defined function
@@ -92,7 +97,23 @@ class LmfitExample(object):
                 keyword arguments
 
                 trainers (string or list of string):
-                    type of trainers
+                    trainer type, if 'all' then following trainers are tried: 
+                    
+                    ’leastsq’:       Levenberg-Marquardt (default)
+                    ’least_squares’: Least-Squares minimization, using 
+                                     Trust Region Reflective method by default
+                    ’differential_evolution’: differential evolution
+                    ’brute’:         brute force method
+                    ’nelder’:        Nelder-Mead
+                    ’lbfgsb’:        L-BFGS-B
+                    ’powell’:        Powell
+                    ’cg’:            Conjugate-Gradient
+                    ’newton’:        Newton-Congugate-Gradient
+                    ’cobyla’:        Cobyla
+                    ’tnc’:           Truncate Newton
+                    ’trust-ncg’:     Trust Newton-Congugate-Gradient
+                    ’dogleg’:        Dogleg
+                    ’slsqp’:         Sequential Linear Squares Programming
 
                 epochs (int):
                     maximum number of epochs
@@ -117,7 +138,7 @@ class LmfitExample(object):
             If X or Y is None, or training fails then self.best['trainer']=None
         """
 
-        def objective(params, X, Y):
+        def residual(params, X=None, Y=None, **kwargs):
             """
             Objective function to be minimized (passed to lmfit.minimize())
 
@@ -131,47 +152,94 @@ class LmfitExample(object):
                 Y (2D or 1D array_like of float):
                     training target, shape: (nPoint, nOut)
 
+                kwargs (dict, optional):
+                    keyword arguments
+
             Returns:
                 (2D array of float):
                     difference between prediction f(X) and target Y(X)
             """
-            opt = {key: params[key] for key in params.keys()}
-            return np.subtract(self.predict(X, **opt), Y)
+            opt = kwargs.copy()
+            opt.update(params.keys())
+            if X is None:
+                X = self.X
+            if Y is None:
+                Y = self.Y
+            res = np.subtract(self.predict(X, **opt), Y)
+
+            if res.shape[1] > 1:
+                res = res.flatten()
+            return res
 
         ###
+
         silent = kwargs.get('silent', True)
+        trainers = kwargs.get('trainers', None)
+        if trainers is None:
+            trainers = ['leastsq']
+        trainers = np.atleast_1d(trainers)
+
+        if isinstance(trainers[0], str) and trainers[0].lower() == 'all':
+            trainers = ['leastsq', 
+                        'least_squares',
+                        # TODO .. takes 2 positional arguments but * were given
+
+                        #'differential_evolution',  # TypeError: penalty() 
+                        #     takes 2 positional arguments but 4 were given
+                        #'brute', 
+                        #'nelder', 
+                        #'lbfgsb', 
+                        #'powell', 
+                        #'cg', 'newton', 
+                        #'cobyla', 'tnc', 'trust-ncg', 'dogleg', 'slsqp'
+                        ]
 
         if X is not None and Y is not None:
             self.X, self.Y = X, Y
 
-        self.ready = True
-        self.best = {}
-
-        self._weights = None  # used in self.predict(), differentiates trn/pred
         params = Parameters()
         for key, val in self.f(None, define=True).items():
             if isinstance(val, (int, float)):
                 params.add(key, value=val)
-            elif len(val) > 0:
+            elif len(val) == 1:
                 params.add(key, value=val[0])
-            elif len(val) > 1:
-                params.set(min=val[1])
-            elif len(val) > 2:
-                params.set(max=val[2])
+            elif len(val) == 2:
+                params.add(key, value=val[0], min=val[1])
+            elif len(val) == 3:
+                params.add(key, value=val[0], min=val[1], max=val[2])
             else:
-                assert 0, str(key) + ': ' + str(val[0])
+                assert 0, str(key) + ': ' + str(val)
 
-        minimizer = Minimizer(objective, params, fcn_args=(X, Y))
-        result = minimizer.minimize()
+        self.ready = True
+        self.best = {'L2': np.inf}
+        for trainer in trainers:
+            if not silent:
+                print("+++ trainer:'" + trainer + "'")
+            self._weights = None  # see self.predict(), differeantn. train/pred
+            if trainer in ('leastsq', 'least_squares'):
+                fnc = residual
+            else:
+                fnc = residual
+            minimizer = Minimizer(fnc, params, fcn_args=(X, Y))
+            args = kwargs if trainer not in ('least_squares') else {}
+            result = minimizer.minimize(method=trainer, args=args)
+                
+            self.ready = True
+            if self.ready:
+                self._weights = result.params.valuesdict()  # fit param as dict
+            L2 = np.sqrt(np.mean((self.predict(self.X) - self.Y)**2))
+            if self.best['L2'] > L2:
+                self.best = {'trainer': trainer, 'L2': L2, 'abs': np.inf,
+                             'iAbs': -1, 'epochs': -1}
+            if not silent:
+                report_fit(result)
+                print('+++ best:', self.best)
+                
         if not silent:
             report_fit(result)
-
-        # TODO decide on success of training
-        self.ready = True
-        if self.ready:
-            self._weights = result.params.valuesdict()  # fitted params as dict
-            self.best = {'trainer': '', 'L2': np.inf, 'abs': np.inf,
-                         'iAbs': -1, 'epochs': -1}
+            # TODO :
+            # ci = conf_interval(minimizer, result)
+            # printfuncs.report_ci(ci)
 
     def predict(self, x, **kwargs):
         """
@@ -203,12 +271,11 @@ class LmfitExample(object):
         if 'x' in kw:
             del kw['x']
         if self._weights is not None:
-            for key, val in self._weights.items():
-                kw[key] = val
-
+            kw.update(self._weights)
         self.x = x
-        self.y = np.array([np.atleast_1d(self.f(x=_x, **kw))
-                           for _x in self.x])
+        self.y = [np.atleast_1d(self.f(x=_x, **kw)) for _x in self.x]
+        self.y = np.array(self.y)
+
         return self.y
 
 
@@ -230,7 +297,7 @@ if __name__ == '__main__':
         Y = Y_exa + np.random.normal(size=Y_exa.shape, scale=0.2)
         y0 = model.predict(X, silent=False)
 
-        best = model.train(X, Y, silent=False)
+        best = model.train(X, Y, silent=False, trainers='all')
         print('weights:', list(model._weights.values()))
         y = model.predict(X)
 
