@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-05-17 DWW
+      2018-05-18 DWW
 """
 
 import numpy as np
@@ -43,17 +43,15 @@ def f(x, **kwargs):
                 coefficients
 
     Returns:
-        (lmfit.Parameter object):
-            if 'define' then key, initial value and bounds of fit pars
-        or
         (1D array_like of float or float):
-            if 'define' is False then output, shape: (nOut)
+            output, shape: (nOut) if 'define' is False
+        or
+        (dict):
+            dict of initial values and bounds of fit params if 'define' is True
     """
-    # return the list of defined lmfit.Parameters entries for lmfit.minimize()
-    if kwargs.get('define', False):
-        C = Parameters()
-        C.add_many(('c0', 5), ('c1', 0.2), ('c2', 3), ('c3', .007))
-        return C
+    if 'define' in kwargs:
+        # dict of values of lmfit.Parameters: {'key': (value, min, max), ...}
+        return {'c0': (5, -10, 100), 'c1': 0.2, 'c2': (3, None, 9), 'c3': .007}
 
     c0, c1, c2, c3 = kwargs.get('c0', 1), kwargs.get('c1', 1), \
         kwargs.get('c2', 1), kwargs.get('c3', 1)
@@ -81,8 +79,7 @@ class LmfitExample(object):
 
     def train(self, X, Y, **kwargs):
         """
-        Trains model. X and Y are stored as self.X and self.Y if both are not
-        None
+        Trains model. X and Y are stored as self.X and self.Y if both not None
 
         Args:
             X (2D or 1D array_like of float):
@@ -126,19 +123,19 @@ class LmfitExample(object):
 
             Args:
                 params (ordered dict or lmfit.Parameter):
-                    dictionary of coefficients with boundaries etc
+                    dictionary of parameters with value, min, max etc
 
                 X (2D or 1D array_like of float):
-                    training input, shape: (nPoint, nInp) or shape: (nPoint)
+                    training input, shape: (nPoint, nInp)
 
                 Y (2D or 1D array_like of float):
-                    training target, shape: (nPoint, nOut) or shape: (nPoint)
+                    training target, shape: (nPoint, nOut)
 
             Returns:
                 (2D array of float):
                     difference between prediction f(X) and target Y(X)
             """
-            opt = {k: params[k] for k in params.keys()}
+            opt = {key: params[key] for key in params.keys()}
             return np.subtract(self.predict(X, **opt), Y)
 
         ###
@@ -150,8 +147,19 @@ class LmfitExample(object):
         self.ready = True
         self.best = {}
 
-        self._weights = None  # needed in self.predict()
-        params = self.f(None, define=True)
+        self._weights = None  # used in self.predict(), differentiates trn/pred
+        params = Parameters()
+        for key, val in self.f(None, define=True).items():
+            if isinstance(val, (int, float)):
+                params.add(key, value=val)
+            elif len(val) > 0:
+                params.add(key, value=val[0])
+            elif len(val) > 1:
+                params.set(min=val[1])
+            elif len(val) > 2:
+                params.set(max=val[2])
+            else:
+                assert 0, str(key) + ': ' + str(val[0])
 
         minimizer = Minimizer(objective, params, fcn_args=(X, Y))
         result = minimizer.minimize()
@@ -167,8 +175,9 @@ class LmfitExample(object):
 
     def predict(self, x, **kwargs):
         """
-        Prediction for MULTIPLE data points. With MPI (requires paralle.py) the
-        execution is distributed. x and y=f(x) is stored as self.x and self.y
+        Prediction for MULTIPLE data points. With MPI (requires parallel.py)
+        the execution can be distributed.
+        x and y=f(x) are stored as self.x and self.y
 
         Args:
             x (2D or 1D array_like of float):
@@ -216,20 +225,20 @@ if __name__ == '__main__':
         X0 = np.linspace(0, 15, 301)
         X1 = np.linspace(-10, 10, 301)
         X = np.c_[X0, X1]
-        C = f(None, define=True)
-        Y_exa = model.predict(X, **C)
-        Y = Y_exa + np.random.normal(size=Y_exa.shape, scale=0.2)
 
+        Y_exa = model.predict(X, c0=5, c1=0.2, c2=3, c3=0.007)
+        Y = Y_exa + np.random.normal(size=Y_exa.shape, scale=0.2)
         y0 = model.predict(X, silent=False)
 
         best = model.train(X, Y, silent=False)
-        print('weights:', model._weights)
+        print('weights:', list(model._weights.values()))
+        y = model.predict(X)
 
-        y = model.predict(X, silent=False)
-
-        plt.title('Lmfit Y(X) vs f(X)')
-        plt.plot(X[:, 0], Y[:, 0], 'k+', label='Y')
-        plt.plot(X[:, 0], y0[:, 0], 'g', label='yStart')
-        plt.plot(X[:, 0], y[:, 0], 'b', label='y')
+        plt.title('Lmfit $Y(X)$ vs $f(X)$')
+        plt.xlabel('$X$')
+        plt.ylabel('$y$')
+        plt.plot(X[:, 0], Y[:, 0], 'k+', label='$Y$')
+        plt.plot(X[:, 0], y0[:, 0], 'g', label='$y_0$')
+        plt.plot(X[:, 0], y[:, 0], 'b', label='$y$')
         plt.legend()
         plt.show()
