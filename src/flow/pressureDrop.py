@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version
-      2018-05-10 DWW
+      2018-05-15 DWW
 
   Reference
       Blevins: Applied fluid dynamics handbook, table 6-5, p. 57
@@ -244,10 +244,9 @@ def _resistanceSharpBend(v, D, rBend, phiBendDeg, nu, eps_rough):
         else:           K = 0.16
     else:
         assert x > 0.5, 'Invalid configuration'
-
-        if   x <= 0.75: K = 0.70
-        elif x <= 1.0:  K = 0.28
-        elif x <= 1.5:  K = 0.21
+        # if   x <= 0.75: K = 0.70
+        # elif x <= 1.0:  K = 0.28
+        # elif x <= 1.5:  K = 0.21
 
     if Re < 5e5:
         K *= (5e5 / Re)**0.17
@@ -478,7 +477,7 @@ def resistanceTaperedPipeExpansion(v1, D1, D2, nu=1e-6, eps_rough=10e-6,
     return x * resistanceSquarePipeExpansion(v1, D1, D2, nu, eps_rough)
 
 
-def dp_in_red_mid_exp_out(v1, D1, L1, D2, L2, D3, L3, nu=1e-6, rho=1e3, 
+def dp_in_red_mid_exp_out(v1, D1, L1, D2, L2, D3, L3, nu=1e-6, rho=1e3,
                           eps_rough=10e-6, c0=1., c1=1., c2=1., c3=1.):
     """
     Pressure drop of the combination:
@@ -553,12 +552,12 @@ def dp_in_red_mid_exp_out(v1, D1, L1, D2, L2, D3, L3, nu=1e-6, rho=1e3,
                                         eps_rough=eps_rough)
     k3 = resistancePipe(v=v3, D=D3, L=L3, nu=nu, eps_rough=eps_rough)
 
-    dp1  = pressureDrop(k1,  v1, rho)
-    dp12 = pressureDrop(k12, v1, rho)         * (c0) # tuning
-    dp2  = pressureDrop(k2,  v2, rho)         * (c1) # tuning
-    dp23 = pressureDrop(k23, v2, rho)         * (c2) # tuning
-    dp3  = pressureDrop(k3,  v3, rho)
-    dpTotal = (dp1 + dp12 + dp2 + dp23 + dp3) * (c3) # tuning
+    dp1 = pressureDrop(k1,   v1, rho)
+    dp12 = pressureDrop(k12, v1, rho) * (c0)  # tuning
+    dp2 = pressureDrop(k2,   v2, rho) * (c1)  # tuning
+    dp23 = pressureDrop(k23, v2, rho) * (c2)  # tuning
+    dp3 = pressureDrop(k3,   v3, rho)
+    dpTotal = (dp1 + dp12 + dp2 + dp23 + dp3) * (c3)  # tuning
     return dpTotal, dp1, dp12, dp2, dp23, dp3
 
 
@@ -632,8 +631,8 @@ if __name__ == '__main__':
             plt.show()
 
     # DN80/2  -> equivalent pipe diameter: 56.57 mm
-    D1 = 40e-3; D2 = 0.5 * D1; v1 = 1.
-    D1 = 56.57e-3; D2 = 40e-3; v1 = 8.5; rBend = 113.5e-3; DN = 80e-3
+    D1, D2, v1 = 40e-3, 20e-3, 1.
+    D1, D2, v1, rBend, DN = 56.57e-3, 40e-3, 8.5, 113.5e-3, 80e-3
     D1 = 80e-3
     rho = 1000.
     nu = 1e-6
