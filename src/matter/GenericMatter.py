@@ -1,5 +1,5 @@
 """
-  Copyright (c) 2016-18 by Dietmar W Weiss
+  Copyright (c) 2016- by Dietmar W Weiss
 
   This is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as
@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2017-12-19 DWW
+      2018-05-30 DWW
 """
 
 import numpy as np
@@ -50,7 +50,7 @@ class GenericMatter(Property):
         self.phases = 1
         self.composition = {}
 
-        self.beta    = Property('beta',    '1/K', latex=r'$\beta_{th}$')
+        self.beta = Property('beta',    '1/K', latex=r'$\beta_{th}$')
         self.c_sound = Property('c_sound', 'm/s', latex='$c_{sound}$')
 
         self.E = Property('E', 'Pa', comment="Young's (elastic) modulus")
@@ -75,12 +75,15 @@ class GenericMatter(Property):
                 / (1. + (T - self.rho.T.ref) * self.beta()) \
                 / (1. - (p - self.rho.p.ref) / self.E())
 
-        self.c_p    = Property('c_p', 'J/(kg K)',
-                                comment='specific heat capacity')
+        self.c_p = Property('c_p', 'J/(kg K)',
+                            comment='specific heat capacity')
         self.Lambda = Property('lambda', 'W/(m K)', latex=r'$\lambda$',
-                                comment='thermal conductivity')
+                               comment='thermal conductivity')
         self.rho_el = Property('rho_el', r'$\Omega$', latex=r'$\varrho_{el}$',
-                                comment='electric resistance')
+                               comment='electric resistance')
+        self.a = Property('a', 'm$^2$/s', comment='thermal diffusity')
+        self.a.calc = lambda T, p, x: self.Lambda.calc(T, p, x) / \
+            (self.c_p.calc(T, p, x) * self.rho.calc(T, p, x))
 
     def plot(self, property=None):
         if property is None or property.lower() == 'all':
@@ -117,13 +120,34 @@ class Solid(GenericMatter):
     def __init__(self, identifier='solid', latex=None, comment=None):
         super().__init__(identifier=identifier, latex=latex, comment=comment)
 
-        self.R_p02   = Property('Rp0.2', 'Pa', latex='$R_{p,0.2}$',
-                                comment='yield strength')
-        self.R_m     = Property('R_m', 'Pa', latex='$R_{m}$',
-                                comment='tensile strength')
+        self.R_p02 = Property('Rp0.2', 'Pa', latex='$R_{p,0.2}$',
+                              comment='yield strength')
+        self.R_m = Property('R_m', 'Pa', latex='$R_{m}$',
+                            comment='tensile strength')
         self.R_compr = Property('R_compr', 'Pa', latex='$R_{compr}$',
                                 comment='compressive strength')
         self.T_recry = 0.
+
+
+class NonMetal(Solid):
+    """
+    Collection of physical and chemical properties of generic non-metal
+
+    Args:
+        identifier (string, optional):
+            identifier of matter
+
+        latex (string, optional):
+            Latex-version of identifier. If None, identical with identifier
+
+        comment (string, optional):
+            comment on matter
+
+    Note:
+        Do NOT define a self.__call__() method in this class
+    """
+    def __init__(self, identifier='nonmetal', latex=None, comment=None):
+        super().__init__(identifier=identifier, latex=latex, comment=comment)
 
 
 class Metal(Solid):
@@ -147,9 +171,9 @@ class Metal(Solid):
         super().__init__(identifier=identifier, latex=latex, comment=comment)
 
 
-class NonMetal(Solid):
+class NonFerrous(Metal):
     """
-    Collection of physical and chemical properties of generic non-metal
+    Collection of physical and chemical properties of generic nonferrous metal
 
     Args:
         identifier (string, optional):
@@ -164,7 +188,28 @@ class NonMetal(Solid):
     Note:
         Do NOT define a self.__call__() method in this class
     """
-    def __init__(self, identifier='nonMetal', latex=None, comment=None):
+    def __init__(self, identifier='nonferrous', latex=None, comment=None):
+        super().__init__(identifier=identifier, latex=latex, comment=comment)
+
+
+class Ferrous(Metal):
+    """
+    Collection of physical and chemical properties of generic ferrous metal
+
+    Args:
+        identifier (string, optional):
+            identifier of matter
+
+        latex (string, optional):
+            Latex-version of identifier. If None, identical with identifier
+
+        comment (string, optional):
+            comment on matter
+
+    Note:
+        Do NOT define a self.__call__() method in this class
+    """
+    def __init__(self, identifier='ferrous', latex=None, comment=None):
         super().__init__(identifier=identifier, latex=latex, comment=comment)
 
 
@@ -329,7 +374,7 @@ if __name__ == '__main__':
         # Add new Parameter 'p1'
         mat.p1 = Parameter(identifier='p1', unit='p1-unit', absolute=True,
                            latex=None, val=200, ref=120,
-                           comment='define limits of p1')
+                           comment='define bounds of p1')
         mat.p1.operational = [100, 200]
         print(mat.p1)
         print('-' * 60)
@@ -349,6 +394,28 @@ if __name__ == '__main__':
         fluid.Lambda.plot()
         fluid.plot('Lambda')
         fluid.plot()
+        print('-' * 60)
+
+    if 0 or ALL:
+        # Example of Fluid
+        fluid = Fluid(identifier='fluid')
+        fluid.rho.plot()
+        fluid.rho(T=300)
+        fluid.rho.plot()
+        fluid.plot('rho')
+        print('-' * 60)
+
+    if 1 or ALL:
+        # Example of Fluid
+        fluid = Fluid(identifier='fluid')
+        fluid.Lambda.plot()
+        fluid.c_p.plot()
+        fluid.rho.plot()
+        fluid.a.plot()
+        print('cp:', fluid.c_p(T=300, p=0, x=0),
+              'rho:', fluid.rho(T=300, p=0, x=0),
+              'lambda:', fluid.Lambda(T=300, p=0, x=0),
+              'a:', fluid.a(T=300, p=0, x=0))
         print('-' * 60)
 
     if 0 or ALL:

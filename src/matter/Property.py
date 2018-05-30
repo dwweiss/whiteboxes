@@ -1,5 +1,5 @@
 """
-  Copyright (c) 2016-17 by Dietmar W Weiss
+  Copyright (c) 2016- by Dietmar W Weiss
 
   This is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as
@@ -17,9 +17,8 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2017-12-05 DWW
+      2017-12-19 DWW
 """
-
 
 import numpy as np
 import matplotlib.pyplot as plt
@@ -28,12 +27,12 @@ from Parameter import Parameter, C2K
 
 class Property(Parameter):
     """
-    Adds temperature and pressure Parameter to a Parameter and provides call
-    of Property value as function of temperature, pressure and spare parameter
+    Adds temperature and pressure Parameter to a Parameter and provides call of
+    Property value as function of temperature, pressure and spare parameter 'x'
 
     Note:
-      - calc(T, p, x) is the implementation of a temperature or pressure
-        dependency (x is also provided as a spare parameter)
+      - calc(T, p, x) is the implementation of the dependency on temperature T,
+        pressure p or spare parameter x
 
       - Function self.__call__() must NOT be overwritten
     """
@@ -44,13 +43,13 @@ class Property(Parameter):
                          latex=latex, val=val, ref=ref, comment=comment)
 
         self.T = Parameter(identifier='T', unit='K', absolute=True)
-        self.T.operational = [C2K(T_C) for T_C in [-40, 200]]
+        self.T.operational = [C2K(T_C) for T_C in (-40, 200)]
         self.T.ref = C2K(15)
         self.T.accuracy = ['-1', '+1']
 
         self.p = Parameter(identifier='p', unit='Pa', absolute=True)
         self.p.ref = 101.325e3
-        self.p.operational = [(p_rel + self.p.ref) for p_rel in [0, 100e5]]
+        self.p.operational = [(p_rel + self.p.ref) for p_rel in (0, 100e5)]
         self.p.accuracy = ['-1%FS', '+1%FS']
 
         self.x = None
@@ -65,7 +64,7 @@ class Property(Parameter):
                 plt.xlabel(self.T.latex + ' ' + self.T.unit)
                 plt.ylabel(self.latex + ' ' + self.unit)
                 T = np.linspace(self.T.operational[0], self.T.operational[1])
-                plt.plot(T, [self.__call__(el, self.p.ref, 0) for el in T])
+                plt.plot(T, [self.__call__(_T, self.p.ref, 0) for _T in T])
                 plt.grid()
                 plt.show()
         if isinstance(self.p, Parameter):
@@ -74,7 +73,7 @@ class Property(Parameter):
                 plt.xlabel(self.p.latex + ' ' + self.p.unit)
                 plt.ylabel(self.latex + ' ' + self.unit)
                 p = np.linspace(self.p.operational[0], self.p.operational[1])
-                plt.plot(p, [self.__call__(self.T.ref, el, 0) for el in p])
+                plt.plot(p, [self.__call__(self.T.ref, _p, 0) for _p in p])
                 plt.grid()
                 plt.show()
         if isinstance(self.x, Parameter):
@@ -83,8 +82,8 @@ class Property(Parameter):
                 plt.xlabel(self.x.latex + ' ' + self.x.unit)
                 plt.ylabel(self.latex + ' ' + self.unit)
                 x = np.linspace(self.x.operational[0], self.x.operational[1])
-                plt.plot(x, [self.__call__(self.T.ref, self.p.ref, el)
-                             for el in x])
+                plt.plot(x, [self.__call__(self.T.ref, self.p.ref, _x)
+                             for _x in x])
                 plt.grid()
                 plt.show()
 
@@ -116,7 +115,9 @@ class Property(Parameter):
 # Examples ####################################################################
 
 if __name__ == '__main__':
-    if 1:
+    ALL = 1
+
+    if 0 or ALL:
         foo = Property(identifier='abc')
         foo.calc = lambda T, p, x=0: 0.1 + 1e-3*T - 1e-4*p
         print(foo)

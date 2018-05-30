@@ -17,17 +17,17 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-01-16 DWW
+      2018-05-30 DWW
 """
 
 from Parameter import C2K
 from Base import Base
-from Air import Air
-from Argon import Argon
-from Diesel import Diesel
-from HydraulicOil import HydraulicOil
-from Solids import AISI304, Aluminum, Concrete, Copper, Iron, R4_230NA
-from Water import Water
+
+import NonMetals as NonMetals
+import NonFerrousMetals as NonFerrousMetals
+import FerrousMetals as FerrousMetals
+import Liquids as Liquids
+import Gases as Gases
 
 
 def molecularWeight(identifier):
@@ -79,7 +79,7 @@ class Matter(Base):
     Intended to be a follower of root in a Base-based tree
 
     Args:
-        identifier (string):
+        identifier (string, optional):
             identifier of collection of matter
     """
     def __init__(self, identifier='Matter'):
@@ -87,17 +87,19 @@ class Matter(Base):
         self.program = self.__class__.__name__
         self.version = '150917_dww'
 
-        # add new class instances
-        solids = [AISI304(), Aluminum(), Copper(), Concrete(), Iron(),
-                  R4_230NA()]
-        liquids = [Water(), Diesel(), HydraulicOil()]
-        gases = [Air(), Argon()]
+        classes = []
+        for md in [FerrousMetals, NonFerrousMetals, NonMetals, Liquids, Gases]:
+            classes += [v() for c, v in md.__dict__.items()
+                        if isinstance(v, type) and
+                        v.__module__ == md.__name__]
 
         self.data = {}
-        for matter in solids + liquids + gases:
-            self.data[matter.identifier.lower()] = matter
+        for mat in classes:
+            self.data[mat.identifier.lower()] = mat
 
-    def __call__(self, identifier):
+    def __call__(self, identifier=None):
+        if identifier is None or identifier == 'all':
+            return self.data.values()
         if identifier.lower() not in self.data:
             self.write('??? unknown identifier of matter: ', identifier)
             return None
@@ -116,6 +118,16 @@ class Matter(Base):
 
 if __name__ == '__main__':
     ALL = 1
+
+    if 1 or ALL:
+        print('collection:', [m.identifier for m in Matter()('all')])
+
+    if 0 or ALL:
+        matter = Matter()
+        for mat in matter('all'):
+            print('mat:', mat.identifier)
+            if 1:
+                mat.plot()
 
     if 0 or ALL:
         s = 'Water'
