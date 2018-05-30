@@ -1,5 +1,5 @@
 """
-  Copyright (c) 2016-17 by Dietmar W Weiss
+  Copyright (c) 2016- by Dietmar W Weiss
 
   This is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as
@@ -142,7 +142,7 @@ class Copper(Solid):
         self.T_sol        = C2K(2560)
         self.beta.calc    = lambda T=0, p=0, x=0: 16.3e-6
         self.c_p.calc     = lambda T=0, p=0, x=0: 129
-        self.Lambda.calc  = lambda T=0, p=0, x=0: None
+        self.Lambda.calc  = lambda T=0, p=0, x=0: 386
         self.rho.calc     = lambda T=0, p=0, x=0: 8960
 
 
@@ -308,7 +308,7 @@ class Iron(Solid, Liquid):
 
 
 class Concrete(Solid):
-    def __init__(self, identifier=None, latex=None, comment=None):
+    def __init__(self, identifier='concrete', latex=None, comment=None):
         """
         Args:
             identifier (string, optional):
@@ -321,12 +321,13 @@ class Concrete(Solid):
                 comment on matter
         """
         super().__init__(identifier, latex=latex, comment=comment)
-        self.rho.calc   = lambda T=0, p=0, x=0: 2300
-        self.Lambda.cal = lambda T=0, p=0, x=0: 1.8
+        self.c_p.calc    = lambda T=0, p=0, x=0: 0.8
+        self.rho.calc    = lambda T=0, p=0, x=0: 2300
+        self.Lambda.calc = lambda T=0, p=0, x=0: 1.8
 
 
 class Ceramic(Solid):
-    def __init__(self, identifier=None, latex=None, comment=None):
+    def __init__(self, identifier='ceramic', latex=None, comment=None):
         """
         Args:
             identifier (string, optional):
@@ -339,9 +340,9 @@ class Ceramic(Solid):
                 comment on matter
         """
         super().__init__(identifier, latex=latex, comment=comment)
-        self.c_p.calc   = lambda T=0, p=0, x=0: 835
-        self.rho.calc   = lambda T=0, p=0, x=0: 1920
-        self.Lambda.cal = lambda T=0, p=0, x=0: 0.72
+        self.c_p.calc    = lambda T=0, p=0, x=0: 835
+        self.rho.calc    = lambda T=0, p=0, x=0: 1920
+        self.Lambda.calc = lambda T=0, p=0, x=0: 0.72
 
 
 # Examples ####################################################################
