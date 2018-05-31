@@ -103,7 +103,7 @@ class HydraulicOil(gm.Liquid):
     Thermophysical properties of hydraulic oil
     """
 
-    def __init__(self, identifier='HydraulicOil', latex=None, comment=None):
+    def __init__(self, identifier='hydraulicOil', latex=None, comment=None):
         super().__init__(identifier=identifier)
         """
         Args:
@@ -182,7 +182,7 @@ class Water(gm.Liquid):
     Physical and chemical properties of water
     """
 
-    def __init__(self, identifier='Water', latex='$H_2O$', comment=None):
+    def __init__(self, identifier='water', latex='$H_2O$', comment=None):
         """
         Args:
             identifier (string, optional):

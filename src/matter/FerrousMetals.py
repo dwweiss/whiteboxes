@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-05-30 DWW
+      2018-05-31 DWW
 """
 
 import numpy as np
@@ -25,43 +25,112 @@ import numpy as np
 from Parameter import C2K, K2C
 import GenericMatter as gm
 
+"""
+References: 
+    U. Heubner: Merkblatt 821, Edelstahl Rostfrei – Eigenschaften, 
+    [Informationsstelle Edelstahl Rostfrei](www.edelstahl-rostfrei.de), 
+    Düsseldorf, 5. Auflage, 2014  
+"""
 
-class AISI304(gm.Ferrous):
-    """
-        Properties of stainless steel AISI 304
-    """
-
-    def __init__(self, identifier='304', latex=None, comment=None):
-        """
-        Args:
-            identifier (string, optional):
-                identifier of matter
-
-            latex (string, optional):
-                Latex-version of identifier. If None, identifier is assigned
-
-            comment (string, optional):
-                comment on matter
-        """
+class St1_4016(gm.Ferrous):
+    def __init__(self, identifier='1.4016', latex=None, comment='X6Cr17'):
         super().__init__(identifier, latex=latex, comment=None)
-
-        self.version = '240817_dww'
-        if comment is None:
-            self.comment = '1.4301, AISI 304, X5CrNi1810'
         self.T.ref = C2K(20)
+        self.T_sol = None
+        self.E.calc = lambda T=0, p=0, x=0: 220e+9
+        self.beta.calc = lambda T=0, p=0, x=0: 10.5e-6
+        self.c_p.calc = lambda T=0, p=0, x=0: 460
+        self.Lambda.calc = lambda T=0, p=0, x=0: 25
+        self.rho.calc = lambda T=0, p=0, x=0: 7700
 
-        self.nu_mech      = 0.28
-        self.friction     = None
-        self.E.calc       = lambda T=0, p=0, x=0: 193e+9
-        self.R_p02.calc   = lambda T=0, p=0, x=0: (K2C(T)-20)/(100-20) * \
-                                                  (157e6-200e6) + 200e6
-        self.R_m.calc     = lambda T=0, p=0, x=0: 600e6
 
-        self.T_sol        = C2K(1400)
-        self.beta.calc    = lambda T=0, p=0, x=0: 17e-6
-        self.c_p.calc     = lambda T=0, p=0, x=0: 480
-        self.Lambda.calc  = lambda T=0, p=0, x=0: 16
-        self.rho.calc     = lambda T=0, p=0, x=0: 8030
+class St1_4003(gm.Ferrous):
+    def __init__(self, identifier='1.4003', latex=None, comment='X2CrNi12'):
+        super().__init__(identifier, latex=latex, comment=None)
+        self.T.ref = C2K(20)
+        self.T_sol = None
+        self.E.calc = lambda T=0, p=0, x=0: 220e+9
+        self.beta.calc = lambda T=0, p=0, x=0: 11.6e-6
+        self.c_p.calc = lambda T=0, p=0, x=0: 430
+        self.Lambda.calc = lambda T=0, p=0, x=0: 25
+        self.rho.calc = lambda T=0, p=0, x=0: 7700
+
+
+class St1_4301(gm.Ferrous):
+    def __init__(self, identifier='1.4301', latex=None, 
+                 comment='X5CrNi18-10, AISI 304'):
+        super().__init__(identifier, latex=latex, comment=None)
+        self.T.ref = C2K(20)
+        self.T_sol = C2K(1400)
+        self.E.calc = lambda T=0, p=0, x=0: 200e+9
+        self.beta.calc = lambda T=0, p=0, x=0: 17.5e-6
+        self.c_p.calc = lambda T=0, p=0, x=0: 500
+        self.Lambda.calc = lambda T=0, p=0, x=0: 15
+        self.rho.calc = lambda T=0, p=0, x=0: 7900
+
+
+class St1_4541(gm.Ferrous):
+    def __init__(self, identifier='1.4541', latex=None,
+                 comment='X6CrNiTi18-10'):
+        super().__init__(identifier, latex=latex, comment=None)
+        self.T.ref = C2K(20)
+        self.T_sol = None
+        self.E.calc = lambda T=0, p=0, x=0: 200e+9
+        self.beta.calc = lambda T=0, p=0, x=0: 17.5e-6
+        self.c_p.calc = lambda T=0, p=0, x=0: 500
+        self.Lambda.calc = lambda T=0, p=0, x=0: 15
+        self.rho.calc = lambda T=0, p=0, x=0: 7900
+
+
+class St1_4401(gm.Ferrous):
+    def __init__(self, identifier='1.4401', latex=None,
+                 comment='X5CrNiMo17-12-2'):
+        super().__init__(identifier, latex=latex, comment=None)
+        self.T.ref = C2K(20)
+        self.T_sol = None
+        self.E.calc = lambda T=0, p=0, x=0: 200e+9
+        self.beta.calc = lambda T=0, p=0, x=0: 17.5e-6
+        self.c_p.calc = lambda T=0, p=0, x=0: 500
+        self.Lambda.calc = lambda T=0, p=0, x=0: 15
+        self.rho.calc = lambda T=0, p=0, x=0: 8000
+
+
+class St1_4571(gm.Ferrous):
+    def __init__(self, identifier='1.4571', latex=None,
+                 comment='X6CrNiMoTi17-12-2'):
+        super().__init__(identifier, latex=latex, comment=None)
+        self.T.ref = C2K(20)
+        self.T_sol = None
+        self.E.calc = lambda T=0, p=0, x=0: 200e+9
+        self.beta.calc = lambda T=0, p=0, x=0: 18.5e-6
+        self.c_p.calc = lambda T=0, p=0, x=0: 500
+        self.Lambda.calc = lambda T=0, p=0, x=0: 15
+        self.rho.calc = lambda T=0, p=0, x=0: 8000
+
+
+class St1_4362(gm.Ferrous):
+    def __init__(self, identifier='1.4362', latex=None, comment='X2CrNiN23-4'):
+        super().__init__(identifier, latex=latex, comment=None)
+        self.T.ref = C2K(20)
+        self.T_sol = None
+        self.E.calc = lambda T=0, p=0, x=0: 200e+9
+        self.beta.calc = lambda T=0, p=0, x=0: 17.5e-6
+        self.c_p.calc = lambda T=0, p=0, x=0: 500
+        self.Lambda.calc = lambda T=0, p=0, x=0: 15
+        self.rho.calc = lambda T=0, p=0, x=0: 7800
+
+
+class St1_4462(gm.Ferrous):
+    def __init__(self, identifier='1.4462', latex=None,
+                 comment='X2CrNiMoN22-5-3'):
+        super().__init__(identifier, latex=latex, comment=None)
+        self.T.ref = C2K(20)
+        self.T_sol = None
+        self.E.calc = lambda T=0, p=0, x=0: 200e+9
+        self.beta.calc = lambda T=0, p=0, x=0: 14.5e-6
+        self.c_p.calc = lambda T=0, p=0, x=0: 500
+        self.Lambda.calc = lambda T=0, p=0, x=0: 15
+        self.rho.calc = lambda T=0, p=0, x=0: 7800
         
         
 class Iron(gm.Ferrous, gm.Liquid):
@@ -98,7 +167,7 @@ class Iron(gm.Ferrous, gm.Liquid):
 
         self.nu_mech      = None
         self.friction     = None
-        self.E.calc       = lambda T=0, p=0, x=0: None
+        self.E.calc       = lambda T=0, p=0, x=0: 211e9
 
         self.T_sol        = C2K(1430)
         self.T_liq        = self.T_sol + 50
@@ -128,7 +197,7 @@ class Iron(gm.Ferrous, gm.Liquid):
     def _Lambda(self, T=0, p=0, x=0):
         Tp = [300, 600, 900, 1184, 1400, 1673, 1673.1, 1809, 1809.1,
               2000, 3000]
-        Up = [9.6, 54.6, 37.4, 28.2, 30.6, 33.7, 33.4, 34.6, 40.3, 42.6,
+        Up = [59.6, 54.6, 37.4, 28.2, 30.6, 33.7, 33.4, 34.6, 40.3, 42.6,
               48]
         return np.interp(T, Tp, Up)
 
@@ -188,9 +257,22 @@ if __name__ == '__main__':
     classes = [v for c, v in module.__dict__.items()
                if isinstance(v, type) and v.__module__ == module.__name__]
 
-    if 1 or ALL:
+    if 1:
+        print('list of defined matter:', [c().identifier for c in classes])
+
+    if 0 or ALL:
         for mat in classes:
             print('class:', mat.__name__)
             foo = mat()
             print(foo.identifier, '*' * 50)
             foo.plot()
+
+    if 1 or ALL:
+        print('-' * 55 + '\nTable of all steels defined (id, lambda, rho, '
+              'c_p, E)\n' + '-' * 55)
+        for mat in classes:
+            foo = mat()
+            T = foo.T.ref
+            print('Steel: {:>8s}  {:3.1f}  {:5.1f}  {:5.1f}  {:5.3e}'.format(
+                  foo.identifier, foo.Lambda(T),  foo.rho(T), foo.c_p(T), 
+                  foo.E(T)))
