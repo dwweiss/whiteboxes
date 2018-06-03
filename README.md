@@ -6,6 +6,7 @@ _coloredLids_ extends the [_grayBoxes_](https://github.com/dwweiss/grayBoxes/wik
 
 <br>
 <br>
+
 ![](https://github.com/dwweiss/coloredlids/blob/master/doc/fig/colored_boxes_top.png)
 
 ##### Figure 1: Gray box model comprising a black box and white box subsets
@@ -35,6 +36,5 @@ _coloredLids_ extends the [_grayBoxes_](https://github.com/dwweiss/grayBoxes/wik
 ## Dependency
 
 _coloredLids_ is dependent on _grayBoxes_, install with:
-
-    $ wget https://github.com/dwweiss/grayBoxes.git
+    $ git clone https://github.com/dwweiss/grayBoxes.git
     $ cp DOWNLOAD_PATH/grayBoxes/scr/*.py ./coloredLids/scr
