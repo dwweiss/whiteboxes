@@ -35,8 +35,8 @@ _coloredLids_ extends the [_grayBoxes_](https://github.com/dwweiss/grayBoxes/wik
 
 ## Installation
 
-> git clone https://github.com/dwweiss/coloredLids.git  
-> sudo python3 setup.py install 
+    git clone https://github.com/dwweiss/coloredLids.git  
+    sudo python3 setup.py install 
 
 ## Dependencies
 
