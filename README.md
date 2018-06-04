@@ -15,26 +15,29 @@ _coloredLids_ extends the [_grayBoxes_](https://github.com/dwweiss/grayBoxes/wik
 
 ## Content of project 
 
-    src/data        Conversion of data, operations on data frames
-    src/empirical   Data-driven models
-    src/flow        Solutions to velocity and pressure distribution
-    src/heat        Solutions to heat transfer
-    src/mass        Mass transfer (diffusion)
-    src/matter      Properties of solids, liquids and gases
-    src/mech        Structural mechanics
-    src/mesh        Primitives for building geometries and meshes
-    src/numeric     Numerical solution of differential and integral equations
-    src/tests       Selected test cases
-    src/tools       Tools for data manipulation
-        
+    coloredLids/
+        data        Conversion of data, operations on data frames
+        empirical   Data-driven models
+        flow        Solutions to velocity and pressure distribution
+        heat        Solutions to heat transfer
+        mass        Mass transfer (diffusion)
+        matter      Properties of solids, liquids and gases
+        mech        Structural mechanics
+        mesh        Primitives for building geometries and meshes
+        numeric     Numerical solution of differential and integral equations
+        tools       Tools for data manipulation
+        
+    tests
+        Selected test cases
+
+    doc
+        Figures and manuals used in wiki
 
 ## Installation
 
-    $ wget https://github.com/dwweiss/coloredLids.git
+> git clone https://github.com/dwweiss/coloredLids.git  
+> sudo python3 setup.py install 
 
+## Dependencies
 
-## Dependency
-
-_coloredLids_ is dependent on _grayBoxes_, install with:
-    $ git clone https://github.com/dwweiss/grayBoxes.git
-    $ cp DOWNLOAD_PATH/grayBoxes/scr/*.py ./coloredLids/scr
+Package _coloredLids_ is dependent on package _grayBoxes_, [info](https://github.com/dwweiss/grayBoxes#dependencies)
