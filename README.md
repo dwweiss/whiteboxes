@@ -15,7 +15,7 @@ _coloredLids_ extends the [_grayBoxes_](https://github.com/dwweiss/grayBoxes/wik
 
 ## Content of project 
 
-    coloredLids/
+    coloredLids
         data        Conversion of data, operations on data frames
         empirical   Data-driven models
         flow        Solutions to velocity and pressure distribution
@@ -40,4 +40,4 @@ _coloredLids_ extends the [_grayBoxes_](https://github.com/dwweiss/grayBoxes/wik
 
 ## Dependencies
 
-Package _coloredLids_ is dependent on package _grayBoxes_, [info](https://github.com/dwweiss/grayBoxes#dependencies)
+Package _coloredLids_ is dependent on package _grayBoxes_, [[info]](https://github.com/dwweiss/grayBoxes#dependencies)
