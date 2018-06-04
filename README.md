@@ -13,7 +13,7 @@ _coloredLids_ extends the [_grayBoxes_](https://github.com/dwweiss/grayBoxes/wik
 
 <br>
 
-## Content of project 
+### Content of project 
 
     coloredLids
         data        Conversion of data, operations on data frames
@@ -33,11 +33,11 @@ _coloredLids_ extends the [_grayBoxes_](https://github.com/dwweiss/grayBoxes/wik
     doc
         Figures and manuals used in wiki
 
-## Installation
+### Installation
 
     git clone https://github.com/dwweiss/coloredLids.git  
     sudo python3 setup.py install 
 
-## Dependencies
+### Dependencies
 
 Package _coloredLids_ is dependent on package _grayBoxes_, [[info]](https://github.com/dwweiss/grayBoxes#dependencies)
