@@ -2,7 +2,7 @@
 
 _coloredLids_ extends the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki) project by deriving objects from the _grayboxes.Model_ class. That class is merely an interface to an empty white box model. It defines the contract between the gray box and subsets of the white boxes model. The lid color of the subsets in [Fig. 1](#figure-1-gray-box-model-comprising-white-boxes-with-colored-lids-and-black-boxes) indicates functionality for simulating  <font color="red">heat transfer</font>, <font color="blue">fluid flow</font>, <font color="green">mass transfer</font> and <font color="yellow">structural mechanics</font>.
 
-[[Link to coloredLids wiki]](https://github.com/dwweiss/coloredLids/wiki)
+[[Link to coloredLids wiki]](https://github.com/dwweiss/coloredlids/wiki)
 
 <br>
 <br>
@@ -24,7 +24,7 @@ _coloredLids_ extends the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wik
         matter      Properties of solids, liquids and gases
         mech        Structural mechanics
         mesh        Primitives for building geometries and meshes
-        numeric     Numerical solution of differential and integral equations
+        numerics    Numerical solution of differential and integral equations
         tools       Tools for data manipulation
         
     tests
