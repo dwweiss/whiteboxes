@@ -17,15 +17,15 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-03-22 DWW
+      2018-06-19 DWW
 """
 
 from math import inf
 import numpy as np
 from scipy.optimize import curve_fit
 
-from Base import Base
-from plotArrays import plotSurface, plotIsoMap
+from grayboxes.Base import Base
+from grayboxes.plotArrays import plotSurface, plotIsoMap
 
 
 class Fit2DModel(Base):
@@ -168,7 +168,7 @@ if __name__ == '__main__':
         Pressure loss of the flow of a liquid trough a pipe reduction, a
         straight pipe and a pipe extension, see: pressureDropEmpirical.py
         """
-        from pressureDropEmpirical import dp_inlet_reduce_middle_expand_outlet
+        from coloredlids.pressureDropEmpirical import dp_inlet_reduce_middle_expand_outlet
 
         def f(x, a=1, b=1, c=1, d=1):
             """
