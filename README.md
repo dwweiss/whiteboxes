@@ -38,7 +38,7 @@ The lid color of the theoretical submodels in [Fig. 1](#figure-1-gray-box-model-
 ### Installation
 
     git clone https://github.com/dwweiss/coloredlids.git  
-    python3 setup.py install 
+    python3 setup.py install --user
 
 ### Dependencies
 
