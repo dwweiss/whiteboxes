@@ -17,11 +17,11 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-05-30 DWW
+      2018-06-25 DWW
 """
 
-from Parameter import C2K, K2C
-import GenericMatter as gm
+from . parameter import C2K, K2C
+import . genericmatter as gm
 
 
 class R4_230NA(gm.NonMetal):
@@ -116,7 +116,7 @@ class Ceramic(gm.NonMetal):
 if __name__ == '__main__':
     ALL = 0
 
-    import NonMetals as thisModule
+    import . nonmetals as thisModule
     classes = [v for c, v in thisModule.__dict__.items()
                if isinstance(v, type) and v.__module__ == thisModule.__name__]
 
