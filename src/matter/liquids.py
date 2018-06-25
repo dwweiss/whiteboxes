@@ -17,14 +17,14 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-05-30 DWW
+      2018-06-25 DWW
 """
 
 import numpy as np
 from scipy.interpolate import interp2d
 
-import GenericMatter as gm
-from Parameter import C2K, K2C
+import . genericmatter as gm
+from . parameter import C2K, K2C
 
 
 class Diesel(gm.Liquid):
@@ -354,7 +354,7 @@ class Water(gm.Liquid):
 if __name__ == '__main__':
     ALL = 0
 
-    import Liquids as module
+    import . liquids as module
     classes = [v for c, v in module.__dict__.items()
                if isinstance(v, type) and v.__module__ == module.__name__]
 
