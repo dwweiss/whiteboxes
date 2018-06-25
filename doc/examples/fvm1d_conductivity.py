@@ -17,13 +17,13 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-18 DWW
+      2018-06-25 DWW
 """
 
 from time import clock
 import numpy as np
 import matplotlib.pyplot as plt
-import tdma as td
+import coloredlids.numerics.tdma as tdma
 
 
 def main(nVol=15, L=1., conductivity=lambda x: 1., source=lambda x: 0.,
@@ -134,7 +134,7 @@ def main(nVol=15, L=1., conductivity=lambda x: 1., source=lambda x: 0.,
         # solution of linear equation system, U will contain the solution
         start_time = clock()
 
-        u = td.tdma(Lo, Di, Up, Rs)
+        u = tdma(Lo, Di, Up, Rs)
 
         if not silent:
             print('--- n:', u.size, 't:', (clock() - start_time) * 1e3, 'ms')
