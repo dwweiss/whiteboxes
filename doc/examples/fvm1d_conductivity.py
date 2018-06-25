@@ -23,7 +23,7 @@
 from time import clock
 import numpy as np
 import matplotlib.pyplot as plt
-import coloredlids.numerics.tdma as tdma
+from coloredlids.numerics.tdma import tdma
 
 
 def main(nVol=15, L=1., conductivity=lambda x: 1., source=lambda x: 0.,
