@@ -253,9 +253,9 @@ class Iron(gm.Ferrous, gm.Liquid):
 if __name__ == '__main__':
     ALL = 0
 
-    import FerrousMetals as module
-    classes = [v for c, v in module.__dict__.items()
-               if isinstance(v, type) and v.__module__ == module.__name__]
+    import FerrousMetals as thisModule
+    classes = [v for c, v in thisModule.__dict__.items()
+               if isinstance(v, type) and v.__module__ == thisModule.__name__]
 
     if 1:
         print('list of defined matter:', [c().identifier for c in classes])
