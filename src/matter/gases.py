@@ -224,9 +224,9 @@ class Argon(gm.Gas):
 if __name__ == '__main__':
     ALL = 1
 
-    import . gases as module
-    classes = [v for c, v in module.__dict__.items()
-               if isinstance(v, type) and v.__module__ == module.__name__]
+    import . gases as thisModule
+    classes = [v for c, v in thisModule.__dict__.items()
+               if isinstance(v, type) and v.__module__ == thisModule.__name__]
 
     if 1 or ALL:
         for mat in classes:
