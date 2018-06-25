@@ -20,9 +20,9 @@
       2018-06-25 DWW
 """
 
-from . parameter import C2K
 from grayboxes.base import Base
 
+from . parameter import C2K
 from . nonmetals import NonMetals
 from . nonferrousmetals as NonFerrousMetals
 from . ferrousmetals as FerrousMetals
