@@ -17,17 +17,17 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-05-30 DWW
+      2018-06-25 DWW
 """
 
-from Parameter import C2K
-from Base import Base
+from . parameter import C2K
+from grayboxes.base import Base
 
-import NonMetals as NonMetals
-import NonFerrousMetals as NonFerrousMetals
-import FerrousMetals as FerrousMetals
-import Liquids as Liquids
-import Gases as Gases
+from . nonmetals import NonMetals
+from . nonferrousmetals as NonFerrousMetals
+from . ferrousmetals as FerrousMetals
+from . liquids import Liquids
+from . gases import Gases
 
 
 def molecularWeight(identifier):
