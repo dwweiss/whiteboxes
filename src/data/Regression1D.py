@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2017-12-31 DWW
+      2018-06-25 DWW
 """
 
 
@@ -29,8 +29,8 @@ from scipy.optimize import curve_fit
 import matplotlib.pyplot as plt
 from inspect import getsourcelines
 
-from Base import Base
-from norms import L2_norm, SSE
+from grayboxes.base import Base
+from coloredlids.numerics.norm import L2_norm, SSE
 
 
 class Regression1D(Base):
