@@ -23,7 +23,7 @@
 import numpy as np
 from coloredlids.matter.parameter import C2K
 from coloredlids.matter.genericmatter import Fluid
-from coloredlids.matter.qir import Air
+from coloredlids.matter.air import Air
 
 
 class FreeConvectionPlate(object):
