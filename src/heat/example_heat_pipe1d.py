@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-19 DWW
+      2018-06-25 DWW
 """
 
 from tempfile import gettempdir
@@ -25,7 +25,7 @@ from numba import autojit
 import numpy as np
 import matplotlib.pyplot as plt
 
-from grayboxes.Base import Base
+from grayboxes.base import Base
 
 """
     Demonstrates discretisation of a 1D transient heat conduction problem
