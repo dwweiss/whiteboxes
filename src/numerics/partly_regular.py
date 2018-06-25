@@ -24,7 +24,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def partlyRegular(nCells, *ranges, spacing='lin', dtype=np.float32,
+def partly_regular(nCells, *ranges, spacing='lin', dtype=np.float32,
                   silent=True):
     """
     Coordinates of vertices and cell centers for partly regular spaced grid
@@ -250,7 +250,7 @@ if __name__ == '__main__':
             (10)
             ]
     for L, n in zip(Ls, ns):
-        X, x, dx, vol = partlyRegular(n, *L, spacing=('log+-', 'log-', 'lin'),
-                                      silent=False)
+        X, x, dx, vol = partly_regular(n, *L, spacing=('log+-', 'log-', 'lin'),
+                                       silent=False)
 
         print('### X x dx vol:', X.shape, x.shape, dx.shape, vol.shape, )
