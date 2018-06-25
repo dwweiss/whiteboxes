@@ -1,21 +1,14 @@
-# coloredLids
+# colored lids
 
-This package extends the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki) package by providing theoretical submodels _**f**(x)_. Complexer functions _**f**(x)_ are often implemented as a tree of objects derived from the _grayboxes.Model_ class.  The instance of _Model_ at the tree root defines the contract between empirical and theoretical submodels.
+This package extends the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki) package by providing theoretical submodels
 
-The lid color of the theoretical submodels in [Fig. 1](#figure-1-gray-box-model-comprising-white-boxes-with-colored-lids-and-black-boxes) indicates functionality for simulating  <font color="red">heat transfer</font>, <font color="blue">fluid flow</font>, <font color="green">mass transfer</font> and <font color="yellow">structural mechanics</font>.
+[[Link to coloredlids wiki]](https://github.com/dwweiss/coloredlids/wiki)
 
-[[Link to coloredLids wiki]](https://github.com/dwweiss/coloredlids/wiki)
 
-<br>
-<br>
-
-![](https://github.com/dwweiss/coloredlids/blob/master/doc/fig/colored_boxes_top.png)
-
-##### Figure 1: Gray box model comprising a black box and white box subsets
 
 <br>
 
-### Content of project 
+### Content
 
     src
         data        Conversion of data, operations on data frames
