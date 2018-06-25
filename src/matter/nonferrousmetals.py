@@ -17,11 +17,11 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-05-30 DWW
+      2018-06-25 DWW
 """
 
-from Parameter import C2K
-import GenericMatter as gm
+from . parameter import C2K
+import . genericMatter as gm
 
 
 class Aluminum(gm.NonFerrous):
@@ -108,7 +108,7 @@ class Copper(gm.NonFerrous):
 if __name__ == '__main__':
     ALL = 0
 
-    import NonFerrousMetals as module
+    import . nonferrousmetals as module
     classes = [v for c, v in module.__dict__.items()
                if isinstance(v, type) and v.__module__ == module.__name__]
 
