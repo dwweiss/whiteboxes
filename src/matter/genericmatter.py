@@ -17,12 +17,12 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-05-30 DWW
+      2018-06-25 DWW
 """
 
 import numpy as np
-from Parameter import Parameter, C2K
-from Property import Property
+from . parameter import Parameter, C2K
+from . property import Property
 
 
 class GenericMatter(Property):
