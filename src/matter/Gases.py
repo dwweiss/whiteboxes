@@ -21,8 +21,8 @@
 """
 
 import numpy as np
-from Parameter import C2K, K2C
-import GenericMatter as gm
+from . parameter import C2K, K2C
+import . genericmatter as gm
 
 
 class Air(gm.Gas):
@@ -224,7 +224,7 @@ class Argon(gm.Gas):
 if __name__ == '__main__':
     ALL = 1
 
-    import Gases as module
+    import . gases as module
     classes = [v for c, v in module.__dict__.items()
                if isinstance(v, type) and v.__module__ == module.__name__]
 
