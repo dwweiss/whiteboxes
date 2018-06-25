@@ -17,14 +17,14 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2017-12-07 DWW
+      2018-06-25 DWW
 """
 
 from copy import deepcopy
 from math import pi, radians
 from collections import OrderedDict
 
-from xyz import xyz
+from grayboxes.xyz import xyz
 
 
 class CrossSection(object):
