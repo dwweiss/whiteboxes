@@ -17,13 +17,13 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-05-07 DWW
+      2018-06-25 DWW
 """
 
 import numpy as np
-from Parameter import C2K
-from GenericMatter import Fluid
-from Air import Air
+from coloredlids.matter.parameter import C2K
+from coloredlids.matter.genericmatter import Fluid
+from coloredlids.matter.qir import Air
 
 
 class FreeConvectionPlate(object):
