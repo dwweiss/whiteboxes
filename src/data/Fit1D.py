@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-03-19 DWW
+      2018-06-25 DWW
 """
 
 from math import inf
@@ -25,7 +25,7 @@ import numpy as np
 from scipy.optimize import minimize, basinhopping, curve_fit
 import matplotlib.pyplot as plt
 
-from Base import Base
+from grayboxes.base import Base
 
 
 class Fit1D(Base):
