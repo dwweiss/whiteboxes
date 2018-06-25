@@ -1,5 +1,5 @@
 """
-  Copyright (c) 2016-18 by Dietmar W Weiss
+  Copyright (c) 2016- by Dietmar W Weiss
 
   This is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as
@@ -17,12 +17,12 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-01-01 DWW
+      2018-06-25 DWW
 """
 
 from math import pi
-from Property import Parameter, Property, C2K
-from Water import Water
+from coloredlids.matter.property import Parameter, Property, C2K
+from coloredlids.matter.water import Water
 
 
 class FlowIncompressible(Property):
