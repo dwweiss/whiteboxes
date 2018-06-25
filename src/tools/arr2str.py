@@ -1,5 +1,5 @@
 """
-  Copyright (c) 2016-17 by Dietmar W Weiss
+  Copyright (c) 2016- by Dietmar W Weiss
 
   This is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as
@@ -17,14 +17,14 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2017-12-18 DWW
+      2018-06-25 DWW
 """
 
 import collections
 import numpy as np
 
 
-def array2str(x):
+def arr2str(x):
     """
     Converts array to string. Removes comma, newline and multiple space
 
@@ -61,4 +61,4 @@ if __name__ == '__main__':
                ]
     
         for x in seq:
-            print('x:', x, 'str:', array2str(x))
+            print('x:', x, 'str:', arr2str(x))
