@@ -17,15 +17,15 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2017-11-22 DWW
+      2018-06-25 DWW
 """
 
 from copy import deepcopy
 
-from Base import Base
-from xyz import xyz
-from plotArrays import plotTrajectory
-from CrossSection import CrossSection
+from grayboxes.base import Base
+from grayboxes.xyz import xyz
+from grayboxes.plotarrays import plotTrajectory
+from . cross_section import CrossSection
 
 
 class PipeworkBase(Base):
