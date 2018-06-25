@@ -1,5 +1,5 @@
 """
-  Copyright (c) 2016-17 by Dietmar W Weiss
+  Copyright (c) 2016- by Dietmar W Weiss
 
   This is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as
@@ -18,7 +18,7 @@
 
   Version:
 
-      2017-12-21 DWW
+      2018-06-25 DWW
 """
 
 import re
