@@ -24,8 +24,8 @@ from math import inf
 import numpy as np
 from scipy.optimize import curve_fit
 
-from grayboxes.Base import Base
-from grayboxes.plotArrays import plotSurface, plotIsoMap
+from grayboxes.base import Base
+from grayboxes.plotarrays import plotSurface, plotIsoMap
 
 
 class Fit2DModel(Base):
