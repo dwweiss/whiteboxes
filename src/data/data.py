@@ -1,5 +1,5 @@
 """
-  Copyright (c) 2016-17 by Dietmar W Weiss
+  Copyright (c) 2016- by Dietmar W Weiss
 
   This is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as
@@ -17,12 +17,12 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2017-11-16 DWW
+      2018-06-25 DWW
 """
 
 
 from collections import OrderedDict
-from pandas import read_csv
+from pandas import read_csv, read_excel
 import numpy as np
 
 
@@ -221,7 +221,7 @@ def frame2xy(df, xKeys, yKeys):
 
 
 def excel2xy(xKeys=None, yKeys=None, file='c:/temp/data.xlsx',
-             sheetname='data', startcol=0, startrow=0):
+             sheet_name='data', startcol=0, startrow=0):
     """
     Reads DataFrame from excel file and convert it to two 2D arrays
 
@@ -229,7 +229,7 @@ def excel2xy(xKeys=None, yKeys=None, file='c:/temp/data.xlsx',
         file (string):
             full path to Excel file
 
-        sheetname (string):
+        sheet_name (string):
             name of Excel sheet
 
         startcol (int):
@@ -252,12 +252,12 @@ def excel2xy(xKeys=None, yKeys=None, file='c:/temp/data.xlsx',
             dependent variables
     """
     df = read_excel(open(file, 'rb'),
-                    sheetname=sheetname, startcol=startcol, startrow=startrow)
+                    sheetname=sheet_name, startcol=startcol, startrow=startrow)
     return frame2xy(df, xKeys, yKeys)
 
 
-def xy2excel(X, Y=None, xKeys=None, yKeys=None, file='c:/temp/data.xlsx',
-             sheetname='data', startcol=0, startrow=0):
+def xy2excel(X, Y=None, xKeys=None, yKeys=None, file='./data.xlsx',
+             sheet_name='data', startcol=0, startrow=0):
     """
     Converts two 2D arrays to DataFrame and write it to excel file
 
@@ -287,7 +287,7 @@ def xy2excel(X, Y=None, xKeys=None, yKeys=None, file='c:/temp/data.xlsx',
     writer = ExcelWriter(file)
     if not writer:
         return False
-    df.to_excel(writer, sheet_name=sheetname, startcol=startcol,
+    df.to_excel(writer, sheet_name=sheet_name, startcol=startcol,
                 startrow=startrow)
     writer.save()
     return True
@@ -433,10 +433,14 @@ if __name__ == '__main__':
         plt.show()
 
     if 1:
-        from pandas import ExcelWriter, read_excel
+        import os
+        from pandas import ExcelWriter
         print('*** Example: ExcelWriter(), read_excel() and to_csv()')
 
-        file = 'c:/temp/PythonExport.xlsx'
+        if os.name == 'posix':
+            file = '/tmp/PythonExport.xlsx'
+        else:
+            file = 'c:/temp/PythonExport.xlsx'
         writer = ExcelWriter(file)
         df.to_excel(writer, sheet_name='data', startcol=4, startrow=3)
         writer.save()
