@@ -354,9 +354,9 @@ class Water(gm.Liquid):
 if __name__ == '__main__':
     ALL = 0
 
-    import . liquids as module
-    classes = [v for c, v in module.__dict__.items()
-               if isinstance(v, type) and v.__module__ == module.__name__]
+    import . liquids as thisModule
+    classes = [v for c, v in thisModule.__dict__.items()
+               if isinstance(v, type) and v.__module__ == thisModule.__name__]
 
     if 1 or ALL:
         for mat in classes:
