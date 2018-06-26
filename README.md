@@ -10,7 +10,7 @@ This package extends the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki
 
 ### Content
 
-    src
+    coloredlids
         data        Conversion of data, operations on data frames
         flow        Solutions to velocity and pressure distribution
         heat        Solutions to heat transfer
