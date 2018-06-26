@@ -65,7 +65,7 @@ def partly_regular(nCells, *ranges, spacing='lin', dtype=np.float32,
                     e.g. partlyRegular(nCells, [0, 1])
                     nCells: -5 ==> X1d:[[0], [.25], [.5], [.75], [1]]
                     nCells: +5 ==> X1d:[[0, .25, .5, .75, 1]]
-            Currently the length of 'nCells' is limited to 3
+            nCells or all elements of nCells must be greater 0 and less than 4
 
         ranges (variable length argument list of pairs of float):
             list of (min, max) pairs of vertex node ranges
