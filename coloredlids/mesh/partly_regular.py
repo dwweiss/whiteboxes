@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-18 DWW
+      2018-06-26 DWW
 """
 
 import numpy as np
@@ -28,7 +28,7 @@ def partly_regular(nCells, *ranges, spacing='lin', dtype=np.float32,
                   silent=True):
     """
     Coordinates of vertices and cell centers for partly regular spaced grid
-    in 1D, 2D and 3D space.
+    (rectilinear) in 1D, 2D and 3D space.
     The spacing can be linear, logarithmic and double-logarithmic
 
     - The boundary cells are void ghost cells with zero volume
@@ -58,7 +58,7 @@ def partly_regular(nCells, *ranges, spacing='lin', dtype=np.float32,
 
 
     Args:
-        nCells (int or 1D array_like of int):
+        nCells (int, or 1D array_like of int):
             number of cells per axis for which coordinates are generated.
             If nCells is single and negative, arrays will be transformed to 2D
                 and transposed:
@@ -70,7 +70,7 @@ def partly_regular(nCells, *ranges, spacing='lin', dtype=np.float32,
         ranges (variable length argument list of pairs of float):
             list of (min, max) pairs of vertex node ranges
 
-        spacing (str or 1D array_like of str, optional):
+        spacing (str, or 1D array_like of str, optional):
             spacing of axes: ('lin', 'log+', 'log-', 'log+-', 'log-+')
 
             with 'log-', grid densities are higher at the lower range limit.
