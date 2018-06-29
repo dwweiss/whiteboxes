@@ -17,16 +17,20 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-25 DWW
+      2018-06-30 DWW
 """
 
 from time import clock
 import numpy as np
 import matplotlib.pyplot as plt
+
 from coloredlids.numerics.tdma import tdma
 
 
-def main(nVol=15, L=1., conductivity=lambda x: 1., source=lambda x: 0.,
+def fvm1d_conductivity(nVol=15, 
+         L=1., 
+         conductivity=lambda x: 1., 
+         source=lambda x: 0.,
          silent=True):
     """
     Example of cell centered finite volume discretization in 1D space
@@ -41,7 +45,7 @@ def main(nVol=15, L=1., conductivity=lambda x: 1., source=lambda x: 0.,
         nVol (int, optional):
             number of cells (excl. ghost cells)
 
-        L (float):
+        L (float, optional):
             east extension of domain: [0, L]
 
         conductivity (function, optional):
@@ -60,6 +64,9 @@ def main(nVol=15, L=1., conductivity=lambda x: 1., source=lambda x: 0.,
            ---------------------- ... --------------
             |                                     |
             |<------------- L ---- ... --------- >
+            
+    Note:
+        This is only a demonstrator without optimization by pre-compilation
     """
 
     # mesh generation, cells with index 0 and nVol+1 are ghostcells
@@ -149,4 +156,6 @@ def main(nVol=15, L=1., conductivity=lambda x: 1., source=lambda x: 0.,
 
 
 if __name__ == '__main__':
-    main(nVol=int(1e6), conductivity=lambda x: 1 if x <= .5 else 2, silent=0)
+    fvm1d_conductivity(nVol=int(1e6), 
+                       conductivity=lambda x: 1. if x <= .5 else 2., 
+                       silent=False)
