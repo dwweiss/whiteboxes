@@ -17,13 +17,14 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-25 DWW
+      2018-06-30 DWW
 """
 
 
 from collections import OrderedDict
 from pandas import read_csv, read_excel
 import numpy as np
+from tempfile import gettempdir
 
 
 def split(df, split, sort=None, minSubFrameSize=1):
@@ -220,7 +221,7 @@ def frame2xy(df, xKeys, yKeys):
     return np.asfarray(df.loc[:, xKeys]), np.asfarray(df.loc[:, yKeys])
 
 
-def excel2xy(xKeys=None, yKeys=None, file='c:/temp/data.xlsx',
+def excel2xy(xKeys=None, yKeys=None, file=gettempdir(),
              sheet_name='data', startcol=0, startrow=0):
     """
     Reads DataFrame from excel file and convert it to two 2D arrays
@@ -256,7 +257,7 @@ def excel2xy(xKeys=None, yKeys=None, file='c:/temp/data.xlsx',
     return frame2xy(df, xKeys, yKeys)
 
 
-def xy2excel(X, Y=None, xKeys=None, yKeys=None, file='./data.xlsx',
+def xy2excel(X, Y=None, xKeys=None, yKeys=None, file=gettempdir(),
              sheet_name='data', startcol=0, startrow=0):
     """
     Converts two 2D arrays to DataFrame and write it to excel file
@@ -437,10 +438,7 @@ if __name__ == '__main__':
         from pandas import ExcelWriter
         print('*** Example: ExcelWriter(), read_excel() and to_csv()')
 
-        if os.name == 'posix':
-            file = '/tmp/PythonExport.xlsx'
-        else:
-            file = 'c:/temp/PythonExport.xlsx'
+        file = os.path.join(gettempdir(), 'PythonExport.xlsx')
         writer = ExcelWriter(file)
         df.to_excel(writer, sheet_name='data', startcol=4, startrow=3)
         writer.save()
