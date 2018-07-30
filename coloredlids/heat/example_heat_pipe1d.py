@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-25 DWW
+      2018-07-30 DWW
 """
 
 from tempfile import gettempdir
@@ -37,13 +37,13 @@ from grayboxes.base import Base
         jumps from T(x=x_in,t=0)=T_out to T(x=x_in,t>0)=T_in.
 
         The transient response of the wall temperature is measured with a
-        thermocpuple on the outer wall surface. Wanted is an estimate of the
+        thermocouple on the outer wall surface. Wanted is an estimate of the
         time when the difference between outer surface temperature T_wal_out
         and liquid temperature T_in is less a given limit.
 
         The heat transfer from the flowing liquid to the inner surface is
         considered by a Robin boundary condition. The inner heat transfer
-        cofficient is estimated from the Nusselt number formula by
+        coefficient is estimated from the Nusselt number formula by
         Dittus-Boelter. The outer heat transfer by natural convection is also
         considered by a Robin boundary condition. The outer heat transfer
         coefficient is assumed to be constant.
