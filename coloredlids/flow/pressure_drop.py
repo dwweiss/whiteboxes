@@ -422,6 +422,7 @@ def resistanceSquarePipeExpansion(v1, D1, D2, nu=1e-6, eps_rough=10e-6):
     """
     # correction of possibly confused inlet and outlet values
     d1, d2 = (D1, D2) if D1 < D2 else (D2, D1)
+    
     Re1 = v1 * d1 / nu   # Reynolds number at inlet
     if Re1 < REYNOLDS_PIPE_LAMINAR:
         # laminar
@@ -561,10 +562,102 @@ def dp_in_red_mid_exp_out(v1, D1, L1, D2, L2, D3, L3, nu=1e-6, rho=1e3,
     return dpTotal, dp1, dp12, dp2, dp23, dp3
 
 
+def dp_tapered_in_red_mid_exp_out(v1, D1, L1, D2, L2, D3, L3, 
+                                  alpha12=90, alpha23=90, 
+                                  nu=1e-6, rho=1e3, eps_rough=10e-6):
+    """
+    Pressure drop of the combination:
+        1) straight pipe ==> 1/2) tapered pipe reduction 
+        ==> 2) thin straight pipe ==> 2/3) tapered pipe expansion 
+        ==> 3) straight pipe
+
+    Resistance series:
+
+
+         k1       k12          k2         k23             k3
+    -----------------+                        +-------------------
+                      \                      /  
+                    /  +--------------------+  \
+    --v1->     alpha12           D2            alpha23    D3
+    D1              \  +--------------------+  /
+                      /                      \
+    -----------------+                        +-------------------
+    
+
+    Args:
+        v1 (float):
+            axial component of velocity at inlet [m/s]
+
+        D1 (float):
+            inner pipe diameter at inlet [m]
+
+        L1 (float):
+            length of inlet section [m]
+
+        alpha12 (float):
+            opening angle (over both sides) [deg]
+            
+        D2 (float):
+            inner pipe diameter of middle section [m]
+
+        L2 (float):
+            length of middle section [m]
+
+        alpha23 (float):
+            opening angle (over both sides) [deg]
+            
+        D3 (float):
+            inner pipe diameter at outlet [m]
+
+        L3 (float):
+            length of outlet section [m]
+
+        nu (float, optional):
+            kinematic viscosity [m^2/s]
+
+        rho (float, optional):
+            density [kg/m^3]
+
+        eps_rough (float, optional):
+            inner pipe roughness [m]
+
+    Returns:
+        (6-tuple of float):
+            (dp, dp1, dp12, dp2, dp23, dp3)
+            total pressure drop and pressure drops over sections in figure [Pa]
+    """
+    if np.abs(v1) < 1e-20:
+        return 0.
+    
+    pars = [v1, D1, L1, alpha12, D2, L2, alpha23, D3, L3, nu, rho, eps_rough]
+    assert all([isinstance(x, (int, float, bool)) for x in pars])
+    assert D1 > D2 and D2 < D3
+
+    v2 = v1 * (D1 / D2)**2
+    v3 = v2 * (D2 / D3)**2
+
+    k1 = resistancePipe(v=v1, D=D1, L=L1, nu=nu, eps_rough=eps_rough)
+    
+    k12 = resistanceTaperedPipeReduction(v1=v1, D1=D1, D2=D2, nu=nu,
+                                         eps_rough=eps_rough, alphaDeg=alpha12)
+    k2 = resistancePipe(v=v2, D=D2, L=L2, nu=nu, eps_rough=eps_rough)
+    k23 = resistanceTaperedPipeExpansion(v1=v2, D1=D2, D2=D3, nu=nu,
+                                         eps_rough=eps_rough, alphaDeg=alpha23)
+    k3 = resistancePipe(v=v3, D=D3, L=L3, nu=nu, eps_rough=eps_rough)
+
+    dp1 = pressureDrop(k1,   v1, rho)
+    dp12 = pressureDrop(k12, v1, rho)
+    dp2 = pressureDrop(k2,   v2, rho)
+    dp23 = pressureDrop(k23, v2, rho)
+    dp3 = pressureDrop(k3,   v3, rho)
+    dpTotal = (dp1 + dp12 + dp2 + dp23 + dp3)
+    return dpTotal, dp1, dp12, dp2, dp23, dp3
+
+
 # Examples ####################################################################
 
 if __name__ == '__main__':
-    ALL = 1
+    ALL = 0
 
     import matplotlib.pyplot as plt
 
@@ -599,6 +692,9 @@ if __name__ == '__main__':
         s = 'Pressure loss in straight->reduct->straight->expansion->straight'
         print('-' * len(s) + '\n' + s + '\n' + '-' * len(s))
 
+        function = dp_in_red_mid_exp_out
+        # function = dp_tapered_in_red_mid_exp_out
+        
         D1, L1 = 20e-3, 20e-3
         D2, L2 = 5e-3, 200e-3
         D3, L3 = D1, L1
@@ -612,7 +708,7 @@ if __name__ == '__main__':
         print('+++ nu:', nu)
 
         # dp_set is array of [dp_total, dp1, ..., dp3]
-        dp_set = [dp_in_red_mid_exp_out(v1=v1, D1=D1, L1=L1,
+        dp_set = [function(v1=v1, D1=D1, L1=L1,
                   D2=D2, L2=L2, D3=D3, L3=L3, nu=nu, rho=rho,
                   eps_rough=eps_rough) for v1 in v1_seq]
         dp_set = 1e-6 * np.atleast_2d(dp_set)
@@ -629,6 +725,70 @@ if __name__ == '__main__':
             plt.legend(bbox_to_anchor=(0, 1), loc='upper left')
             plt.grid()
             plt.show()
+
+    if 1 or ALL:
+        s = 'Pressure loss  tapered: straight->redu->straight->expan->straight'
+        print('-' * len(s) + '\n' + s + '\n' + '-' * len(s))
+
+        function = dp_tapered_in_red_mid_exp_out
+        #function = dp_in_red_mid_exp_out
+
+        id_seq = ['2', '3', '6', '10']
+        D1_seq = [17.3e-3, 17.3e-3, 17.3e-3, 17e-3]
+        L1_seq = [.5e-3, .5e-3, .5e-3, 0]
+        D2_seq = [2.05e-3, 3e-3, 6e-3, 10e-3]
+        L2_seq = [20e-3, 20e-3, 20e-3, 46.6e-3]
+        D3_seq, L3_seq = D1_seq, L1_seq
+        alpha12_seq = [30, 26.8, 16, 16]
+        alpha23_seq = alpha12_seq
+        eps_rough = 0.1e-6
+        nu = 1e-6
+        rho = 1000
+        rho_seq = [800, 900, 1000, 1100, 1200, 1300, 1400, 1600, 1800, 2000]
+        v1_seq = [0.1, 0.2, 0.5, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+        print('+++ nu:', nu)
+        dp_total_collect = []
+
+        for i, identifier in enumerate(id_seq):
+            L1, L2, L3 = L1_seq[i], L2_seq[i], L3_seq[i]
+            D1, D2, D3 = D1_seq[i], D2_seq[i], D3_seq[i]
+            alpha12, alpha23 = alpha12_seq[i], alpha23_seq[i]
+            
+            
+            # dp_set is array of [dp_total, dp1, ..., dp3]
+            dp_set = [function(v1=v1, D1=D1, L1=L1, \
+                D2=D2, L2=L2, D3=D3, L3=L3, 
+                alpha12=alpha12, alpha23=alpha23, 
+                nu=nu, rho=rho, eps_rough=eps_rough) for v1 in v1_seq]
+            dp_set = 1e-6 * np.atleast_2d(dp_set)
+            dp_total_collect.append(dp_set[:, 0])
+    
+            for withoutTotalLoss in [True, False]:
+                labels = ['total', 'inlet', 'reduce', 'middle', 'expand', 
+                          'outlet']
+                for i in range(int(withoutTotalLoss), len(dp_set[0])):
+                    if labels[i] == 'middle':
+                        plt.plot(v1_seq, dp_set[:, i], label=labels[i], ls='--')
+                    else:
+                        plt.plot(v1_seq, dp_set[:, i], label=labels[i])
+                plt.title('Id:'+identifier)
+                plt.xlabel('$v$ [m/s]')
+                plt.ylabel(r'$\Delta p$ [MPa]')
+                plt.legend(bbox_to_anchor=(0, 1), loc='upper left')
+                plt.grid()
+                plt.show()
+
+        plt.title('All diameters')
+        for i, dp_total in enumerate(dp_total_collect):
+            plt.plot(v1_seq, dp_total, label='DN'+id_seq[i])
+        plt.xlabel('$v$ [m/s]')
+        plt.ylabel(r'$\Delta p$ [MPa]')
+        plt.legend(bbox_to_anchor=(0, 1), loc='upper left')
+        plt.grid()
+        plt.show()
+
+
 
     # DN80/2  -> equivalent pipe diameter: 56.57 mm
     D1, D2, v1 = 40e-3, 20e-3, 1.
