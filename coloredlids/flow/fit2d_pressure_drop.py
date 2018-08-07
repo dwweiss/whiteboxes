@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-25 DWW
+      2018-08-07 DWW
 """
 
 from math import inf
@@ -30,14 +30,11 @@ from grayboxes.plotarrays import plotSurface, plotIsoMap
 
 class Fit2DModel(Base):
     """
-    Fits a given theoretical 2D model self.f(x, C) to synthetically generated
-    training data
+    Tunes a given theoretical 2D model self.f(x_com, x_tun) to synthetically 
+    generated training data
 
-    In the example section, the pressure drop in a pipework section (reduction,
-    straight, expansion) is fitted with synthetically generated data.
-
-    Note:
-        This a demonstrator. See class Theoretical for a real implementation.
+    In the example section, the model of pressure drop in a pipework section 
+    (reduction, straight pipe, expansion) is tuned 
     """
 
     def __init__(self, identifier='Fit2DModel', f=None, noise=None):
@@ -46,10 +43,9 @@ class Fit2DModel(Base):
             as default, self.f() contains an example function for testing
         """
         super().__init__(identifier=identifier)
-        self.version = '250118_dww'
 
         # example method, has to be overloaded with actual theoretical model
-        # x is an 1D array or a transposed 2D array: x[0..nInp-1, 0..nPoint-1]
+        # x is an 1D array or a transposed 2D array, x.shape: (nInp, nPoint)
         self.f = f if f is not None else lambda x, a=1, b=1, c=1, d=1: \
             a * np.cos(x[0]) + 0.1 * b * x[1] + 0.01 * c * x[0]**2 + d
 
@@ -112,7 +108,7 @@ class Fit2DModel(Base):
         self.C = curve_fit(self.f, self.X.T, self.Y.T, p0=None,
                            sigma=None, absolute_sigma=False, check_finite=True,
                            bounds=(-inf, inf), method=None)[0]
-        print('+++ Coefficients:', self.C)
+        print('+++ Tuning parameters:', self.C)
 
         # y is prediction
         if self.x is None:
@@ -125,8 +121,7 @@ class Fit2DModel(Base):
     def post(self, **kwargs):
         """
         Plots exact solution, test data (exact solution + noise), prediction of
-        test data with fitted function, difference between prediction and test
-        data.
+        test data with tuned model, difference between prediction and test data
         """
         super().post(**kwargs)
 
@@ -166,20 +161,20 @@ if __name__ == '__main__':
     if 1 or ALL:
         """
         Pressure loss of the flow of a liquid trough a pipe reduction, a
-        straight pipe and a pipe extension, see: pressureDropEmpirical.py
+        straight pipe and a pipe extension
         """
-        from coloredlids.pressureDropEmpirical import dp_inlet_reduce_middle_expand_outlet
+        from coloredlids.pressure_drop import dp_inlet_reduce_middle_expand_outlet
 
         def f(x, a=1, b=1, c=1, d=1):
             """
             Args:
-                x (2D array of float):
-                    x[0]: mean velocity [m/s]
-                    x[1]: kinematic viscosity [m2/s]
-                    first index is parameter index, second index is point index
+                x (2D or 1D array_like of float):
+                    x[:, 0]: mean velocity [m/s]
+                    x[:, 1]: kinematic viscosity [m2/s]
+                    first index is parameter index, second one is point index
 
                 a, b, c, d (float, optional):
-                    coeffients
+                    tuning parameter
 
             Returns:
                 (1D array of float):
@@ -225,5 +220,5 @@ if __name__ == '__main__':
                 dy = foo.noise * (Y_exact.max() - Y_exact.min())
                 Y = Y_exact + np.random.uniform(-dy, dy, size=Y_exact.size)
 
-        # fits model and predicts y(x)
+        # tunes model and predicts y(x)
         y = foo(X=X, Y=Y, x=X)
