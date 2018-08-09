@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-07-30 DWW
+      2018-08-09 DWW
 """
 
 from tempfile import gettempdir
@@ -208,8 +208,8 @@ class TransHeat1DPipe(Base):
         self.show         = kwargs.get('show',         1)
         figsize           = kwargs.get('figsize',      (10, 8))
         self.save         = kwargs.get('save',         False)
-        self.path         = kwargs.get('path',         gettempdir().replace(
-                                                              '\\', '/') + '/')
+        self.path         = kwargs.get('path',         gettempdir())
+    
         # flowing liquid
         self.v            = kwargs.get('v',            3.)
         self.T_in         = kwargs.get('T_in',         10.)
@@ -349,7 +349,7 @@ class TransHeat1DPipe(Base):
                   r'  $t_{end}$ : ' + '{:5.3f}'.format(self.t) + ' s')
         plt.show()
         if self.save:
-            self.fig.savefig(self.path + __name__ + '.png',
+            self.fig.savefig(self.path / __name__ + '.png',
                              bbox_inches='tight')
         plt.close()
 
