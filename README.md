@@ -12,8 +12,10 @@ This package extends the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki
 
     coloredlids
         data        Conversion of data, operations on data frames
+        electric    Electric fields
         flow        Solutions to velocity and pressure distribution
         heat        Solutions to heat transfer
+        magnetic    Magnetic fields
         mass        Mass transfer (diffusion)
         matter      Properties of solids, liquids and gases
         mech        Structural mechanics
