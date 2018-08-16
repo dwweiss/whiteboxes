@@ -36,4 +36,5 @@ This package extends the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki
 
 ### Dependencies
 
-This package is dependent on package _grayboxes_, [[info]](https://github.com/dwweiss/grayboxes#dependencies)
+This package is dependent on package _grayboxes_. This dependency is satisfied if _coloredlids_ is installed with the commands in section Installation
+
