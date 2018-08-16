@@ -14,7 +14,7 @@ This package extends the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki
         data        Conversion of data, operations on data frames
         electric    Electric fields
         flow        Solutions to velocity and pressure distribution
-        heat        Solutions to heat transfer
+        heat        Heat transfer by conduction, convection and radiation
         magnetic    Magnetic fields
         mass        Mass transfer (diffusion)
         matter      Properties of solids, liquids and gases
