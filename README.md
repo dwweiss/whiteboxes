@@ -13,7 +13,7 @@ This package extends the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki
     coloredlids
         data        Conversion of data, operations on data frames
         electric    Electric fields
-        flow        Solutions to velocity and pressure distribution
+        flow        Velocity and pressure distribution in flow of gases and liquids
         heat        Heat transfer by conduction, convection and radiation
         magnetic    Magnetic fields
         mass        Mass transfer (diffusion)
