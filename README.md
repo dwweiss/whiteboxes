@@ -18,7 +18,7 @@ This package extends the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki
         magnetic    Magnetic fields
         mass        Mass transfer by diffusion
         matter      Properties of solids, liquids and gases
-        mech        Structural mechanics
+        mechanic    Structural mechanics
         mesh        Primitives for building geometries and meshes
         numerics    Numerical solution of differential and integral equations
         tools       Tools for data manipulation
