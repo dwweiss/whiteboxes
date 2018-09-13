@@ -17,28 +17,35 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-25 DWW
+      2018-09-13 DWW
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
-from . parameter import Parameter, C2K
+from typing import Optional
+from parameter import Parameter, C2K
 
 
 class Property(Parameter):
     """
-    Adds temperature and pressure Parameter to a Parameter and provides call of
-    Property value as function of temperature, pressure and spare parameter 'x'
+    Adds temperature and pressure Parameter to a Parameter and provides
+    call of Property value as function of temperature, pressure and
+    spare parameter 'x'
 
     Note:
-      - calc(T, p, x) is the implementation of the dependency on temperature T,
-        pressure p or spare parameter x
+      - calc(T, p, x) is the implementation of the dependency on
+        temperature T, pressure p or spare parameter x
 
       - Function self.__call__() must NOT be overwritten
     """
 
-    def __init__(self, identifier='Property', unit='/', absolute=True,
-                 latex=None, val=None, ref=None, comment=None):
+    def __init__(self, identifier: str='Property',
+                 unit: str='/',
+                 absolute: bool=True,
+                 latex: Optional[str]=None,
+                 val: Optional[str]=None,
+                 ref: Optional[float]=None,
+                 comment: str=None) -> None:
         super().__init__(identifier=identifier, unit=unit, absolute=absolute,
                          latex=latex, val=val, ref=ref, comment=comment)
 
@@ -57,7 +64,7 @@ class Property(Parameter):
         self.accuracy = ['-1%', '1%']
         self.repeatability = ['-0.1', '+0.1', '95%']
 
-    def plot(self, title=''):
+    def plot(self, title: str='') -> None:
         if isinstance(self.T, Parameter):
             if self.T.operational[0] != self.T.operational[1]:
                 plt.title(title)
@@ -87,7 +94,9 @@ class Property(Parameter):
                 plt.grid()
                 plt.show()
 
-    def calc(self, T=0., p=0., x=0.):
+    def calc(self, T: float=0.,
+             p: float=0.,
+             x: float=0.) -> float:
         """
         This function shall be overwritten in derived classes
 
@@ -99,7 +108,9 @@ class Property(Parameter):
         """
         return self.val
 
-    def __call__(self, T=None, p=None, x=None):
+    def __call__(self, T: Optional[float]=None,
+                 p: Optional[float]=None,
+                 x: Optional[float]=None) -> float:
         """
         This function must NOT be overwritten
         """
@@ -110,16 +121,3 @@ class Property(Parameter):
         if x is None and self.x is not None:
             x = self.x.ref
         return self.calc(T, p, x)
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    ALL = 1
-
-    if 0 or ALL:
-        foo = Property(identifier='abc')
-        foo.calc = lambda T, p, x=0: 0.1 + 1e-3*T - 1e-4*p
-        print(foo)
-        foo.plot('title')
-        print('-' * 79)
