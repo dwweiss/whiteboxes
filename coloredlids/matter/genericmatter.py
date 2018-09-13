@@ -85,8 +85,8 @@ class GenericMatter(Property):
         self.a.calc = lambda T, p, x: self.Lambda.calc(T, p, x) / \
             (self.c_p.calc(T, p, x) * self.rho.calc(T, p, x))
 
-    def plot(self, property=None):
-        if property is None or property.lower() == 'all':
+    def plot(self, prop=None):
+        if prop is None or prop.lower() == 'all':
             for key, val in self.__dict__.items():
                 if isinstance(val, Property):
                     print("+++ Plot matter:'" + self.identifier +
@@ -360,72 +360,3 @@ class Gas(Fluid):
         super().__init__(identifier=identifier, latex=latex, comment=comment)
 
         self.T.ref = C2K(15)
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    ALL = 1
-
-    if 0 or ALL:
-        # Example of GenericMatter
-        mat = GenericMatter(identifier='material')
-
-        # Add new Parameter 'p1'
-        mat.p1 = Parameter(identifier='p1', unit='p1-unit', absolute=True,
-                           latex=None, val=200, ref=120,
-                           comment='define bounds of p1')
-        mat.p1.operational = [100, 200]
-        print(mat.p1)
-        print('-' * 60)
-
-        # Add new Property 'abc'
-        mat.abc = Property(identifier='abc')
-        mat.abc.calc = lambda T, p, x=0: 0.1 + 1e-3*T - 1e-4*p
-        print(mat.abc)
-        mat.abc.plot('title')
-        print('-' * 60)
-
-    if 0 or ALL:
-        # Example of Fluid
-        fluid = Fluid(identifier='fluid')
-        fluid.c_p.plot()
-        fluid.plot('c_p')
-        fluid.Lambda.plot()
-        fluid.plot('Lambda')
-        fluid.plot()
-        print('-' * 60)
-
-    if 0 or ALL:
-        # Example of Fluid
-        fluid = Fluid(identifier='fluid')
-        fluid.rho.plot()
-        fluid.rho(T=300)
-        fluid.rho.plot()
-        fluid.plot('rho')
-        print('-' * 60)
-
-    if 1 or ALL:
-        # Example of Fluid
-        fluid = Fluid(identifier='fluid')
-        fluid.Lambda.plot()
-        fluid.c_p.plot()
-        fluid.rho.plot()
-        fluid.a.plot()
-        print('cp:', fluid.c_p(T=300, p=0, x=0),
-              'rho:', fluid.rho(T=300, p=0, x=0),
-              'lambda:', fluid.Lambda(T=300, p=0, x=0),
-              'a:', fluid.a(T=300, p=0, x=0))
-        print('-' * 60)
-
-    if 0 or ALL:
-        # Example of Solid
-        solid = Solid(identifier='solid')
-        solid.plot()
-        print('-' * 60)
-
-    if 0 or ALL:
-        # Example of Metal
-        solid = Metal()
-        solid.plot()
-        print('-' * 60)
