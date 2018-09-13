@@ -17,11 +17,11 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-25 DWW
+      2018-09-13 DWW
 """
 
 import numpy as np
-from . parameter import Parameter, C2K
+from . parameter import C2K
 from . property import Property
 
 
