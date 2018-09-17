@@ -16,17 +16,16 @@
   Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-  Version:
-      2018-08-16 DWW
+  Version
+      2018-09-17 DWW
 """
 
 import unittest
 import sys
 import os
-import numpy as np
 
 sys.path.append(os.path.abspath('..'))
-from grayboxes.___ import ___
+from coloredlids.matter.sutherland import sutherland_viscosity
 
 
 class TestUM(unittest.TestCase):
@@ -37,20 +36,11 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-#if __name__ == '__main__':
-#    unittest.main()
-        foo = ___()
-        foo()
+        s = 'Sutherland viscosity (change relative to reference value)'
+        print('-' * len(s) + '\n' + s + '\n' + '-' * len(s))
 
-        self.assertTrue(True)
-
-    def test2(self):
-        foo = ___()
-        foo()
-
-        self.assertFalse(True)
-        self.assertAlmostEqual
-        self.assertDictEqual
+        mu_tilde = sutherland_viscosity("AIR", 100 + 273.15, 20 + 273.15, 1.)
+        print('mu_tilde:', mu_tilde)
 
 
 if __name__ == '__main__':

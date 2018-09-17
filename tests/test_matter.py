@@ -17,16 +17,18 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-08-16 DWW
+      2018-09-17 DWW
 """
 
 import unittest
 import sys
 import os
-import numpy as np
 
 sys.path.append(os.path.abspath('..'))
-from grayboxes.___ import ___
+sys.path.append(os.path.abspath('../coloredlids'))
+sys.path.append(os.path.abspath('../coloredlids/matter'))
+from coloredlids.matter.genericmatter import C2K
+from coloredlids.matter.matter import Matter
 
 
 class TestUM(unittest.TestCase):
@@ -37,20 +39,29 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-#if __name__ == '__main__':
-#    unittest.main()
-        foo = ___()
-        foo()
+        print('collection:', [m.identifier for m in Matter()('all')])
 
-        self.assertTrue(True)
+        matter = Matter()
+        for mat in matter('all'):
+            print('mat:', mat.identifier)
+            if True:
+                mat.plot()
 
     def test2(self):
-        foo = ___()
-        foo()
+        s = 'Water'
+        print('-' * len(s) + '\n' + s + '\n' + '-' * len(s))
 
-        self.assertFalse(True)
-        self.assertAlmostEqual
-        self.assertDictEqual
+        collection = Matter()
+        print('Collection:', collection)
+        mat = collection('Water')
+        mat.plot('c_p')
+
+        rho = mat.plot('rho')
+        Lambda = mat.Lambda(T=C2K(100))
+        print('Lambda:', Lambda)
+        c_p = mat.c_p(T=C2K(20), p=mat.p.ref)
+
+        mat.plot('all')
 
 
 if __name__ == '__main__':

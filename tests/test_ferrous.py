@@ -17,16 +17,16 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-08-16 DWW
+      2018-09-17 DWW
 """
+
 
 import unittest
 import sys
 import os
-import numpy as np
 
 sys.path.append(os.path.abspath('..'))
-from grayboxes.___ import ___
+import ferrous as module_under_test
 
 
 class TestUM(unittest.TestCase):
@@ -37,20 +37,15 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-#if __name__ == '__main__':
-#    unittest.main()
-        foo = ___()
-        foo()
+        classes = [v for c, v in module_under_test.__dict__.items()
+                   if isinstance(v, type) and
+                   v.__module__ == module_under_test.__name__]
 
-        self.assertTrue(True)
-
-    def test2(self):
-        foo = ___()
-        foo()
-
-        self.assertFalse(True)
-        self.assertAlmostEqual
-        self.assertDictEqual
+        for mat in classes:
+            print('class:', mat.__name__)
+            foo = mat()
+            print(foo.identifier, '*' * 50)
+            foo.plot()
 
 
 if __name__ == '__main__':
