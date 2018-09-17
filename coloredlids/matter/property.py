@@ -17,12 +17,13 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-13 DWW
+      2018-09-17 DWW
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
-from typing import Optional
+from typing import Optional, Sequence, Tuple, Union
+
 from parameter import Parameter, C2K
 
 
@@ -48,21 +49,22 @@ class Property(Parameter):
                  comment: str=None) -> None:
         super().__init__(identifier=identifier, unit=unit, absolute=absolute,
                          latex=latex, val=val, ref=ref, comment=comment)
-
+        T_Celsius = 15.
         self.T = Parameter(identifier='T', unit='K', absolute=True)
-        self.T.operational = [C2K(T_C) for T_C in (-40, 200)]
-        self.T.ref = C2K(15)
-        self.T.accuracy = ['-1', '+1']
+        self.T.operational = (C2K(-40.), C2K(200.))
+        self.T.ref = C2K(T_Celsius)
+        self.T.accuracy: Tuple[str, str] = ('-1', '+1')
 
         self.p = Parameter(identifier='p', unit='Pa', absolute=True)
         self.p.ref = 101.325e3
-        self.p.operational = [(p_rel + self.p.ref) for p_rel in (0, 100e5)]
-        self.p.accuracy = ['-1%FS', '+1%FS']
+        self.p.operational: Tuple[float, float] = (0 + self.p.ref,
+                                                   100e5 + self.p.ref)
+        self.p.accuracy: Tuple[str, str] = ('-1%FS', '+1%FS')
 
-        self.x = None
+        self.x: Optional[Parameter] = None
 
-        self.accuracy = ['-1%', '1%']
-        self.repeatability = ['-0.1', '+0.1', '95%']
+        self.accuracy: Tuple[str, str] = ('-1%', '1%')
+        self.repeatability: Tuple[str, str, str] = ('-0.1', '+0.1', '95%')
 
     def plot(self, title: str='') -> None:
         if isinstance(self.T, Parameter):
@@ -94,9 +96,10 @@ class Property(Parameter):
                 plt.grid()
                 plt.show()
 
-    def calc(self, T: float=0.,
-             p: float=0.,
-             x: float=0.) -> float:
+    def calc(self, T: Union[float, Sequence[float]]=0.,
+             p: Union[float, Sequence[float]]=0.,
+             x: Union[float, Sequence[float]]=0.) \
+            -> Union[float, Sequence[float]]:
         """
         This function shall be overwritten in derived classes
 
@@ -108,9 +111,10 @@ class Property(Parameter):
         """
         return self.val
 
-    def __call__(self, T: Optional[float]=None,
-                 p: Optional[float]=None,
-                 x: Optional[float]=None) -> float:
+    def __call__(self, T: Optional[Union[float, Sequence[float]]]=None,
+                 p: Optional[Union[float, Sequence[float]]]=None,
+                 x: Optional[Union[float, Sequence[float]]]=None) \
+            -> Union[float, Sequence[float]]:
         """
         This function must NOT be overwritten
         """

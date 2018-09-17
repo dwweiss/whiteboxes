@@ -17,14 +17,14 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-25 DWW
+      2018-09-17 DWW
 """
 
-from . parameter import C2K, K2C
-import . genericmatter as gm
+from parameter import C2K, K2C
+from genericmatter import NonMetal
 
 
-class R4_230NA(gm.NonMetal):
+class R4_230NA(NonMetal):
     """
     Properties of R-4-230 Polyphenylene Sulfide Resins
 
@@ -73,7 +73,7 @@ class R4_230NA(gm.NonMetal):
         self.T_melt = (C2K(1399), C2K(1454))
 
 
-class Concrete(gm.NonMetal):
+class Concrete(NonMetal):
     def __init__(self, identifier='concrete', latex=None, comment=None):
         """
         Args:
@@ -92,7 +92,7 @@ class Concrete(gm.NonMetal):
         self.Lambda.calc = lambda T=0, p=0, x=0: 1.8
 
 
-class Ceramic(gm.NonMetal):
+class Ceramic(NonMetal):
     def __init__(self, identifier='ceramic', latex=None, comment=None):
         """
         Args:
@@ -109,20 +109,3 @@ class Ceramic(gm.NonMetal):
         self.c_p.calc = lambda T=0, p=0, x=0: 835
         self.rho.calc = lambda T=0, p=0, x=0: 1920
         self.Lambda.calc = lambda T=0, p=0, x=0: 0.72
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    ALL = 0
-
-    import . nonmetals as thisModule
-    classes = [v for c, v in thisModule.__dict__.items()
-               if isinstance(v, type) and v.__module__ == thisModule.__name__]
-
-    if 1 or ALL:
-        for mat in classes:
-            print('class:', mat.__name__)
-            foo = mat()
-            print(foo.identifier, '*' * 50)
-            foo.plot()

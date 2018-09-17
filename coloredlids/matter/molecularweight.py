@@ -1,6 +1,6 @@
 """
   Copyright (c) 2016- by Dietmar W Weiss
-  
+
   This is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as
   published by the Free Software Foundation; either version 3.0 of
@@ -13,27 +13,29 @@
   License along with this software; if not, write to the Free
   Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
+
   Version:
-  
-      2018-08-07 DWW
+      2018-09-17 DWW
 """
 
-def molecular_weight(identifier):
+
+def molecular_weight(identifier: str) -> float:
     """
     Args:
-        identifier (string):
+        identifier:
             Element or organic compound
 
     Returns:
-        (float):
-            Molecular weight (molar mass) in [kg/mol]
-         or None:
-             if identifier is not valid
+        - Molecular weight (molar mass) in [kg/mol] or
+        - None if identifier is not valid
 
     Reference:
         https://www.lenntech.com/calculators/molecular/
         molecular-weight-calculator.htm
     """
+    if not str or not isinstance(identifier, str):
+        return None
+
     first = identifier[0].upper()
     if first == 'A':
         if   identifier == 'Ar':     return 39.95e-3
@@ -59,4 +61,3 @@ def molecular_weight(identifier):
         elif identifier =='O2':      return 32.00e-3
     else:
         return None
-

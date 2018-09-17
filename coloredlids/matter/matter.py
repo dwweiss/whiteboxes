@@ -17,88 +17,76 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-08-07 DWW
+      2018-09-17 DWW
 """
 
-from grayboxes.base import Base
+from typing import Optional, Sequence, Union
 
-from . parameter import C2K
-from . ferrousmetals as FerrousMetals
-from . nonferrousmetals as NonFerrousMetals
-from . nonmetals import NonMetals
-from . liquids import Liquids
-from . gases import Gases
+from grayboxes.base import Base
+from genericmatter import GenericMatter
+import ferrous
+import nonferrous
+import nonmetals
+import liquids
+import gases
 
 
 class Matter(Base):
     """
     Collection of physical and chemical properties of matter
 
-    Designed as follower in tree of white box models 
-
-    Args:
-        identifier (string, optional):
-            identifier of collection of matter
+    Note:
+        The class is designed as a follower in theoretical submodel tree
     """
-    def __init__(self, identifier='Matter'):
+
+    def __init__(self, identifier: str='Matter') -> None:
+        """
+        Args:
+            identifier:
+                Identifier of collection of matter
+        """
         super().__init__(identifier=identifier)
         self.program = self.__class__.__name__
-        self.version = '150917_dww'
 
         classes = []
-        for md in [FerrousMetals, NonFerrousMetals, NonMetals, Liquids, Gases]:
+        matter = (ferrous, nonferrous, nonmetals, liquids, gases)
+        for md in matter:
             classes += [v() for c, v in md.__dict__.items()
                         if isinstance(v, type) and
-                        v.__module__ == md.__name__]
-
+                        v.__module__.lower() == md.__name__.lower()]
         self.data = {}
         for mat in classes:
             self.data[mat.identifier.lower()] = mat
 
-    def __call__(self, identifier=None):
+    def __call__(self, identifier: Optional[str]=None) \
+            -> Optional[Union[GenericMatter, Sequence[GenericMatter]]]:
+        """
+        Select specific matter
+
+        Args:
+            identifier:
+                Identifier of matter.
+                If None or 'all', then all matter will be returned
+
+        Returns:
+            - Selected matter or:
+            - List all matter if identifier is None or 'all' or
+            - None if identifier is unknown
+
+        Example:
+            collection = Matter()
+            mat = collection('iron')
+        """
         if identifier is None or identifier == 'all':
             return self.data.values()
         if identifier.lower() not in self.data:
-            self.write('??? unknown identifier of matter: ', identifier)
+            self.write('??? unknown identifier of matter: ' + identifier)
             return None
         return self.data[identifier.lower()]
 
-    def __str__(self):
+    def __str__(self) -> str:
         """
         Returns:
-            (array of string):
-                array of keys of available matter
+            String of keys list of available matter
         """
         return str(self.data.keys())
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    ALL = 1
-
-    if 1 or ALL:
-        print('collection:', [m.identifier for m in Matter()('all')])
-
-    if 0 or ALL:
-        matter = Matter()
-        for mat in matter('all'):
-            print('mat:', mat.identifier)
-            if 1:
-                mat.plot()
-
-    if 0 or ALL:
-        s = 'Water'
-        print('-' * len(s) + '\n' + s + '\n' + '-' * len(s))
-
-        collection = Matter()
-        print('Collection:', collection)
-        mat = collection('water')
-        mat.plot('c_p')
-
-        rho = mat.plot('rho')
-        Lambda = mat.Lambda(T=C2K(100))
-        print('Lambda:', Lambda)
-        c_p = mat.c_p(T=C2K(20), p=mat.p.ref)
-
-        mat.plot('all')

@@ -17,13 +17,13 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-13 DWW
+      2018-09-17 DWW
 """
 
 import numpy as np
 from typing import Optional
-from . parameter import C2K
-from . property import Property
+from parameter import C2K
+from property import Property
 
 
 class GenericMatter(Property):
@@ -31,7 +31,8 @@ class GenericMatter(Property):
     Collection of physical and chemical properties of generic matter
     """
 
-    def __init__(self, identifier: str='matter', latex: Optional[str]=None,
+    def __init__(self, identifier: str='matter',
+                 latex: Optional[str]=None,
                  comment: Optional[str]=None) -> None:
         """
         Args:
@@ -89,7 +90,7 @@ class GenericMatter(Property):
         self.a.calc = lambda T, p, x: self.Lambda.calc(T, p, x) / \
             (self.c_p.calc(T, p, x) * self.rho.calc(T, p, x))
 
-    def plot(self, prop=None):
+    def plot(self, prop: Optional[Property]=None) -> None:
         if prop is None or prop.lower() == 'all':
             for key, val in self.__dict__.items():
                 if isinstance(val, Property):
@@ -109,7 +110,8 @@ class Solid(GenericMatter):
     Collection of physical and chemical properties of generic solid
     """
 
-    def __init__(self, identifier: str='solid', latex: Optional[str]=None,
+    def __init__(self, identifier: str='solid',
+                 latex: Optional[str]=None,
                  comment: Optional[str]=None) -> None:
         """
         Args:
@@ -141,7 +143,8 @@ class NonMetal(Solid):
     Collection of physical and chemical properties of generic non-metal
     """
 
-    def __init__(self, identifier: str='nonmetal', latex: Optional[str]=None,
+    def __init__(self, identifier: str='nonmetal',
+                 latex: Optional[str]=None,
                  comment: Optional[str]=None) -> None:
         """
         Args:
@@ -165,7 +168,8 @@ class Metal(Solid):
     Collection of physical and chemical properties of generic metal
     """
 
-    def __init__(self, identifier: str='metal', latex: Optional[str]=None,
+    def __init__(self, identifier: str='metal',
+                 latex: Optional[str]=None,
                  comment: Optional[str]=None) -> None:
         """
         Args:
@@ -189,7 +193,8 @@ class NonFerrous(Metal):
     Collection of physical and chemical properties of generic nonferrous metal
     """
 
-    def __init__(self, identifier: str='nonferrous', latex: Optional[str]=None,
+    def __init__(self, identifier: str='nonferrous',
+                 latex: Optional[str]=None,
                  comment: Optional[str]=None) -> None:
         """
         Args:
@@ -213,7 +218,8 @@ class Ferrous(Metal):
     Collection of physical and chemical properties of generic ferrous metal
     """
 
-    def __init__(self, identifier: str='ferrous', latex: Optional[str]=None,
+    def __init__(self, identifier: str='ferrous',
+                 latex: Optional[str]=None,
                  comment: Optional[str]=None) -> None:
         """
         Args:
@@ -237,7 +243,8 @@ class Fluid(GenericMatter):
     Collection of physical and chemical properties of generic fluid
     """
 
-    def __init__(self, identifier: str='fluid', latex: Optional[str]=None,
+    def __init__(self, identifier: str='fluid',
+                 latex: Optional[str]=None,
                  comment: Optional[str]=None) -> None:
         """
         Args:
@@ -266,7 +273,8 @@ class Liquid(Fluid):
     Collection of physical and chemical properties of generic liquid
     """
 
-    def __init__(self, identifier: str='liquid', latex: Optional[str]=None,
+    def __init__(self, identifier: str='liquid',
+                 latex: Optional[str]=None,
                  comment: Optional[str]=None) -> None:
         """
         Args:
@@ -292,7 +300,8 @@ class Mixture(Fluid):
     Collection of physical and chemical properties of generic mixture
     """
 
-    def __init__(self, identifier: str='mixture', latex: Optional[str]=None,
+    def __init__(self, identifier: str='mixture',
+                 latex: Optional[str]=None,
                  comment: Optional[str]=None) -> None:
         """
         Args:
@@ -371,7 +380,8 @@ class Gas(Fluid):
            p. 997-1000.
     """
 
-    def __init__(self, identifier: str='gas', latex: Optional[str]=None,
+    def __init__(self, identifier: str='gas',
+                 latex: Optional[str]=None,
                  comment: Optional[str]=None) -> None:
         """
         Args:

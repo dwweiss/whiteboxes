@@ -17,17 +17,17 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-25 DWW
+      2018-09-17 DWW
 """
 
 import numpy as np
 from scipy.interpolate import interp2d
 
-import . genericmatter as gm
-from . parameter import C2K, K2C
+from genericmatter import Liquid
+from parameter import C2K, K2C
 
 
-class Diesel(gm.Liquid):
+class Diesel(Liquid):
     """
     Thermophysical properties of diesel fuel
 
@@ -37,7 +37,9 @@ class Diesel(gm.Liquid):
             Annals of Chemistry, Vol. 22, No. 1, pp.357-61, 2011
     """
 
-    def __init__(self, identifier='Diesel', latex=None, comment=None):
+    def __init__(self, identifier='Diesel',
+                 latex=None,
+                 comment=None):
         super().__init__(identifier=identifier)
         """
         Args:
@@ -98,12 +100,14 @@ class Diesel(gm.Liquid):
         return 0.15
 
 
-class HydraulicOil(gm.Liquid):
+class HydraulicOil(Liquid):
     """
     Thermophysical properties of hydraulic oil
     """
 
-    def __init__(self, identifier='hydraulicOil', latex=None, comment=None):
+    def __init__(self, identifier='hydraulicOil',
+                 latex=None,
+                 comment=None):
         super().__init__(identifier=identifier)
         """
         Args:
@@ -134,7 +138,7 @@ class HydraulicOil(gm.Liquid):
 #        self.T_boil = C2K(   )
         self.composition['C12H24'] = 100  # TODO
 
-        # functions of temperature, presssure and spare parameter 'x'
+        # functions of temperature, pressure and spare parameter 'x'
         self.rho.calc = self._rho
         self.nu.calc = self._nu
         self.mu.calc = self._mu
@@ -177,12 +181,14 @@ class HydraulicOil(gm.Liquid):
         return self._nu(T, p, x) * self.rho(T, p, x)
 
 
-class Water(gm.Liquid):
+class Water(Liquid):
     """
     Physical and chemical properties of water
     """
 
-    def __init__(self, identifier='water', latex='$H_2O$', comment=None):
+    def __init__(self, identifier='water',
+                 latex='$H_2O$',
+                 comment=None):
         """
         Args:
             identifier (string, optional):
@@ -212,7 +218,7 @@ class Water(gm.Liquid):
         self.T_boil = C2K(99.9839)
         self.composition['H2O'] = 100.
 
-        # functions of temperature, presssure and spare parameter 'x'
+        # functions of temperature, pressure and spare parameter 'x'
         self.rho.calc = self._rho
         self.nu.calc = self._nu
         self.mu.calc = self._mu
@@ -347,20 +353,3 @@ class Water(gm.Liquid):
 
     def _E(self, T, p=0., x=0.):
         return 2.2e9
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    ALL = 0
-
-    import . liquids as thisModule
-    classes = [v for c, v in thisModule.__dict__.items()
-               if isinstance(v, type) and v.__module__ == thisModule.__name__]
-
-    if 1 or ALL:
-        for mat in classes:
-            print('class:', mat.__name__)
-            foo = mat()
-            print(foo.identifier, '*' * 50)
-            foo.plot()

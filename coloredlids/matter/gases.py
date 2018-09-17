@@ -17,15 +17,15 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-25 DWW
+      2018-09-17 DWW
 """
 
 import numpy as np
-from . parameter import C2K, K2C
-import . genericmatter as gm
+from parameter import C2K, K2C
+from genericmatter import Gas
 
 
-class Air(gm.Gas):
+class Air(Gas):
     """
     Physical and chemical properties of air
     """
@@ -49,7 +49,7 @@ class Air(gm.Gas):
         self.T.operational = C2K((0, 100)).tolist()
         self.T.ref = C2K(15)
         self.T.val = self.T.ref
-        self.p.operational = (np.array([0, 100e5]) + 1.01325e5).tolist()
+        self.p.operational = (np.array([0., 100e5]) + 1.01325e5).tolist()
         self.p.ref = 1.01325e5
         self.p.val = self.p.ref
 
@@ -62,7 +62,7 @@ class Air(gm.Gas):
         self.composition['N2'] = 0.76   # weight percentage, dry air
         self.composition['O2'] = 0.23   # weight percentage, dry air
 
-        # functions of temperature, presssure and spare parameter 'x'
+        # functions of temperature, pressure and spare parameter 'x'
         self.rho.calc = self._rho
         self.nu.calc = self._nu
         self.mu.calc = self._mu
@@ -148,7 +148,7 @@ class Air(gm.Gas):
         return 1. / T
 
 
-class Argon(gm.Gas):
+class Argon(Gas):
     """
     Physical and chemical properties of Argon
     """
@@ -186,7 +186,7 @@ class Argon(gm.Gas):
         self.M = 39.948e-3
         self.Z = 0.9994
 
-        # functions of temperature, presssure and spare parameter 'x'
+        # functions of temperature, pressure and spare parameter 'x'
         self.rho.calc = self._rho
         self.nu.calc = self._nu
         self.mu.calc = self._mu
@@ -217,20 +217,3 @@ class Argon(gm.Gas):
         Tp = C2K([0, 100, 200, 300, 400, 500, 600])
         Up = np.array([16.51, 21.17, 25.59, 29.89, 33.96, 37.91, 39.43]) * 1e-3
         return np.interp(T, Tp, Up)
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    ALL = 1
-
-    import . gases as thisModule
-    classes = [v for c, v in thisModule.__dict__.items()
-               if isinstance(v, type) and v.__module__ == thisModule.__name__]
-
-    if 1 or ALL:
-        for mat in classes:
-            print('class:', mat.__name__)
-            foo = mat()
-            print(foo.identifier, '*' * 50)
-            foo.plot()

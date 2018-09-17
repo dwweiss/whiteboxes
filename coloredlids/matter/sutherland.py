@@ -1,5 +1,5 @@
 """
-  Copyright (c) 2016-18 by Dietmar W Weiss
+  Copyright (c) 2016- by Dietmar W Weiss
 
   This is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as
@@ -17,31 +17,37 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version
-      2018-01-01 DWW
+      2018-09-17 DWW
 """
 
 from math import sqrt
+from typing import Optional
 
 
-def sutherlandViscosity(identifier, T, T0, mu0):
+def sutherland_viscosity(identifier: str,
+                         T: float,
+                         T0: float,
+                         mu0: float) -> Optional[float]:
     """
     Sutherland approximation of gas viscosity
 
     Args:
-        id (string):
-            identifier out of [ "AIR" "CO2" "H2" "N2" "NH3" "O2" ]
+        identifier:
+            Identifier out of [ "AIR" "CO2" "H2" "N2" "NH3" "O2" ]
 
-        T (float):
-            temperature [K]
+        T:
+            Temperature [K]
 
-        T0 (float):
-            reference temperature [K]
+        T0:
+            Reference temperature [K]
 
-        mu0 (float):
-            reference dynamic viscosity [Pa s]
+        mu0:
+            Reference dynamic viscosity [Pa s]
 
     Returns:
-        (float): dynamic viscosity [Pa s], or None if identifier is unknown
+        Dynamic viscosity [Pa s],
+        or
+        None if identifier is unknown
 
     Reference:
         Crane: Flow of fluids trough valves, fittings and pipe. Technical paper
@@ -74,16 +80,3 @@ def sutherlandViscosity(identifier, T, T0, mu0):
     T_tilde = T / T0
 
     return mu0 * a / b * T_tilde * sqrt(T_tilde)
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    ALL = 1
-
-    if 0 or ALL:
-        s = 'Sutherland viscosity (change relative to reference value)'
-        print('-' * len(s) + '\n' + s + '\n' + '-' * len(s))
-
-        mu_tilde = sutherlandViscosity("AIR", 100+273.15, 20+273.15, 1.)
-        print('mu_tilde:', mu_tilde)
