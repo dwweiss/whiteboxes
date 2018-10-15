@@ -17,22 +17,23 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2017-12-18 DWW
+      2018-10-15 DWW
 """
 
+from typing import Optional
 
-def toLatex(x):
+
+def to_latex(x: str) -> str:
     """
     Converts symbol in string to a Latex formatted string. Intended for
     titles and axis labels in plots.
 
     Args:
-        x (string):
+        x:
             raw text
 
     Returns:
-        (string):
-            valid Latex string
+        valid Latex string
 
     Note:
         sniplet for generation of Mx..Fz part of dict:
@@ -136,40 +137,38 @@ def toLatex(x):
         return x
 
 
-def fromLatex(x):
+def from_latex(x: str) -> str:
     """
     Strips Latex formatting from string
 
     Args:
-        x (string):
-            Latex text
+        x:
+            Latex string
 
     Returns:
-        (string):
-            string without Latex formatting
+        string without Latex formatting
     """
     x = str(x)
     return x.translate({ord(c): None for c in r'\${}'})
 
 
-def guessUnit(x=None):
+def guess_unit(x: Optional[str]=None) -> str:
     """
     Guesses measurement unit from given Latex formatted string
 
     Args:
-        x (string):
-            Latex text
+        x:
+            Latex string
 
     Returns:
-        (string):
-            unit
+        unit
     """
-    x = fromLatex(x)
+    x = from_latex(x)
     if not x:
         return '[/]'
     elif any(x.startswith(a) for a in
              ['alpha', 'alfa', 'beta', 'gamma', 'delta', 'phi', 'psi']):
-        return toLatex('[deg]')
+        return to_latex('[deg]')
     elif x in ['t', 'w', 'h', 'l', 'Dx', 'Dy', 'Dz',
                'Delta x', 'Delta y', 'Delta z',
                'Delta_x', 'Delta_y', 'Delta_z']:
@@ -207,19 +206,18 @@ def guessUnit(x=None):
         return ''
 
 
-def guessScale(x):
+def guess_scale(x: str) -> str:
     """
     Guess unit-prefixes (scale) of symbols in a Latex string
 
     Args:
-        x (string):
-            Latex text containing a symbol
+        x:
+            Latex string containing a symbol
 
     Returns:
-        (string):
-            string guess of unit of given symbol
+        guess of unit
     """
-    x = fromLatex(x)
+    x = from_latex(x)
     if x == '[um]':
         return 1e6
     elif x == '[mm]':
@@ -255,23 +253,3 @@ def guessScale(x):
     else:
         print("!!! no guess of scale of x: '" + x + "'")
     return 1.
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    ALL = 1
-
-    if 0 or ALL:
-        s = r'$\alpha=$5'
-        print('s:', s, 'fromLatex:', "'" + fromLatex(s) + "'")
-        s = 'alpha'
-        print('to:', "'" + toLatex(s) + "'",
-              'to[0]:', "'" + toLatex(s).split()[0] + "'")
-        s = 'beta=6'
-        print('to:', "'" + toLatex(s) + "'",
-              'to[0]:', "'" + toLatex(s).split()[0] + "'")
-        s = 'Mx'
-        print('to:', "'" + toLatex(s) + "'",
-              'to[0]:', "'" + toLatex(s).split()[0] + "'")
-        print('guess unit of', "'w':", guessUnit('w'))
