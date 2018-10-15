@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-08-07 DWW
+      2018-10-15 DWW
 """
 
 import numpy as np
@@ -126,7 +126,7 @@ def x_y(X, Y, U):
     assert len(X) == len(U), 'lenX:' + str(len(X)) + ' lenY:' + str(len(U))
     X = np.asfarray(X)
     Y = np.asfarray(Y)
-    Z = np.asfarray(U)
+    U = np.asfarray(U)
 
     n = len(X)
     x, y, x2, y2, xy = 0., 0., 0., 0., 0.
