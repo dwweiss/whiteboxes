@@ -159,16 +159,16 @@ class Parameter(object):
             if self.latex[-1] != '$':
                 self.latex = self.latex + '$'
 
-        # accuracy and repeatability can be:
+        # accuracy can be:
         # - absolute (e.g. '1.2'),
         # - relative to reading (e.g. '1.2%') or
         # - relative to full scale (e.g. '1.2%FS')
         self._accuracy: Tuple[str, str] = ('-1%', '+1%')
 
-        # accuracy and repeatability can be:
+        # repeatability can be:
         # - absolute (e.g. '1.2'),
         # - relative to full scale (e.g. '1.2%FS')
-        self._repeatability: Tuple[str, str, str] = ('-0.1%FS', '0.1%FS', '95%')
+        self._repeatability: Tuple[str, str, str] = ('-0.01', '0.01', '95%')
         self.sampling: float = 100.                              # [1/s]
         self.rate_of_change: float = 0.                # [(self.unit)/s]
         self.trust_score: int = 10  # confidence, 10: excellent, 0: poor
