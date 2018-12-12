@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-17 DWW
+      2018-12-12 DWW
 """
 
 import types
@@ -160,11 +160,15 @@ class Parameter(object):
                 self.latex = self.latex + '$'
 
         # accuracy and repeatability can be:
-        # 1) absolute (e.g. '1.2'),
-        # 2) relative to reading (e.g. '1.2%') or
-        # 3) relative to full scale (e.g. '1.2%FS')
+        # - absolute (e.g. '1.2'),
+        # - relative to reading (e.g. '1.2%') or
+        # - relative to full scale (e.g. '1.2%FS')
         self._accuracy: Tuple[str, str] = ('-1%', '+1%')
-        self._repeatability: Tuple[str, str, str] = ('-0.1%', '0.1%', '95%')
+
+        # accuracy and repeatability can be:
+        # - absolute (e.g. '1.2'),
+        # - relative to full scale (e.g. '1.2%FS')
+        self._repeatability: Tuple[str, str, str] = ('-0.1%FS', '0.1%FS', '95%')
         self.sampling: float = 100.                              # [1/s]
         self.rate_of_change: float = 0.                # [(self.unit)/s]
         self.trust_score: int = 10  # confidence, 10: excellent, 0: poor
