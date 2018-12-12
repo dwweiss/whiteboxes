@@ -1,5 +1,5 @@
 """
-  Copyright (c) 2016-17 by Dietmar W Weiss
+  Copyright (c) 2016- by Dietmar W Weiss
 
   This is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as
@@ -17,44 +17,42 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2017-12-18 DWW
+      2018-12-12 DWW
 """
 
 import numpy as np
 
 
-def L2_norm(y, Y):
+def L2_norm(y: np.ndaray, Y: np.ndaray) -> float:
     """
     Square root of mean squared difference between arrays y and Y
 
     Args:
-        y (array_like of float):
+        y:
             indicated values
 
-        Y (array_like of float):
+        Y:
             conventional true values
 
     Returns:
-        (double):
-            Error
+        Measure of error
     """
     return np.sqrt(np.mean(np.square(np.asfarray(y) - np.asfarray(Y))))
 
 
-def SSE(y, Y):
+def SSE(y: np.ndaray, Y: np.ndaray) -> float:
     """
     Sum of squared difference between arrays y and Y
 
     Args:
-        y (array_like of float):
+        y:
             indicated values
 
-        Y (array_like of float):
+        Y:
             conventional true values
 
     Returns:
-         (double):
-             Error
+        Measure of error
 
     Note:
          SSE = 0.5 * np.square(L2_norm(y, Y)) * y.size
@@ -62,19 +60,18 @@ def SSE(y, Y):
     return 0.5 * np.sum(np.square(np.asfarray(y) - np.asfarray(Y)))
 
 
-def MSE(y, Y):
+def MSE(y: np.ndaray, Y: np.ndaray) -> float:
     """
     Mean squared difference between arrays y and Y
 
     Args:
-        y (array_like of float):
+        y:
             indicated values
 
-        Y (array_like of float):
+        Y:
             conventional true values
 
     Returns:
-        (double):
-            Error
+        Measure of error
     """
     return np.mean(np.square(np.asfarray(y) - np.asfarray(Y)))
