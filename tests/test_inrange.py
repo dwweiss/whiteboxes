@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-10-15 DWW
+      2019-03-18 DWW
 """
 
 import unittest
@@ -36,14 +36,12 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-        print('in_range:', in_range(2, [3, 4]))
-        print('in_range:', in_range(None, [1, 4]))
-        print('in_range:', in_range(2, [1, 4]))
-        print('in_range:', in_range(2, [3, 4], 3, (2, 9)))
-        print('in_range:', in_range(2, [1, 4], 3, (None, 9), 3, (None, None)))
-        print('in_range:', in_range(None, [1, 4], None, (None, 9), None, 
-                                    (7, 0)))
-        self.assertTrue(True)
+        self.assertFalse(in_range(2, [3, 4]))
+        self.assertFalse(in_range(None, [1, 4]))
+        self.assertTrue(in_range(2, [1, 4]))
+        self.assertFalse(in_range(2, [3, 4], 3, (2, 9)))
+        self.assertTrue(in_range(2, [1, 4], 3, (None, 9), 3, (None, None)))
+        self.assertFalse(in_range(None, [1, 4], None, (None, 9), None, (7, 0)))
 
 
 if __name__ == '__main__':
