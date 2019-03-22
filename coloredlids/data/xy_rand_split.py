@@ -59,7 +59,6 @@ def xy_rand_split(x: np.ndarray, y: Optional[np.ndarray]=None,
         from grayboxes.boxmodel import xy_rand_split
         X, Y = xy_rand_split(x=np.atleast_2d(np.linspace(0., 1., 21)).T,
                              fractions=(.7, .2, .1))
-        ==>
     """
     assert len(x.shape) == 2, str(x.shape)
     if y is not None:
