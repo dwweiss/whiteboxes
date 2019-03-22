@@ -30,18 +30,24 @@ def xy_rand_split(x: np.ndarray, y: Optional[np.ndarray]=None,
                   fractions: Optional[Sequence[float]]=None) \
         -> Tuple[np.ndarray, Optional[np.ndarray]]:
     """
-    Splits randomly one or two 2D arrays into sub-arrays according to
-    the distribution in 'fractions'
+    Splits randomly one or two 2D arrays into sub-arrays, size of the sub 
+    arrays is defined by a list of 'fractions'
 
-    Example
-        x  [1 2 3 4 5 6]
-        y  [3 4 5 6 7 8]
-        fractions [0.3 0.1 0.2]
-
+    Example:
+        from coloredlids.xy_rand_split import xy_rand_split
+        x = [1, 2, 3, 4, 5, 6]
+        y = [3, 4, 5, 6, 7, 8]
+        x = np.atleast_2d(x).T  # 2D array with one column
+        y = np.atleast_2d(y).T  # 2D array with one column
+        fractions = [0.3, 0.1, 0.2]
+        X, Y = xy_rand_split(x=x, y=y, fractions=fractions)
+        # sum(fractions) is 0.6, size (shape[0]) of x and y is 6 
+        # -> sub-array sizes are 0.3/0.6*6=3, 0.1/0.6*6=1 and 0.2/0.6*6=2
+        
         return values:
-            x_split  [4 6 2] [1] [3 5]
-            y_split  [6 8 4] [3] [5 7]
-
+            X = [[4, 6, 2], [1], [3, 5]] 
+            Y = [[6, 8, 4], [3], [5, 7]]
+ 
     Args:
         x (2D array of float):
             data array, first index is point index
@@ -50,15 +56,11 @@ def xy_rand_split(x: np.ndarray, y: Optional[np.ndarray]=None,
             data array, first index is point index
 
         fractions:
-            list of fractions of sub arrays
-
+            size of sub arrays is defined by ratios of elements of fractions 
+            list relative to sum of fractions
+            
     Returns:
         Pair of lists of 2D sub-arrays of float
-
-    Example:
-        from grayboxes.boxmodel import xy_rand_split
-        X, Y = xy_rand_split(x=np.atleast_2d(np.linspace(0., 1., 21)).T,
-                             fractions=(.7, .2, .1))
     """
     assert len(x.shape) == 2, str(x.shape)
     if y is not None:
