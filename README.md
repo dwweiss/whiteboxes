@@ -24,7 +24,7 @@ This package extends the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki
         tools       Tools for data manipulation
         
     tests
-        Selected test cases
+        Test cases
 
     doc
         Figures and manuals used in wiki
