@@ -17,16 +17,16 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-17 DWW
+      2019-09-16 DWW
 """
-
 
 import unittest
 import sys
 import os
 
 sys.path.append(os.path.abspath('..'))
-import gases as module_under_test
+
+import coloredlids.matter.gases as module_under_test
 
 
 class TestUM(unittest.TestCase):

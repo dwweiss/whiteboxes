@@ -25,8 +25,9 @@ import sys
 import unittest
 
 sys.path.append(os.path.abspath('..'))
-from coloredlids.matter.genericmatter import GenericMatter, Fluid, Metal, \
-    Property, Solid
+
+from coloredlids.matter.genericmatter import (GenericMatter, Fluid, Metal,
+                                              Property, Solid)
 from coloredlids.matter.parameter import Parameter
 
 

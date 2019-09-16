@@ -20,13 +20,13 @@
       2018-09-17 DWW
 """
 
-
 import unittest
 import sys
 import os
 
 sys.path.append(os.path.abspath('..'))
-import nonferrous as module_under_test
+
+import coloredlids.matter.nonferrous as module_under_test
 
 
 class TestUM(unittest.TestCase):

@@ -26,6 +26,7 @@ import os
 import numpy as np
 
 sys.path.append(os.path.abspath('..'))
+
 from coloredlids.matter.parameter import Parameter, deg2rad, rad2deg
 
 

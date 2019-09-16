@@ -25,8 +25,7 @@ import sys
 import os
 
 sys.path.append(os.path.abspath('..'))
-sys.path.append(os.path.abspath('../coloredlids'))
-sys.path.append(os.path.abspath('../coloredlids/matter'))
+
 from coloredlids.matter.genericmatter import C2K
 from coloredlids.matter.matter import Matter
 
@@ -57,9 +56,11 @@ class TestUM(unittest.TestCase):
         mat.plot('c_p')
 
         rho = mat.plot('rho')
+        print('rho:', rho)
         Lambda = mat.Lambda(T=C2K(100))
         print('Lambda:', Lambda)
         c_p = mat.c_p(T=C2K(20), p=mat.p.ref)
+        print('c_p:', c_p)
 
         mat.plot('all')
 

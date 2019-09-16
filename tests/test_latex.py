@@ -25,6 +25,7 @@ import sys
 import os
 
 sys.path.append(os.path.abspath('..'))
+
 from coloredlids.tools.latex import from_latex, to_latex, guess_unit
 
 

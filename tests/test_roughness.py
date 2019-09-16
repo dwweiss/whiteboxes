@@ -25,6 +25,7 @@ import sys
 import os
 
 sys.path.append(os.path.abspath('..'))
+
 from coloredlids.matter.roughness import roughness, roughness_list
 
 
@@ -37,11 +38,11 @@ class TestUM(unittest.TestCase):
 
     def test1(self):
         for m in roughness_list.keys():
-            print('metal:', m, 'Ra:', roughness(m))
+            print('metal:', m,  'Ra:', roughness(m))
         print()
 
-        for m in (None, '???', 'AL_NEW'):
-            print("metal:'" + m + "'Ra:", roughness(m), '\n')
+        for m in (None, '???', 'AL_NEW', ):
+            print("metal:'" + str(m) + "', Ra:", roughness(m), '\n')
         print()
 
         self.assertTrue(True)

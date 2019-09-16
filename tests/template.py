@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-08-16 DWW
+      2019-09-16 DWW
 """
 
 import unittest
@@ -26,6 +26,7 @@ import os
 import numpy as np
 
 sys.path.append(os.path.abspath('..'))
+
 from grayboxes.___ import ___
 
 
@@ -37,8 +38,6 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-#if __name__ == '__main__':
-#    unittest.main()
         foo = ___()
         foo()
 

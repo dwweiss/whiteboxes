@@ -17,16 +17,18 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-13 DWW
+      2018-08-28 DWW
 """
 
 import unittest
 import sys
 import os
+import numpy as np
+import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath('..'))
 
-from coloredlids.matter.property import Property
+from coloredlids.flow.pipe_velocity import v_axial
 
 
 class TestUM(unittest.TestCase):
@@ -37,14 +39,31 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-        foo = Property(identifier='abc')
-        foo.calc = lambda T, p, x=0: 0.1 + 1e-3*T - 1e-4*p
-        print(foo)
-        foo.plot('title')
-        print('-' * 79)
-
+        D = 50e-3
+        v_mean = 1
+        r = np.linspace(0, D*0.5, num=100)
+        n_seq = [3, 4, 6, 8, 10]
+        nu_seq = [1e-6, 1e-2]
+    
+        for n in n_seq:
+            for nu in nu_seq:
+                vz = v_axial(v_mean=v_mean, D_pipe=D, r=r, nu=nu, n=n)
+                plt.plot(vz, r, label='$n:'+str(n)+r',\ \nu: '+str(nu)+'$')
+    
+        fontsize = 12
+        plt.title(r'Axial velocity $v_z(r) = f(n, \nu)$')
+        plt.rcParams.update({'font.size': fontsize})
+        plt.rcParams['legend.fontsize'] = fontsize
+        plt.xlim(0, 2.2 * v_mean)
+        plt.ylabel('$r$ [m]')
+        plt.xlabel('$v_z$ [m/s]')
+        plt.grid()
+        plt.legend(bbox_to_anchor=(1.1, 1.03), loc='upper left')
+        plt.show()
+ 
         self.assertTrue(True)
-
-
+        
+        
 if __name__ == '__main__':
     unittest.main()
+

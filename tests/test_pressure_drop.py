@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-11 DWW
+      2018-09-12 DWW
 """
 
 import unittest
@@ -27,12 +27,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 sys.path.append(os.path.abspath('..'))
-from coloredlids.flow.pressure_drop \
-    import (pressureDrop, resistancePipe, poiseulleColebrook,
-            resistancePipeBend,
-            resistanceTaperedPipeReduction, resistanceSquarePipeExpansion,
-            resistanceSquarePipeReduction, resistanceTaperedPipeExpansion,
-            dp_in_red_mid_exp_out, dp_tapered_in_red_mid_exp_out)
+
+from coloredlids.flow.pressure_drop import (pressure_drop, resistance_pipe, 
+    poiseulle_colebrook, resistance_pipe_bend, 
+    resistance_tapered_pipe_reduction, resistance_square_pipe_expansion,
+    resistance_square_pipe_reduction, resistance_tapered_pipe_expansion,
+    dp_in_red_mid_exp_out, dp_tapered_in_red_mid_exp_out)
 
 
 D1, L1 = 20e-3, 20e-3
@@ -45,14 +45,16 @@ v1_seq = (0.5, 1, 2, 3, 4, 5, 6, 7, 8, 10)
 
 # DN80/2  -> equivalent pipe diameter: 56.57 mm
 D1, D2, v1 = 40e-3, 20e-3, 1.
-D1, D2, v1, rBend, DN = 56.57e-3, 40e-3, 8.5, 113.5e-3, 80e-3
+D1, D2, v1, r_bend, DN = 56.57e-3, 40e-3, 8.5, 113.5e-3, 80e-3
 D1 = 80e-3
 
 D3, L3 = D1, L1
 
 eps_rough = 10e-6
-k_functions = (resistanceSquarePipeReduction, resistanceSquarePipeExpansion,
-               resistanceTaperedPipeReduction, resistanceTaperedPipeExpansion)
+k_functions = (resistance_square_pipe_reduction, 
+               resistance_square_pipe_expansion,
+               resistance_tapered_pipe_reduction, 
+               resistance_tapered_pipe_expansion)
 
 
 class TestUM(unittest.TestCase):
@@ -78,8 +80,8 @@ class TestUM(unittest.TestCase):
             v = 1
             Re = v * D / nu
 
-            k = resistancePipe(v=v, D=D, L=L, nu=nu, eps_rough=eps_rough)
-            dp = pressureDrop(k=k, v=v, rho=rho)
+            k = resistance_pipe(v=v, D=D, L=L, nu=nu, eps_rough=eps_rough)
+            dp = pressure_drop(k=k, v=v, rho=rho)
 
             maxKey = max(map(len, locals()))
             for key, val in locals().items():
@@ -180,31 +182,31 @@ class TestUM(unittest.TestCase):
 
     def test4(self):
         Re_seq = np.linspace(1e0, 1e4, 10000)
-        k = [poiseulleColebrook(Re, D1, eps_rough) for Re in Re_seq]
+        k = [poiseulle_colebrook(Re, D1, eps_rough) for Re in Re_seq]
         plt.plot(Re_seq, k)
         plt.xlabel('Re')
         plt.ylabel('$k_{straight}$ [/]')
         plt.show()
 
     def test5(self):
-        # plot of k(rBend), phiBend=const
-        k = resistancePipeBend
+        # plot of k(r_bend), phiBend=const
+        k = resistance_pipe_bend
 
-        # D1 = 40e-3 ; rBend = 112.5e-3
+        # D1 = 40e-3 ; r_bend = 112.5e-3
         x = np.linspace(0.01, 10.0, 100)
-        y = [k(v=v, D=D1, rBend=rBend, phiBendDeg=75) for v in x]
+        y = [k(v=v, D=D1, r_bend=r_bend, phi_bend_deg=75) for v in x]
         plt.xlabel('$v$')
         plt.ylabel('$k_{bend}$ [/]')
         plt.plot(x, y)
         plt.show()
         x = np.linspace(0.05, 5.0, 1000) * 112.5e-3
-        y = [k(v=v1, D=D1, rBend=r, phiBendDeg=75) for r in x]
+        y = [k(v=v1, D=D1, r_bend=r, phi_bend_deg=75) for r in x]
         plt.plot(x, y)
         plt.xlabel('$r_{bend}$')
         plt.show()
 
         x = np.linspace(0.0, 90.0, 100)
-        y = [k(v=5.0, D=D1, rBend=100e-3, phiBendDeg=phi) for phi in x]
+        y = [k(v=5.0, D=D1, r_bend=100e-3, phi_bend_deg=phi) for phi in x]
         plt.xlabel(r'$\varphi_{bend}$')
         plt.plot(x, y)
         plt.show()
@@ -221,8 +223,8 @@ class TestUM(unittest.TestCase):
                     v1 = v
                 else:
                     v1 = v * (D1/D2)**2
-                dp1 = np.array([pressureDrop(k(v1=v1, D1=D1, D2=D2, nu=nu,
-                                             eps_rough=eps_rough), v1, rho)
+                dp1 = np.array([pressure_drop(k(v1=v1, D1=D1, D2=D2, nu=nu,
+                                              eps_rough=eps_rough), v1, rho)
                                 for nu in nu_seq])
                 s = str(k).split(sep=' ')[1][10:]
                 plt.title('v_low: '+str(v)+', D1: '+str(D1)+', D2: '+str(D2) +
@@ -236,7 +238,7 @@ class TestUM(unittest.TestCase):
             print('\n\n***', k.__name__)
             if 1:
                 nu_seq = [x * 1e-7 for x in range(1, int(1e5))]
-                dp1 = [pressureDrop(k(v1=v1, D1=D1, D2=D2, nu=nu,
+                dp1 = [pressure_drop(k(v1=v1, D1=D1, D2=D2, nu=nu,
                                       eps_rough=eps_rough), v1, rho)
                        for nu in nu_seq]
                 x = [x * 1e6 for x in nu_seq]
@@ -253,8 +255,8 @@ class TestUM(unittest.TestCase):
                 v_seq = np.linspace(0.1, 10., 50)
                 nu_seq = [1e-7, 1e-6, 1e-5, 1e-4, 1e-3]
                 for nu in nu_seq:
-                    dp2 = [pressureDrop(k(v1=v1, D1=D1, D2=D2, nu=nu,
-                                          eps_rough=eps_rough), v1, rho)
+                    dp2 = [pressure_drop(k(v1=v1, D1=D1, D2=D2, nu=nu,
+                                           eps_rough=eps_rough), v1, rho)
                            for v1 in v_seq]
                     y = [y * 1e-3 for y in dp2]
                     plt.plot(v_seq, y,
@@ -270,7 +272,7 @@ class TestUM(unittest.TestCase):
                 nu_seq = np.array([1e-7, 1e-6, 1e-5, 1e-4, 1e-3])
                 for nu in nu_seq:
                     Re_seq = v1_seq * D1 / nu
-                    dp_seq = [pressureDrop(k(v1=v1, D1=D1, D2=D2, nu=nu,
+                    dp_seq = [pressure_drop(k(v1=v1, D1=D1, D2=D2, nu=nu,
                               eps_rough=eps_rough), v1, rho) for v1 in v1_seq]
                     dp_kPa = 1e-3 * np.array(dp_seq)
                     plt.plot(Re_seq * 1e-3, dp_kPa,

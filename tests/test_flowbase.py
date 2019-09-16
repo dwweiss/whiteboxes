@@ -17,16 +17,17 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-13 DWW
+      2019-09-16 DWW
 """
 
-import unittest
-import sys
 import os
+import sys
+import unittest
 
-sys.path.append(os.path.abspath('..'))
+sys.path.append(os.path.abspath('../..'))
 
-from coloredlids.matter.property import Property
+from coloredlids.flow.flowbase import FlowIncompressible
+from coloredlids.matter.parameter import C2K
 
 
 class TestUM(unittest.TestCase):
@@ -37,14 +38,13 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-        foo = Property(identifier='abc')
-        foo.calc = lambda T, p, x=0: 0.1 + 1e-3*T - 1e-4*p
+        foo = FlowIncompressible()
+        foo.T.val = C2K(50)
+        foo.v = 2.0
         print(foo)
-        foo.plot('title')
-        print('-' * 79)
+        print('foo.T:', foo.T())
 
         self.assertTrue(True)
-
 
 if __name__ == '__main__':
     unittest.main()
