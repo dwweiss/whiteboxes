@@ -23,8 +23,12 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import Optional, Sequence, Tuple, Union
+import sys
+import os
 
-from parameter import Parameter, C2K
+sys.path.append(os.path.abspath('../..'))
+
+from coloredlids.matter.parameter import Parameter, C2K
 
 
 class Property(Parameter):

@@ -20,10 +20,14 @@
       2018-06-25 DWW
 """
 
+import os
+import sys
 import numpy as np
 
-from . parameter import C2K, K2C
-import . genericmatter as gm
+sys.path.append(os.path.abspath('./'))
+
+from parameter import C2K, K2C
+import genericmatter as gm
 
 """
 References: 
@@ -253,7 +257,7 @@ class Iron(gm.Ferrous, gm.Liquid):
 if __name__ == '__main__':
     ALL = 0
 
-    import FerrousMetals as thisModule
+    import ferrousmetals as thisModule
     classes = [v for c, v in thisModule.__dict__.items()
                if isinstance(v, type) and v.__module__ == thisModule.__name__]
 

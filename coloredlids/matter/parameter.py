@@ -113,7 +113,8 @@ class Parameter(object):
       - unit,
       - range (operational and certified values),
       - identifiers (raw string and and latex version),
-      - accuracy (absolute, relative to reading '%', rel. to full scale '%FS'),
+      - accuracy (absolute, relative to reading '%',
+                  relative to full scale '%FS'),
       - repeatability,
       - sampling rate,
       - rate-of-change (d(Parameter)/dt)

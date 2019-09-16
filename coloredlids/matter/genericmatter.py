@@ -17,13 +17,18 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-17 DWW
+      2019-09-16 DWW
 """
 
+import sys
+import os
 import numpy as np
 from typing import Optional
-from parameter import C2K
-from property import Property
+
+sys.path.append(os.path.abspath('../..'))
+
+from coloredlids.matter.parameter import C2K
+from coloredlids.matter.property import Property
 
 
 class GenericMatter(Property):

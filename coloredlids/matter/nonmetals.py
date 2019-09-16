@@ -20,8 +20,13 @@
       2018-09-17 DWW
 """
 
-from parameter import C2K, K2C
-from genericmatter import NonMetal
+import os
+import sys
+
+sys.path.append(os.path.abspath('../..'))
+
+from coloredlids.matter.parameter import C2K, K2C
+from coloredlids.matter.genericmatter import NonMetal
 
 
 class R4_230NA(NonMetal):

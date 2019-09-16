@@ -17,18 +17,24 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-17 DWW
+      2019-09-16 DWW
 """
 
+import os
+import sys
 from typing import Optional, Sequence, Union
 
+sys.path.append(os.path.abspath('../..'))
+sys.path.append(os.path.abspath('../../../grayboxes'))
+
+from coloredlids.matter.genericmatter import GenericMatter
+from coloredlids.matter import ferrous
+from coloredlids.matter import nonferrous
+from coloredlids.matter import nonmetals
+from coloredlids.matter import liquids
+from coloredlids.matter import gases
+
 from grayboxes.base import Base
-from genericmatter import GenericMatter
-import ferrous
-import nonferrous
-import nonmetals
-import liquids
-import gases
 
 
 class Matter(Base):
@@ -36,7 +42,7 @@ class Matter(Base):
     Collection of physical and chemical properties of matter
 
     Note:
-        The class is designed as a follower in theoretical submodel tree
+        Class is designed to be a follower in tree of theoretical submodels
     """
 
     def __init__(self, identifier: str='Matter') -> None:

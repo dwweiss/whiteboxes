@@ -20,8 +20,13 @@
       2018-06-25 DWW
 """
 
-from . parameter import C2K
-import . genericMatter as gm
+import os
+import sys
+
+sys.path.append(os.path.abspath('./'))
+
+from parameter import C2K
+import genericmatter as gm
 
 
 class Aluminum(gm.NonFerrous):
@@ -108,7 +113,7 @@ class Copper(gm.NonFerrous):
 if __name__ == '__main__':
     ALL = 0
 
-    import . nonferrousmetals as thisModule
+    import nonferrousmetals as thisModule
     classes = [v for c, v in thisModule.__dict__.items()
                if isinstance(v, type) and v.__module__ == thisModule.__name__]
 
