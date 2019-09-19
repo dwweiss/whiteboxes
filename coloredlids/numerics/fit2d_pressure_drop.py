@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-08-07 DWW
+      2019-09-12 DWW
 """
 
 from math import inf
@@ -25,7 +25,7 @@ import numpy as np
 from scipy.optimize import curve_fit
 
 from grayboxes.base import Base
-from grayboxes.plotarrays import plotSurface, plotIsoMap
+from grayboxes.plot import plot_surface, plot_isomap
 
 
 class Fit2DModel(Base):
@@ -90,14 +90,14 @@ class Fit2DModel(Base):
         # Y is target (exact + noise)
         if self.Y is None:
             Y_exact = self.f(self.X.T)
-            plotSurface(self.X.T[0], self.X.T[1], Y_exact,
-                        labels=['x0', 'x1', 'exact'])
+            plot_surface(self.X.T[0], self.X.T[1], Y_exact,
+                         labels=['x0', 'x1', 'exact'])
             np.random.seed(1729)
             dy = self.noise * (Y_exact.max() - Y_exact.min())
             self.Y = Y_exact + np.random.uniform(-dy, dy, size=Y_exact.size)
 
-        plotSurface(self.X.T[0], self.X.T[1], self.Y,
-                    labels=['x0', 'x1', 'target: exact+noise'])
+        plot_surface(self.X.T[0], self.X.T[1], self.Y,
+                     labels=['x0', 'x1', 'target: exact+noise'])
 
     def task(self, **kwargs):
         """
@@ -120,23 +120,24 @@ class Fit2DModel(Base):
 
     def post(self, **kwargs):
         """
-        Plots exact solution, test data (exact solution + noise), prediction of
-        test data with tuned model, difference between prediction and test data
+        Plots exact solution, test data (exact solution + noise), 
+        prediction of test data with tuned model, 
+        difference between prediction and test data
         """
         super().post(**kwargs)
 
-        plotSurface(self.X.T[0], self.X.T[1], self.f(self.X.T),
-                    labels=['X0', 'X1', 'exact'])
-        plotSurface(self.X.T[0], self.X.T[1], self.Y,
-                    labels=['X0', 'X1', 'target'])
-        plotSurface(self.x.T[0], self.x.T[1], self.y,
+        plot_surface(self.X.T[0], self.X.T[1], self.f(self.X.T),
+                     labels=['X0', 'X1', 'exact'])
+        plot_surface(self.X.T[0], self.X.T[1], self.Y,
+                     labels=['X0', 'X1', 'target'])
+        plot_surface(self.x.T[0], self.x.T[1], self.y,
+                     labels=['x0', 'x1', 'prediction'])
+        plot_isomap(self.x.T[0], self.x.T[1], self.y,
                     labels=['x0', 'x1', 'prediction'])
-        plotIsoMap(self.x.T[0], self.x.T[1], self.y,
-                   labels=['x0', 'x1', 'prediction'])
-        plotSurface(self.x.T[0], self.x.T[1], self.y - self.Y,
+        plot_surface(self.x.T[0], self.x.T[1], self.y - self.Y,
+                     labels=['x0', 'x1', r'$\Delta y = y - Y$'])
+        plot_isomap(self.x.T[0], self.x.T[1], self.y - self.Y,
                     labels=['x0', 'x1', r'$\Delta y = y - Y$'])
-        plotIsoMap(self.x.T[0], self.x.T[1], self.y - self.Y,
-                   labels=['x0', 'x1', r'$\Delta y = y - Y$'])
 
 
 # Examples ####################################################################
@@ -214,8 +215,8 @@ if __name__ == '__main__':
         if 1:
             if X is not None:
                 Y_exact = f(X.T)
-                plotSurface(X.T[0], X.T[1], Y_exact,
-                            labels=['x0', 'x1', 'exact'])
+                plot_surface(X.T[0], X.T[1], Y_exact,
+                             labels=['x0', 'x1', 'exact'])
                 np.random.seed(1729)
                 dy = foo.noise * (Y_exact.max() - Y_exact.min())
                 Y = Y_exact + np.random.uniform(-dy, dy, size=Y_exact.size)

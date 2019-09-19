@@ -17,10 +17,9 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-18 DWW
+      2019-09-17 DWW
 """
 
-import numpy as np
 from numba import jit
 
 
@@ -68,47 +67,3 @@ def tdma(C, A, B, D):
         D[i] = B[i] * D[i+1] + C[i]
 
     return D
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    import sys
-    from time import clock
-    import matplotlib.pyplot as plt
-
-    print('*** Begin test TDMA')
-    n = 1 * 64
-    n = int(1e9)
-    lo = np.random.random(n)
-    dg = np.random.random(n)
-    up = np.random.random(n)
-    rs = np.random.random(n)
-    if 0:
-        Type = np.float32
-        lo, dg = np.float32(lo), np.float32(dg)
-        up, rs = np.float32(up), np.float32(rs)
-    else:
-        Type = np.float64
-
-    if n <= 100:
-        plt.plot(lo, label='lo')
-        plt.plot(dg, label='dg')
-        plt.plot(up, label='up')
-        plt.plot(rs, label='rs')
-        plt.legend()
-        plt.show()
-
-    print('+++ type:', rs.dtype)
-    print('+++ lo dg up rs:', rs.dtype, lo.shape, dg.shape, up.shape, rs.shape)
-
-    sys.stdout.flush()
-    for i in range(10):
-        start = clock()
-        x = tdma(lo, dg, up, rs)
-        print('+++ t(' + str(i) + '):', (clock() - start)*1e3, 'ms dtype:',
-              dg.dtype, x.dtype)
-
-    del lo, dg, up, rs
-
-    print('*** End test TDMA')
