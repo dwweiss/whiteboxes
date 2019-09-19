@@ -15,6 +15,7 @@ This package extends the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki
         electric    Electric fields
         flow        Velocity and pressure distribution in flow of gases and liquids
         heat        Heat transfer by conduction, convection and radiation
+        hints       Some python tricks
         magnetic    Magnetic fields
         mass        Mass transfer by diffusion
         matter      Properties of solids, liquids and gases
