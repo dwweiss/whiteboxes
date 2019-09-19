@@ -17,15 +17,14 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-08-09 DWW
+      2019-09-18 DWW
 """
 
-from tempfile import gettempdir
+import matplotlib.pyplot as plt
 from numba import autojit
 import numpy as np
-import matplotlib.pyplot as plt
+from tempfile import gettempdir
 
-from grayboxes.base import Base
 
 """
     Demonstrates discretisation of a 1D transient heat conduction problem
@@ -90,14 +89,14 @@ from grayboxes.base import Base
         coordinates.
 
     Note:
-        Function temperatureInWallForActualTimeStep() is compiled just-in-time
-        with the @autojit decorator.
+        Function temperature_in_wall_for_actual_time_step() is compiled 
+        just-in-time with the @autojit decorator.
 """
 
 
 @autojit
-def temperatureInWallForActualTimeStep(X, T, T_old, Fo, alpha_in, alpha_out,
-                                       T_in, T_out, lambda_wal, isCylinder):
+def temperature_in_wall_for_actual_time_step(X, T, T_old, Fo, alpha_in, \
+        alpha_out, T_in, T_out, lambda_wal, is_cylinder):
     """
     Computes the temperature in the wall for the actual time step
     This function is called from TransHeat1DPipe.task()
@@ -129,7 +128,7 @@ def temperatureInWallForActualTimeStep(X, T, T_old, Fo, alpha_in, alpha_out,
         lambda_wal (float):
             thermal conductivity of wall [W/(m K)]
 
-        isCylinder (bool):
+        is_cylinder (bool):
             if True then space discretisation for cylinder geometry
 
 
@@ -157,7 +156,7 @@ def temperatureInWallForActualTimeStep(X, T, T_old, Fo, alpha_in, alpha_out,
     T_old[0] = T_old[1] + q_dot_in * dx / lambda_wal
     T_old[-1] = T_old[-2] + q_dot_out * dx / lambda_wal
     for i in range(1, X.size-1):
-        if not isCylinder:
+        if not is_cylinder:
             dT = Fo * ((T_old[i+1] - T_old[i]) - (T_old[i] - T_old[i-1]))
         else:
             x_e = 0.5 * (X[i+1] + X[i])
@@ -172,12 +171,12 @@ def temperatureInWallForActualTimeStep(X, T, T_old, Fo, alpha_in, alpha_out,
     T[-1] = T[-2] + q_dot_out * dx / lambda_wal
 
 
-class TransHeat1DPipe(Base):
+class TransHeat1DPipe(object):
     def __init__(self, identifier='TransHeat1DPipe'):
-        super().__init__(identifier=identifier)
+        self.identifier = identifier
         self.version = '250118_dww'
 
-    def plotSingleTimeStep(self, lineStyle='--'):
+    def plot_single_time_step(self, lineStyle='--'):
         """
         Plots wall temperature distribution
 
@@ -257,14 +256,14 @@ class TransHeat1DPipe(Base):
         self.Fo = self.dt * a_wal / self.dx**2
 
         # print local parameters
-        self.write('+++ Parameters:')
+        print('+++ Parameters:')
         lst = dict(locals(), **self.__dict__)
         for key in sorted(lst, key=lambda s: s.lower()):
             if not key.startswith('_') and key not in \
                 ('program', 'save', 'fig', 'show', 'figsize', 'self', 'kwargs',
                  'version', 'X', 'T', 'T_old'):
-                self.write('{:>15}: {}'.format(key, lst[key]))
-        self.write()
+                print('{:>15}: {}'.format(key, lst[key]))
+        print('')
 
         self.X = np.linspace(self.x_in - 0.5 * self.dx,
                              self.x_out + 0.5 * self.dx, self.nx+2)
@@ -304,27 +303,27 @@ class TransHeat1DPipe(Base):
             # swap old and actual temperature array
             self.T, self.T_old = self.T_old, self.T
 
-            self.plotSingleTimeStep('--')
+            self.plot_single_time_step('--')
 
             # computes actual wall temperature
-            temperatureInWallForActualTimeStep(
+            temperature_in_wall_for_actual_time_step(
                 self.X, self.T, self.T_old, self.Fo, self.alpha_in,
                 self.alpha_out, self.T_in, self.T_out, self.lambda_wal,
                 self.isCylinder)
             if self.i_t > 0 and np.abs(self.T[-1] -
                                        self.T_in) < self.delta_T_wal:
-                self.plotSingleTimeStep()
+                self.plot_single_time_step()
                 # plota final wall temperature distribution
-                self.write('+++ t_end: ', self.t, ' (', self.i_t, ' steps)')
-                self.plotSingleTimeStep('r-o')
+                print('+++ t_end: ', self.t, ' (', self.i_t, ' steps)')
+                self.plot_single_time_step('r-o')
                 return self.t
 
             if self.t > self.t_max:
-                self.write('\n??? Break: physical time > limit: ', self.t_max)
+                print('\n??? Break: physical time > limit: ', self.t_max)
                 return -1.0
 
             if self.i_t_max and self.i_t > self.i_t_max:
-                self.write('\n??? Break: steps > limit: ', self.i_t_max)
+                print('\n??? Break: steps > limit: ', self.i_t_max)
                 return -1.0
 
             self.t += self.dt
@@ -353,6 +352,18 @@ class TransHeat1DPipe(Base):
                              bbox_inches='tight')
         plt.close()
 
+    def __call__(self, **kwargs):
+        """
+        Calls pre(), task() and post()
+
+        Args:
+            kwargs (dict, optional):
+                keyword arguments
+        """
+        self.pre(**kwargs)
+        self.task(**kwargs)
+        self.post(**kwargs)
+
 
 # Examples ####################################################################
 
@@ -363,7 +374,7 @@ if __name__ == "__main__":
 
     if 1 or ALL:
         #  Single call of response time computation
-        t_response = foo(nx=128, isCylinder=True, v=10, T_in=100, T_out=20,
+        t_response = foo(nx=128, is_cylinder=True, v=10, T_in=100, T_out=20,
                          t_max=100, alpha_out=5, delta_T_wal=0.1)
     if 0 or ALL:
         # Demonstrates effect of space step size
