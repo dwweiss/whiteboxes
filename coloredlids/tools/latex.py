@@ -25,8 +25,8 @@ from typing import Optional
 
 def to_latex(x: str) -> str:
     """
-    Converts symbol in string to a Latex formatted string. Intended for
-    titles and axis labels in plots.
+    Converts symbol in string to a Latex formatted string. 
+    Intended for titles and axis labels in plots.
 
     Args:
         x:

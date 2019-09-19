@@ -20,12 +20,11 @@
       2018-06-25 DWW
 """
 
-
 import collections
 import numpy as np
 
 
-def isArray(x):
+def is_array(x):
     """
     Checks if argument x is of array_like type
 
@@ -38,20 +37,3 @@ def isArray(x):
             True if x is of array_like type (list, tuple, set, np.array)
     """
     return isinstance(x, (collections.Sequence, np.ndarray))
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    ALL = 1
-
-    if 0 or ALL:
-        l = [1., 2., 3.]
-        a = np.array(l)
-        t = tuple(l)
-        b = np.asfarray(l)
-        i = 2
-        f = 3.3
-
-        for x in [l, a, t, b, i, f]:
-            print('x:', x, '-> isArray:', isArray(x))

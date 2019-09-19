@@ -17,11 +17,11 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-25 DWW
+      2019-09-19 DWW
 """
 
 
-def isFunction(x):
+def is_function(x):
     """
     Checks if argument x is callable
 
@@ -34,32 +34,3 @@ def isFunction(x):
             True if x is callable
     """
     return x is not None and hasattr(x, '__call__')
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    ALL = 1
-
-    if 0 or ALL:
-        def f():
-            return 0.0
-
-        class C(object):
-            def f(self): pass
-        c = C()
-
-        for x in [f, lambda a: 1.0, c.f, c]:
-            print('x:', str(x)[:str(x).index('at')-1] + str(x)[-1],
-                  '=> isFunction:', isFunction(x))
-        print()
-
-        n = None
-        i = 1
-        b = True
-        d = 1.0
-        l = [1, 2]
-        t = (1, 2)
-        s = 'abc'
-        for x in [n, i, b, d, l, t, s]:
-            print('x:', x, '=> isFunction:', isFunction(x))
