@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-12-12 DWW
+      2019-09-17 DWW
 """
 
 import types
@@ -36,7 +36,7 @@ def deg2rad(deg: Union[float, np.ndarray]) -> np.ndarray:
 
 def rad2deg(rad: Union[float, np.ndarray]) -> np.ndarray:
     """
-    Convert angles from degrees to radians
+    Converts angles from degrees to radians
     """
     return np.degrees(rad)
 
@@ -107,17 +107,20 @@ def msi2Pa(msi: Union[float, np.ndarray]) -> np.ndarray:
 class Parameter(object):
     """
     Defines a parameter with:
+      - identifier (raw string and and latex version),
       - actual value,
       - reference value,
       - absolute/relative flag,
       - unit,
-      - range (operational and certified values),
-      - identifiers (raw string and and latex version),
+      - operational range,
+      - tolerated range, 
+      - expected range,
       - accuracy (absolute, relative to reading '%',
                   relative to full scale '%FS'),
       - repeatability,
       - sampling rate,
       - rate-of-change (d(Parameter)/dt)
+      - trust score
 
     Note:
       - val (float):     actual value of parameter with unit 'self.unit'
@@ -147,7 +150,8 @@ class Parameter(object):
         self.ref: float = ref if ref is not None else self.val
         self._operational: Tuple[float, float] = (min(0., self.val),
                                                   max(0., self.val))
-        self._certified: Tuple[float, float] = self._operational
+        self._tolerated: Tuple[float, float] = self._operational
+        self._expected: Tuple[float, float] = self._tolerated
 
         # Latex symbol, e.g. '$\varrho$'
         if latex:
@@ -170,6 +174,7 @@ class Parameter(object):
         # - absolute (e.g. '1.2'),
         # - relative to full scale (e.g. '1.2%FS')
         self._repeatability: Tuple[str, str, str] = ('-0.01', '0.01', '95%')
+
         self.sampling: float = 100.                              # [1/s]
         self.rate_of_change: float = 0.                # [(self.unit)/s]
         self.trust_score: int = 10  # confidence, 10: excellent, 0: poor
@@ -182,10 +187,15 @@ class Parameter(object):
         return self._accuracy
 
     @accuracy.setter
-    def accuracy(self, value: Union[float, Sequence[float]]) -> None:
+    def accuracy(self, value: Union[str, Tuple[float, float]]) -> None:
         """
         Note:
             accuracy is stored as 2-tuple of str
+            
+            foo = Parameter()
+            foo.accuracy = '1%'
+            foo.accuracy = '3.0'
+            foo.accuracy = ('-1.2', '3%')
         """
         value = np.atleast_1d(value)
         if len(value) >= 1:
@@ -204,7 +214,8 @@ class Parameter(object):
         return self._repeatability
 
     @repeatability.setter
-    def repeatability(self, value: Union[float, Sequence[float]]) -> None:
+    def repeatability(self, value: Union[str, Tuple[str, str], 
+                                         Tuple[str, str, str]]) -> None:
         """
         Note:
             Repeatability is stored as string
@@ -253,11 +264,11 @@ class Parameter(object):
                 self._operational = (x0, 0.)
 
     @property
-    def certified(self) -> Tuple[float, float]:
-        return self._certified
+    def tolerated(self) -> Tuple[float, float]:
+        return self._tolerated
 
-    @certified.setter
-    def certified(self, value: Union[float, Sequence[float]]) -> None:
+    @tolerated.setter
+    def tolerated(self, value: Union[float, Sequence[float]]) -> None:
         value = np.atleast_1d(value)
         if len(value) >= 1:
             x0 = float(value[0])
@@ -266,14 +277,36 @@ class Parameter(object):
         if len(value) >= 2:
             x1 = float(value[1])
             if x0 < x1:
-                self._certified = (x0, x1)
+                self._tolerated = (x0, x1)
             else:
-                self._certified = (x1, x0)
+                self._tolerated = (x1, x0)
         else:
             if 0. < x0:
-                self._certified = (0., x0)
+                self._tolerated = (0., x0)
             else:
-                self._certified = (x0, 0.)
+                self._tolerated = (x0, 0.)
+    @property
+    def expected(self) -> Tuple[float, float]:
+        return self._expected
+
+    @expected.setter
+    def expected(self, value: Union[float, Sequence[float]]) -> None:
+        value = np.atleast_1d(value)
+        if len(value) >= 1:
+            x0 = float(value[0])
+        else:
+            x0 = 0.
+        if len(value) >= 2:
+            x1 = float(value[1])
+            if x0 < x1:
+                self._expected = (x0, x1)
+            else:
+                self._expected = (x1, x0)
+        else:
+            if 0. < x0:
+                self._expected = (0., x0)
+            else:
+                self._expected = (x0, 0.)
 
     def __str__(self) -> str:
         s = '\n{'

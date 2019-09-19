@@ -20,14 +20,10 @@
       2018-09-17 DWW
 """
 
-import os
-import sys
 from typing import Optional
 
-sys.path.append(os.path.abspath('../..'))
-
 from coloredlids.matter.parameter import C2K
-from coloredlids.matter.genericmatter import NonFerrous
+from coloredlids.matter.generic import NonFerrous
 
 
 class Aluminum(NonFerrous):

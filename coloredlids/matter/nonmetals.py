@@ -20,13 +20,10 @@
       2018-09-17 DWW
 """
 
-import os
-import sys
-
-sys.path.append(os.path.abspath('../..'))
+from typing import Optional
 
 from coloredlids.matter.parameter import C2K, K2C
-from coloredlids.matter.genericmatter import NonMetal
+from coloredlids.matter.generic import NonMetal
 
 
 class R4_230NA(NonMetal):
@@ -43,16 +40,17 @@ class R4_230NA(NonMetal):
                 matguid=29b9c2bee27942209e3e3747639fbefe
     """
 
-    def __init__(self, identifier='Ryton', latex=None, comment=None):
+    def __init__(self, identifier: str='Ryton', latex: Optional[str]=None, 
+                 comment: Optional[str]=None) -> None:                
         """
         Args:
-            identifier (string, optional):
+            identifier:
                 identifier of matter
 
-            latex (string, optional):
+            latex:
                 Latex-version of identifier. If None, identifier is assigned
 
-            comment (string, optional):
+            comment:
                 comment on matter
         """
         super().__init__(identifier, latex=latex, comment=comment)
@@ -79,16 +77,17 @@ class R4_230NA(NonMetal):
 
 
 class Concrete(NonMetal):
-    def __init__(self, identifier='concrete', latex=None, comment=None):
+    def __init__(self, identifier: str='concrete', latex: Optional[str]=None, 
+                 comment: Optional[str]=None) -> None:
         """
         Args:
-            identifier (string, optional):
+            identifier:
                 identifier of matter
 
-            latex (string, optional):
+            latex:
                 Latex-version of identifier. If None, identifier is assigned
 
-            comment (string, optional):
+            comment:
                 comment on matter
         """
         super().__init__(identifier, latex=latex, comment=comment)
@@ -98,16 +97,17 @@ class Concrete(NonMetal):
 
 
 class Ceramic(NonMetal):
-    def __init__(self, identifier='ceramic', latex=None, comment=None):
+    def __init__(self, identifier: str='ceramic', latex: Optional[str]=None, 
+                 comment: Optional[str]=None) -> None:
         """
         Args:
-            identifier (string, optional):
+            identifier:
                 identifier of matter
 
-            latex (string, optional):
+            latex:
                 Latex-version of identifier. If None, identifier is assigned
 
-            comment (string, optional):
+            comment:
                 comment on matter
         """
         super().__init__(identifier, latex=latex, comment=comment)

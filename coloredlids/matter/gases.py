@@ -20,14 +20,10 @@
       2018-09-17 DWW
 """
 
-import os
-import sys
 import numpy as np
 
-sys.path.append(os.path.abspath('../..'))
-
 from coloredlids.matter.parameter import C2K, K2C
-from coloredlids.matter.genericmatter import Gas
+from coloredlids.matter.generic import Gas
 
 
 class Air(Gas):

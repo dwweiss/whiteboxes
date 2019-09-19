@@ -17,17 +17,14 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-17 DWW
+      2019-09-19 DWW
 """
 
-import os
-import sys
 import numpy as np
 from scipy.interpolate import interp2d
+from typing import Optional
 
-sys.path.append(os.path.abspath('../..'))
-
-from coloredlids.matter.genericmatter import Liquid
+from coloredlids.matter.generic import Liquid
 from coloredlids.matter.parameter import C2K, K2C
 
 
@@ -37,27 +34,27 @@ class Diesel(Liquid):
 
     Reference:
         [NIT11] I Nita and S Geacai: Study of density and viscosity variation
-            with temperature for fules use4d for Diesel engine. Ovidius Univ.
+            with temperature for fules used for Diesel engine. Ovidius Univ.
             Annals of Chemistry, Vol. 22, No. 1, pp.357-61, 2011
     """
 
-    def __init__(self, identifier='Diesel',
-                 latex=None,
-                 comment=None):
+    def __init__(self, identifier: str='Diesel',
+                 latex: Optional[str]=None,
+                 comment: Optional[str]=None) -> None:
         super().__init__(identifier=identifier)
         """
         Args:
-            identifier (string, optional):
+            identifier:
                 identifier of matter
 
-            latex (string, optional):
+            latex:
                 Latex-version of identifier. If None, identical with identifier
 
-            comment (string, optional):
+            comment:
                 comment on matter
         """
         super().__init__(identifier=identifier, latex=latex, comment=comment)
-        self.version = '191217_dww'
+        self.version = '09.19_dww'
 
         # reference point and operational range
         self.T.operational = [x for x in C2K([0, 100])]
@@ -109,19 +106,19 @@ class HydraulicOil(Liquid):
     Thermophysical properties of hydraulic oil
     """
 
-    def __init__(self, identifier='hydraulicOil',
-                 latex=None,
-                 comment=None):
+    def __init__(self, identifier: str='hydraulic_oil',
+                 latex: Optional[str]=None,
+                 comment: Optional[str]=None) -> None:
         super().__init__(identifier=identifier)
         """
         Args:
-            identifier (string, optional):
+            identifier:
                 identifier of matter
 
-            latex (string, optional):
-                Latex-version of identifier. If None, identical with identifier
+            latex:
+                Latex-version of identifier. If None, latex = identifier
 
-            comment (string, optional):
+            comment:
                 comment on matter
         """
         super().__init__(identifier=identifier, latex=latex, comment=comment)
@@ -190,18 +187,18 @@ class Water(Liquid):
     Physical and chemical properties of water
     """
 
-    def __init__(self, identifier='water',
-                 latex='$H_2O$',
-                 comment=None):
+    def __init__(self, identifier: str='water',
+                 latex: Optional[str]='$H_2O$',
+                 comment: Optional[str]=None) -> None:
         """
         Args:
-            identifier (string, optional):
+            identifier:
                 identifier of matter
 
-            latex (string, optional):
+            latex:
                 Latex-version of identifier. If None, identical with identifier
 
-            comment (string, optional):
+            comment:
                 comment on matter
         """
         super().__init__(identifier=identifier, latex=latex, comment=comment)
@@ -292,11 +289,7 @@ class Water(Liquid):
                   4 999.9720
                   0 999.8395
         """
-        T = K2C(np.atleast_1d(T))
-        if any(T < 0.):
-            print('!!! T_celsius less than 0: ', [t for t in T if t < 0])
-        if any(T > 100.):
-            print('!!! T_celsius greater 100: ', [t for t in T if t > 100])
+        T = K2C(T)
         if self.rho.p.absolute:
             pRef = 0.
         else:

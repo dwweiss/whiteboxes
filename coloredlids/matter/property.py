@@ -17,16 +17,12 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-17 DWW
+      2019-09-18 DWW
 """
 
 import numpy as np
 import matplotlib.pyplot as plt
 from typing import Optional, Sequence, Tuple, Union
-import sys
-import os
-
-sys.path.append(os.path.abspath('../..'))
 
 from coloredlids.matter.parameter import Parameter, C2K
 
@@ -48,7 +44,7 @@ class Property(Parameter):
                  unit: str='/',
                  absolute: bool=True,
                  latex: Optional[str]=None,
-                 val: Optional[str]=None,
+                 val: Optional[float]=None,
                  ref: Optional[float]=None,
                  comment: str=None) -> None:
         super().__init__(identifier=identifier, unit=unit, absolute=absolute,
@@ -107,6 +103,19 @@ class Property(Parameter):
         """
         This function shall be overwritten in derived classes
 
+        Args:
+            T:
+                Temperature as scalar or as 1D array
+            p:
+                Pressure as scalar or as 1D array
+            x:
+                Spare variable as scalar or as 1D array
+
+        Returns:
+            Approximation of 'val' as function of T, p and x
+            if T, p and x are scalar, the method returns a scaler.
+            Otherwise a 1D array will be returned
+
         Example:
             class X():
                 def __init__(self):
@@ -121,6 +130,19 @@ class Property(Parameter):
             -> Union[float, Sequence[float]]:
         """
         This function must NOT be overwritten
+
+        Args:
+            T:
+                Temperature as scalar or as 1D array
+            p:
+                Pressure as scalar or as 1D array
+            x:
+                Spare variable as scalar or as 1D array
+
+        Returns:
+            Approximation of 'val' as function of T, p and x
+            if T, p and x are scalar, the method returns a scaler.
+            Otherwise a 1D array will be returned
         """
         if T is None:
             T = self.T.ref

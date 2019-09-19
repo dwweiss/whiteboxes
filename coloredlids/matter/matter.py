@@ -17,32 +17,28 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-16 DWW
+      2019-09-18 DWW
 """
 
-import os
-import sys
 from typing import Optional, Sequence, Union
 
-sys.path.append(os.path.abspath('../..'))
-sys.path.append(os.path.abspath('../../../grayboxes'))
-
-from coloredlids.matter.genericmatter import GenericMatter
+from coloredlids.matter.generic import Generic
 from coloredlids.matter import ferrous
+from coloredlids.matter import gases
+from coloredlids.matter import liquids
 from coloredlids.matter import nonferrous
 from coloredlids.matter import nonmetals
-from coloredlids.matter import liquids
-from coloredlids.matter import gases
 
 from grayboxes.base import Base
 
 
 class Matter(Base):
     """
-    Collection of physical and chemical properties of matter
-
-    Note:
-        Class is designed to be a follower in tree of theoretical submodels
+    Convenience class providing properties of all matter in modules:
+        (ferrous, nonferrous, nonmetals, liquids, gases)
+        
+    For a list of all matter write:
+        
     """
 
     def __init__(self, identifier: str='Matter') -> None:
@@ -51,7 +47,7 @@ class Matter(Base):
             identifier:
                 Identifier of collection of matter
         """
-        super().__init__(identifier=identifier)
+        super().__init__(identifier=identifier)        
         self.program = self.__class__.__name__
 
         classes = []
@@ -65,7 +61,7 @@ class Matter(Base):
             self.data[mat.identifier.lower()] = mat
 
     def __call__(self, identifier: Optional[str]=None) \
-            -> Optional[Union[GenericMatter, Sequence[GenericMatter]]]:
+            -> Optional[Union[Generic, Sequence[Generic]]]:
         """
         Select specific matter
 
@@ -95,4 +91,4 @@ class Matter(Base):
         Returns:
             String of keys list of available matter
         """
-        return str(self.data.keys())
+        return str(self.data.keys())    
