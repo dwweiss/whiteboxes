@@ -1,5 +1,5 @@
 """
-  Copyright (c) 2016-17 by Dietmar W Weiss
+  Copyright (c) 2016- by Dietmar W Weiss
 
   This is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as
@@ -20,11 +20,10 @@
       2018-10-15 DWW
 """
 
-import unittest
-import sys
-import os
+import __init__
+__init__.init_path()
 
-sys.path.append(os.path.abspath('..'))
+import unittest
 
 from coloredlids.tools.latex import from_latex, to_latex, guess_unit
 
@@ -39,6 +38,7 @@ class TestUM(unittest.TestCase):
     def test1(self):
         s = r'$\alpha=$5'
         print('s:', s, 'from_latex:', "'" + from_latex(s) + "'")
+        
         self.assertTrue(True)
 
     def test2(self):
@@ -52,6 +52,7 @@ class TestUM(unittest.TestCase):
         print('to:', "'" + to_latex(s) + "'",
               'to[0]:', "'" + to_latex(s).split()[0] + "'")
         print('guess unit of', "'w':", guess_unit('w'))
+        
         self.assertTrue(True)
 
 

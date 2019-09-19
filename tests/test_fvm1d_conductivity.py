@@ -17,16 +17,15 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-13 DWW
+      2019-09-18 DWW
 """
 
 import __init__
 __init__.init_path()
 
 import unittest
-import numpy as np
 
-from coloredlids.matter.parameter import Parameter, deg2rad, rad2deg
+from doc.examples.fvm1d_conductivity import fvm1d_conductivity
 
 
 class TestUM(unittest.TestCase):
@@ -37,28 +36,9 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-        print('deg2rad(90):', deg2rad(90))
-        print('rad2deg(pi*0.5):', rad2deg(np.pi*0.5))
-
-        self.assertTrue(True)
-
-    def test2(self):
-        foo = Parameter(identifier='rhoLiq', latex=r'$\varrho_{liq}$',
-                        unit='kg/m3')
-        print(foo)
-        print('-' * 40)
-
-        foo.val = 3.3
-        print(foo)
-        print('-' * 40)
-
-        print('foo.val, foo(), foo.ref:', (foo.val, foo(), foo.ref))
-        foo.accuracy = ('1%FS', )
-        foo.repeatability = ('-4ac', 11, 5)  # '-4ac' is invalid
-        foo.expected = (0, 11)
-        foo.operational = (-8.8, )
-        print(foo)
-        print('-' * 40)
+        fvm1d_conductivity(n_vol=int(1e6), 
+                           conductivity=lambda x: 1. if x <= .5 else 2., 
+                           silent=False)
 
         self.assertTrue(True)
 

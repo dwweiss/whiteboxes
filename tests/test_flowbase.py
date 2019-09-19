@@ -17,17 +17,17 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-16 DWW
+      2019-09-19 DWW
 """
 
-import os
-import sys
+import __init__
+__init__.init_path()
+
 import unittest
 
-sys.path.append(os.path.abspath('../..'))
-
-from coloredlids.flow.flowbase import FlowIncompressible
+from coloredlids.flow.flowbase import FlowBase
 from coloredlids.matter.parameter import C2K
+from coloredlids.matter.liquids import HydraulicOil
 
 
 class TestUM(unittest.TestCase):
@@ -38,11 +38,43 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-        foo = FlowIncompressible()
+        foo = FlowBase()
         foo.T.val = C2K(50)
         foo.v = 2.0
-        print(foo)
+
         print('foo.T:', foo.T())
+        print('foo.T:', foo.T.val)
+        print('*' * 60)
+
+        self.assertTrue(foo.T.val == foo.T())
+
+    def test2(self):
+        foo = FlowBase(w_h_pipe = (4e-3, 5e-3))
+
+        foo.T.val = C2K(50)
+        foo.v = 1.
+        print(foo)
+        print('*' * 60)
+
+        self.assertTrue(True)
+
+    def test3(self):
+        foo = FlowBase(d_pipe=25e-3)
+
+        foo.T.val = C2K(50)
+        foo.v = 1.
+        print(foo)
+        print('*' * 60)
+
+        self.assertTrue(True)
+
+    def test4(self):
+        foo = FlowBase(fluid=HydraulicOil())
+
+        foo.T.val = C2K(50)
+        foo.v = 1.
+        print(foo)
+        print('*' * 60)
 
         self.assertTrue(True)
 

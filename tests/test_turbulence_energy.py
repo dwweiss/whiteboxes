@@ -20,12 +20,11 @@
       2018-09-14 DWW
 """
 
-import sys
-import os
-import matplotlib.pyplot as plt
-import unittest
+import __init__
+__init__.init_path()
 
-sys.path.append(os.path.abspath('..'))
+import unittest
+import matplotlib.pyplot as plt
 
 from coloredlids.flow.turbulence_energy import \
     initial_turbulence_energy_and_dissipation

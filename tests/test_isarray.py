@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-13 DWW
+      2018-09-17 DWW
 """
 
 import __init__
@@ -26,7 +26,7 @@ __init__.init_path()
 import unittest
 import numpy as np
 
-from coloredlids.matter.parameter import Parameter, deg2rad, rad2deg
+from coloredlids.tools.isarray import is_array
 
 
 class TestUM(unittest.TestCase):
@@ -37,29 +37,16 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-        print('deg2rad(90):', deg2rad(90))
-        print('rad2deg(pi*0.5):', rad2deg(np.pi*0.5))
-
-        self.assertTrue(True)
-
-    def test2(self):
-        foo = Parameter(identifier='rhoLiq', latex=r'$\varrho_{liq}$',
-                        unit='kg/m3')
-        print(foo)
-        print('-' * 40)
-
-        foo.val = 3.3
-        print(foo)
-        print('-' * 40)
-
-        print('foo.val, foo(), foo.ref:', (foo.val, foo(), foo.ref))
-        foo.accuracy = ('1%FS', )
-        foo.repeatability = ('-4ac', 11, 5)  # '-4ac' is invalid
-        foo.expected = (0, 11)
-        foo.operational = (-8.8, )
-        print(foo)
-        print('-' * 40)
-
+        l = [1., 2., 3.]
+        a = np.array(l)
+        t = tuple(l)
+        b = np.asfarray(l)
+        i = 2
+        f = 3.3
+    
+        for x in [l, a, t, b, i, f]:
+            print('x:', x, '-> isArray:', is_array(x))
+    
         self.assertTrue(True)
 
 

@@ -20,13 +20,12 @@
       2018-09-17 DWW
 """
 
+import __init__
+__init__.init_path()
+
 import unittest
-import sys
-import os
 
-sys.path.append(os.path.abspath('..'))
-
-from coloredlids.matter.genericmatter import C2K
+from coloredlids.matter.generic import C2K
 from coloredlids.matter.matter import Matter
 
 
@@ -46,6 +45,8 @@ class TestUM(unittest.TestCase):
             if True:
                 mat.plot()
 
+        self.assertTrue(True)
+
     def test2(self):
         s = 'Water'
         print('-' * len(s) + '\n' + s + '\n' + '-' * len(s))
@@ -63,6 +64,8 @@ class TestUM(unittest.TestCase):
         print('c_p:', c_p)
 
         mat.plot('all')
+
+        self.assertTrue(True)
 
 
 if __name__ == '__main__':

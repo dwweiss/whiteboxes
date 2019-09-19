@@ -17,36 +17,18 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-16 DWW
+      2018-09-19 DWW
 """
 
-import __init__
-__init__.init_path()
-
-import unittest
-
-import coloredlids.matter.gases as module_under_test
+import sys
+import os
 
 
-class TestUM(unittest.TestCase):
-    def setUp(self):
-        pass
+def init_path():
+    sys.path.append(os.path.abspath('..'))
+    sys.path.append(os.path.abspath('../../coloredlids')) # for coloredlids/doc
+    sys.path.append(os.path.abspath('../../grayboxes'))         # for grayboxes
 
-    def tearDown(self):
-        pass
 
-    def test1(self):
-        classes = [v for c, v in module_under_test.__dict__.items()
-                   if isinstance(v, type) and
-                   v.__module__ == module_under_test.__name__]
-
-        for mat in classes:
-            print('class:', mat.__name__)
-            foo = mat()
-            print(foo.identifier, '*' * 50)
-            foo.plot()
-
-        self.assertTrue(True)
-
-if __name__ == '__main__':
-    unittest.main()
+if __file__ == '__main__':
+    init_path()

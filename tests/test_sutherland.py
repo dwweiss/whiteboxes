@@ -20,11 +20,10 @@
       2018-09-17 DWW
 """
 
-import unittest
-import sys
-import os
+import __init__
+__init__.init_path()
 
-sys.path.append(os.path.abspath('..'))
+import unittest
 
 from coloredlids.matter.sutherland import sutherland_viscosity
 
@@ -42,6 +41,8 @@ class TestUM(unittest.TestCase):
 
         mu_tilde = sutherland_viscosity("AIR", 100 + 273.15, 20 + 273.15, 1.)
         print('mu_tilde:', mu_tilde)
+
+        self.assertTrue(True)
 
 
 if __name__ == '__main__':

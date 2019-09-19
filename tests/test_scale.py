@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-13 DWW
+      2019-09-18 DWW
 """
 
 import __init__
@@ -26,7 +26,7 @@ __init__.init_path()
 import unittest
 import numpy as np
 
-from coloredlids.matter.parameter import Parameter, deg2rad, rad2deg
+from coloredlids.data.scale import scale, batch_normalize, batch_denormalize
 
 
 class TestUM(unittest.TestCase):
@@ -37,28 +37,23 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-        print('deg2rad(90):', deg2rad(90))
-        print('rad2deg(pi*0.5):', rad2deg(np.pi*0.5))
+        X = np.array([39, 50, 41, 100, 90])
+        x = scale(X, lo=-1, hi=2)
+        print('1 X:', X, 'x:', x)
+
+        x = scale(X)
+        print('2 X:', X, 'x:', x)
 
         self.assertTrue(True)
 
     def test2(self):
-        foo = Parameter(identifier='rhoLiq', latex=r'$\varrho_{liq}$',
-                        unit='kg/m3')
-        print(foo)
-        print('-' * 40)
+        X = np.array([39, 50, 41, 100, 90])
+        x = batch_normalize(X, eps=1000)
+        print('3 X:', X, 'x:', x)
 
-        foo.val = 3.3
-        print(foo)
-        print('-' * 40)
-
-        print('foo.val, foo(), foo.ref:', (foo.val, foo(), foo.ref))
-        foo.accuracy = ('1%FS', )
-        foo.repeatability = ('-4ac', 11, 5)  # '-4ac' is invalid
-        foo.expected = (0, 11)
-        foo.operational = (-8.8, )
-        print(foo)
-        print('-' * 40)
+        x = batch_denormalize(x)
+        print('4 x:', x)
+        print('5 x == X:', all(x == X))        
 
         self.assertTrue(True)
 

@@ -17,16 +17,23 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-13 DWW
+      2019-09-19 DWW
 """
 
 import __init__
 __init__.init_path()
 
 import unittest
-import numpy as np
 
-from coloredlids.matter.parameter import Parameter, deg2rad, rad2deg
+from coloredlids.tools.isfunction import is_function
+
+
+def f():
+    return 0.0
+
+class C(object):
+    def f(self): 
+        pass
 
 
 class TestUM(unittest.TestCase):
@@ -37,29 +44,23 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-        print('deg2rad(90):', deg2rad(90))
-        print('rad2deg(pi*0.5):', rad2deg(np.pi*0.5))
-
-        self.assertTrue(True)
-
-    def test2(self):
-        foo = Parameter(identifier='rhoLiq', latex=r'$\varrho_{liq}$',
-                        unit='kg/m3')
-        print(foo)
-        print('-' * 40)
-
-        foo.val = 3.3
-        print(foo)
-        print('-' * 40)
-
-        print('foo.val, foo(), foo.ref:', (foo.val, foo(), foo.ref))
-        foo.accuracy = ('1%FS', )
-        foo.repeatability = ('-4ac', 11, 5)  # '-4ac' is invalid
-        foo.expected = (0, 11)
-        foo.operational = (-8.8, )
-        print(foo)
-        print('-' * 40)
-
+        c = C()
+    
+        for x in [f, lambda a: 1.0, c.f, c]:
+            print('x:', str(x)[:str(x).index('at')-1] + str(x)[-1],
+                  '=> is_function:', is_function(x))
+        print()
+    
+        n = None
+        i = 1
+        b = True
+        d = 1.0
+        l = [1, 2]
+        t = (1, 2)
+        s = 'abc'
+        for x in [n, i, b, d, l, t, s]:
+            print('x:', x, '=> isFunction:', is_function(x))
+    
         self.assertTrue(True)
 
 

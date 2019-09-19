@@ -20,13 +20,12 @@
       2018-09-12 DWW
 """
 
+import __init__
+__init__.init_path()
+
 import unittest
-import sys
-import os
 import numpy as np
 import matplotlib.pyplot as plt
-
-sys.path.append(os.path.abspath('..'))
 
 from coloredlids.flow.pressure_drop import (pressure_drop, resistance_pipe, 
     poiseulle_colebrook, resistance_pipe_bend, 
@@ -90,6 +89,8 @@ class TestUM(unittest.TestCase):
                     print(s.format(key, val))
         f()
 
+        self.assertTrue(True)
+
     def test2(self):
         s = 'Pressure loss in straight->reduct->straight->expansion->straight'
         print('-' * len(s) + '\n' + s + '\n' + '-' * len(s))
@@ -117,6 +118,8 @@ class TestUM(unittest.TestCase):
             plt.legend(bbox_to_anchor=(0, 1), loc='upper left')
             plt.grid()
             plt.show()
+
+        self.assertTrue(True)
 
     def test3(self):
         s = 'Pressure loss  tapered: straight->redu->straight->expan->straight'
@@ -180,6 +183,8 @@ class TestUM(unittest.TestCase):
         plt.grid()
         plt.show()
 
+        self.assertTrue(True)
+
     def test4(self):
         Re_seq = np.linspace(1e0, 1e4, 10000)
         k = [poiseulle_colebrook(Re, D1, eps_rough) for Re in Re_seq]
@@ -187,6 +192,8 @@ class TestUM(unittest.TestCase):
         plt.xlabel('Re')
         plt.ylabel('$k_{straight}$ [/]')
         plt.show()
+
+        self.assertTrue(True)
 
     def test5(self):
         # plot of k(r_bend), phiBend=const
@@ -211,6 +218,8 @@ class TestUM(unittest.TestCase):
         plt.plot(x, y)
         plt.show()
 
+        self.assertTrue(True)
+
     def test6(self):
         # plot dp(nu)  for v-sequence
         for v in [0.05, 0.1, 0.2, 1, 10]:
@@ -231,6 +240,8 @@ class TestUM(unittest.TestCase):
                           ', eps: '+str(eps_rough)+' v1_expan=v2_reduc')
                 plt.plot(nu_seq*1e6, dp1*1e-3, label=s)
             plt.show()
+
+        self.assertTrue(True)
 
     def test7(self):
         # dp(nu)  for a v-sequence
@@ -280,6 +291,7 @@ class TestUM(unittest.TestCase):
                 plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
                 plt.show()
 
+        self.assertTrue(True)
 
 if __name__ == '__main__':
     unittest.main()

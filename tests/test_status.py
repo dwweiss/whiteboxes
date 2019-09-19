@@ -17,16 +17,15 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-13 DWW
+      2019-09-18 DWW
 """
 
 import __init__
 __init__.init_path()
 
 import unittest
-import numpy as np
 
-from coloredlids.matter.parameter import Parameter, deg2rad, rad2deg
+from coloredlids.data.status import Status
 
 
 class TestUM(unittest.TestCase):
@@ -37,27 +36,21 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-        print('deg2rad(90):', deg2rad(90))
-        print('rad2deg(pi*0.5):', rad2deg(np.pi*0.5))
-
-        self.assertTrue(True)
-
-    def test2(self):
-        foo = Parameter(identifier='rhoLiq', latex=r'$\varrho_{liq}$',
-                        unit='kg/m3')
-        print(foo)
+        for x in Status:
+            print(x.name, ": '" + str(x.value) + "'")
+        print()
+    
+        for x in Status:
+            print(Status.symbol(x), Status.color(x))
         print('-' * 40)
-
-        foo.val = 3.3
-        print(foo)
+    
+        x = Status.FAIL
+        print('status:', x)
+        print('name:', x.name, ", symbol:'" + x.value[0] + "', color:", x.value[1])
         print('-' * 40)
-
-        print('foo.val, foo(), foo.ref:', (foo.val, foo(), foo.ref))
-        foo.accuracy = ('1%FS', )
-        foo.repeatability = ('-4ac', 11, 5)  # '-4ac' is invalid
-        foo.expected = (0, 11)
-        foo.operational = (-8.8, )
-        print(foo)
+    
+        x = '-'
+        print("Name(symbol='" + x + "'):", Status.Name('-'))
         print('-' * 40)
 
         self.assertTrue(True)

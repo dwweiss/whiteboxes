@@ -17,18 +17,18 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-08-23 DWW
+      2019-09-19 DWW
 """
 
+import __init__
+__init__.init_path()
+
 import unittest
+import os
 import subprocess
 from tempfile import gettempdir
 from pandas import DataFrame, ExcelWriter, read_excel
 import matplotlib.pyplot as plt
-import sys
-import os
-
-sys.path.append(os.path.abspath('..'))
 
 from coloredlids.data.dataframe import select_frame, split_frame
 

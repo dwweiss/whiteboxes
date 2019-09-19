@@ -20,11 +20,10 @@
       2018-09-13 DWW
 """
 
-import unittest
-import sys
-import os
+import __init__
+__init__.init_path()
 
-sys.path.append(os.path.abspath('..'))
+import unittest
 
 from coloredlids.matter.property import Property
 

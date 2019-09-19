@@ -20,11 +20,10 @@
       2018-09-16 DWW
 """
 
-import unittest
-import sys
-import os
+import __init__
+__init__.init_path()
 
-sys.path.append(os.path.abspath('..'))
+import unittest
 
 from coloredlids.tools.date_to_seconds import date_to_seconds
 

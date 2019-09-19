@@ -20,11 +20,10 @@
       2018-09-17 DWW
 """
 
-import unittest
-import sys
-import os
+#import __init__
+#__init__.init_path()
 
-sys.path.append(os.path.abspath('..'))
+import unittest
 
 import coloredlids.matter.ferrous as module_under_test
 
@@ -46,6 +45,8 @@ class TestUM(unittest.TestCase):
             foo = mat()
             print(foo.identifier, '*' * 50)
             foo.plot()
+
+        self.assertTrue(True)
 
 
 if __name__ == '__main__':

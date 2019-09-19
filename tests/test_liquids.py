@@ -17,17 +17,16 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-17 DWW
+      2018-09-19 DWW
 """
 
-import unittest
-import sys
-import os
+import __init__
+__init__.init_path()
 
-sys.path.append(os.path.abspath('..'))
+import unittest
 
 import coloredlids.matter.liquids as module_under_test
-
+from coloredlids.matter.liquids import HydraulicOil
 
 class TestUM(unittest.TestCase):
     def setUp(self):
@@ -46,6 +45,14 @@ class TestUM(unittest.TestCase):
             foo = mat()
             print(foo.identifier, '*' * 50)
             foo.plot()
+
+        self.assertTrue(True)
+
+    def test2(self):
+        foo = HydraulicOil()
+        foo.plot()
+
+        self.assertTrue(True)
 
 
 if __name__ == '__main__':

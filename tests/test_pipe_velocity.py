@@ -20,13 +20,12 @@
       2018-08-28 DWW
 """
 
+import __init__
+__init__.init_path()
+
 import unittest
-import sys
-import os
 import numpy as np
 import matplotlib.pyplot as plt
-
-sys.path.append(os.path.abspath('..'))
 
 from coloredlids.flow.pipe_velocity import v_axial
 
