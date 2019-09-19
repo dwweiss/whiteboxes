@@ -1,5 +1,5 @@
 """
-  Copyright (c) 2016-17 by Dietmar W Weiss
+  Copyright (c) 2016- by Dietmar W Weiss
 
   This is free software; you can redistribute it and/or modify it
   under the terms of the GNU Lesser General Public License as
@@ -17,16 +17,17 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2017-11-27 DWW
+      2018-10-15 DWW
 """
 
-
+from typing import Optional
 from enum import Enum
 
 
 class Status(Enum):
     """
-    Defines status of data. A symbol and a color is connected to status name.
+    Defines status of data. 
+    A symbol and a color is connected to status name.
     """
     BLOCK    = ('#', 'black')       # data is blocked for processing
     FAIL     = ('-', 'red')         # failure
@@ -37,45 +38,42 @@ class Status(Enum):
     TOLERATE = ('~', 'yellow')      # data is within tolerated ranges
     UNDEF    = ('?', 'lightgray')   # undefined
 
-    def symbol(status):
+    def symbol(status: 'Status') -> str:
         """
         Gets symbol connected to status
 
         Args:
-            status (Status):
+            status:
                 status of data
 
         Returns:
-            (string):
-                symbol indicating status
+            symbol indicating status
         """
         return status.value[0]
 
-    def color(status):
+    def color(status: 'Status') -> str:
         """
         Gets color connected to status
 
         Args:
-            status (Status):
+            status:
                 status of data
 
         Returns:
-            (string):
-                string with status color
+            string with status color
         """
         return status.value[1]
 
-    def Name(symbol):
+    def Name(symbol: str) -> Optional['Status']:
         """
         Gets symbol from status name
 
         Args:
-            symbol (string):
+            symbol:
                 symbol indicating status
 
         Returns:
-            (Status):
-                name of status. If symbol is unknown, 'None' is returned
+            name of status. If symbol is unknown, 'None' is returned
 
         Note:
             Do not rename to 'name()'.  'name' is first element of attributes
@@ -84,24 +82,3 @@ class Status(Enum):
             if x.value[0] == symbol:
                 return x.name
         return None
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    for x in Status:
-        print(x.name, ": '" + str(x.value) + "'")
-    print()
-
-    for x in Status:
-        print(Status.symbol(x), Status.color(x))
-    print('-' * 40)
-
-    x = Status.FAIL
-    print('status:', x)
-    print('name:', x.name, ", symbol:'" + x.value[0] + "', color:", x.value[1])
-    print('-' * 40)
-
-    x = '-'
-    print("Name(symbol='" + x + "'):", Status.Name('-'))
-    print('-' * 40)

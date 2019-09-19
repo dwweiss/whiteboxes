@@ -17,21 +17,22 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-25 DWW
+      2018-10-15 DWW
 """
 
 import numpy as np
 from coloredlids.data.status import Status
-from coloredlids.data.inrange import inRange
+from coloredlids.data.inrange import in_range
 
 
 class ToleranceRange(object):
     """
     Ranges of tolerances around data points
 
-    This class stores ranges around a point in multi-dimensional space. It can
-    check if the values are within the expected(), tolerated(), local() and
-    global() windows. It stores the statuses of the data points.
+    This class stores ranges around a point in multi-dimensional space. 
+    It can check if the values are within the expected(), tolerated(), 
+    local() and global() windows. 
+    It stores the statuses of the data points.
 
     Note:
         The reference() point can be located outside the
@@ -162,15 +163,15 @@ class ToleranceRange(object):
                 self._statuses[i] = Status.FAIL
                 b = True
                 for j in range(self._axes.size):
-                    b = b and inRange(self._values[i][j], self.expected[j],
-                                      tolerance)
+                    b = b and in_range(self._values[i][j], self.expected[j],
+                                       tolerance)
                 if b:
                     self._statuses[i] = Status.SUCCESS
                 else:
                     b = True
                     for j in range(self._axes.size):
-                        b = b and inRange(self._values[i][j],
-                                          self.tolerated[j], tolerance)
+                        b = b and in_range(self._values[i][j],
+                                           self.tolerated[j], tolerance)
                     if b:
                         self._statuses[i] = Status.TOLERATE
 
@@ -181,31 +182,12 @@ class ToleranceRange(object):
         else:
             b = True
             for j in range(self._axes.size):
-                b = b and inRange(P, self.expected, tolerance)
+                b = b and in_range(P, self.expected, tolerance)
             if b:
                 return Status.SUCCESS
             b = True
             for j in range(self._axes.size):
-                b = b and inRange(P, self.tolerated, tolerance)
+                b = b and in_range(P, self.tolerated, tolerance)
             if b:
                 return Status.TOLERATE
             return Status.FAIL
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    test = ToleranceRange()
-
-    test.axes = ['U', 'I']
-    test.reference = (230, 80)
-    test.tolerated = ((0, 245), (0, 100))
-    test.expected = ((4, 241), (0, 90))
-    test.local = ((0, 300), (0, 1000))
-    test.Global = ((0, 10e3), (0, 20e3))
-    test.values = ((3, 355), (30, 50), (7, 66), (9, 77), (3, 33), (11, 99))
-
-    stat = test.evaluate()
-
-    print('test.statuses:', [Status.symbol(x) for x in test.statuses])
-    print('stat:', stat)

@@ -17,46 +17,47 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-02-23 DWW
+      2019-09-17 DWW
 """
 
+__all__ = ['scale', 'batch_normalize', 'batch_denormalize'] 
+
+from typing import Optional
 import numpy as np
 
-
-def scale(X, lo=0., hi=1., axis=None):
+           
+def scale(X: np.ndarray, lo: float=0., hi: float=1., 
+          axis: Optional[int]=None) -> np.ndarray:
     """
     Normalizes elements of array to [lo, hi] interval (linear)
 
     Args:
-        X (array_like of float):
+        X:
             array of data to be normalised
 
-        lo (float, optional):
+        lo:
             minimum of returned array
 
-        hi (float, optional):
+        hi:
             maximum of returned array
 
-        axis (string or int, optional):
-            if not None, max is taken from axis given by axis index
+        axis:
+            if not None, minimum and maximum are taken from axis given by 
+            axis index (for 2D array: column=0, row=1)
 
     Returns:
         (array of float):
             normalized array
     """
-    if axis == 'col':
-        axis = 0
-    if axis == 'row':
-        axis = 1
     np.asarray(X)
     _max = np.max(X, axis=axis)
     delta = _max - np.min(X, axis=axis)
-    assert np.abs(delta) > 1e-20, str(delta)
+    assert not np.isclose(delta, 0), str(delta)
 
     return hi - (((hi - lo) * (_max - X)) / delta)
 
 
-def batchNormalize(X, eps=0):
+def batch_normalize(X, eps=0):
     """
     Normalizes elements of array, shifted by mean of X and scaled by variance
 
@@ -83,7 +84,7 @@ def batchNormalize(X, eps=0):
     return {'val': X, 'mean': mean, 'var': var, 'eps': eps}
 
 
-def batchDenormalize(X, mean=0, var=1, eps=0):
+def batch_denormalize(X, mean=0, var=1, eps=0):
     """
     Denormalizes elements of array, shifted by mean of X and scaled by variance
 
@@ -115,26 +116,3 @@ def batchDenormalize(X, mean=0, var=1, eps=0):
         val = np.asfarray(X)
 
     return val * np.sqrt(var + eps) + mean
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    ALL = 1
-
-    X = np.array([39, 50, 41, 100, 90])
-
-    if 0 or ALL:
-        x = scale(X, lo=-1, hi=2)
-        print('1 X:', X, 'x:', x)
-
-        x = scale(X)
-        print('2 X:', X, 'x:', x)
-
-    if 0 or ALL:
-        x = batchNormalize(X, eps=1000)
-        print('3 X:', X, 'x:', x)
-
-        x = batchDenormalize(x)
-        print('4 x:', x)
-        print('5 x == X:', all(x == X))

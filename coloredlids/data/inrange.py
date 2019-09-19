@@ -44,7 +44,7 @@ def in_range(x0: float, x0_range: Tuple[float, float],
              x9_range: Optional[Tuple[float, float]]=None,
              tolerance: Optional[float]=None) -> Optional[bool]:
     """
-    Checks if all x_i is within lower and upper bound of x_i-_range
+    Checks if all x_i is within lower and upper bound of x_i-range
 
     Args:
         x0..x9:

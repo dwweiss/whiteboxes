@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-03-18 DWW
+      2019-03-21 DWW
 """
 
 __all__ = ['split_frame', 'select_frame', 'xy_to_frame', 'frame_to_xy',
@@ -217,7 +217,9 @@ def frame_to_xy(df: DataFrame,
                 y_keys: Optional[Sequence[str]]=None) \
         -> Tuple[np.ndarray, np.ndarray]:
     """
-    Converts pandas.DataFrame to two 2D arrays
+    Converts pandas.DataFrame to couple of 2D arrays
+    
+    See also: grayboxes.boxmodel.frame2arr()
 
     Args:
         df:

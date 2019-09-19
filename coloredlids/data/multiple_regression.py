@@ -17,8 +17,10 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-10-15 DWW
+      2019-09-18 DWW
 """
+
+__all__ = ['x_y_xy', 'x_y', 'x_y_xy_x2_y2', 'xy_x2_y2'] 
 
 import numpy as np
 
