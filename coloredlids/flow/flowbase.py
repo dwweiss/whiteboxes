@@ -17,35 +17,47 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-16 DWW
+      2019-09-19 DWW
 """
 
-import os
-from math import pi
-import sys
-
-sys.path.append(os.path.abspath('../..'))
+import numpy as np
+from typing import Optional, Tuple
 
 from coloredlids.matter.property import Parameter, Property, C2K
-from coloredlids.matter.genericmatter import Fluid
+from coloredlids.matter.generic import Fluid
 from coloredlids.matter.liquids import Water
 
 
-class FlowIncompressible(Property):
+class FlowBase(Property):
     """
-    Properties of mass or volume flow in pipework
+    Properties of flow in pipework with circular or rectangulat 
+    cross-section
     """
 
-    def __init__(self, identifier: str='Flow', d_pipe: float=15e-3, 
-                 v: float=1.) -> None:
+    def __init__(self, identifier: str='Flow', 
+                 d_pipe: Optional[float]=None, 
+                 w_h_pipe: Optional[Tuple[float, float]] = None,
+                 v: float=1.,
+                 fluid: Optional[Fluid]= None) -> None:
         """
         Args:
             identifier:
-                Indentifier of flow
+                indentifier of flow
+
             d_pipe:
-                Equivalent inner pipe diameter [m]
+                inner diameter if circular cross-section [m]
+
+            w_h_pipe:
+                Width and height of rectangular cross-section [m, m]
+
             v:
-                Speed (mean velocity) [m/s]
+                speed (mean velocity) [m/s]
+                
+            fluid:
+                fluid object, default is Water
+
+        Note:
+            If both d_pipe and w_h_pipe are given, w_h_pipe is ignored
         """
         super().__init__(identifier=identifier)
 
@@ -54,17 +66,32 @@ class FlowIncompressible(Property):
         self.T.val: float = C2K(20)
         self.p.val: float = self.p.ref
 
+        self._v: float = Parameter(identifier='v', unit='m/s', val=v)
+        self._A: float = 0.
         self._m_dot: float = 0.
         self._V_dot: float = 0.
-        self._d_pipe: float = d_pipe
-        self._A: float = pi * 0.25 * self.d_pipe**2
-        self._v: float = Parameter(identifier='v', unit='m/s', val=v)
+
+        self._d_pipe: Optional[float] = None
+        self._w_h_pipe: Optional[Tuple[float, float]] = None
+
+        if d_pipe is not None:
+            self.d_pipe = d_pipe
+        elif w_h_pipe is not None:
+            self.w_h_pipe = w_h_pipe
+        else:
+            self.d_pipe = 1.
+
+        if fluid is None:
+            self.fluid = Water()
+        else:
+            self.fluid = fluid 
+            assert isinstance(self.fluid, Fluid)
 
     @property
     def fluid(self) -> Fluid:
         """
         Returns:
-            (Fluid): fluid object
+            fluid object
         """
         return self._fluid
 
@@ -74,7 +101,8 @@ class FlowIncompressible(Property):
         Sets fluid
 
         Args:
-            value: fluid
+            value: 
+                fluid object
         """
         del self._fluid
         self._fluid = value
@@ -82,7 +110,7 @@ class FlowIncompressible(Property):
     def h_dot(self) -> float:
         """
         Returns:
-            enthalpy flow rate [W/kg]
+            enthalpy flow rate [J/kg]
         """
         return self.T() * self.fluid.c_p(self.T()) * self.m_dot
 
@@ -98,9 +126,11 @@ class FlowIncompressible(Property):
     def v(self, value: float) -> None:
         """
         Sets speed and updates volume and mass flow rate
+        Updates volume and mass flow rate
 
         Args:
-            value: speed [m/s]
+            value: 
+                speed [m/s]
         """
         self._v = value
         self._V_dot = self._A * self._v
@@ -117,15 +147,51 @@ class FlowIncompressible(Property):
     @d_pipe.setter
     def d_pipe(self, value: float) -> None:
         """
-        Sets pipe diameter and updates area, volume and mass flow rate
+        Sets diameter of pipe with circular cross-section
+        Updates area, volume and mass flow rate
 
         Args:
-            value: pipe diameter [m]
+            value: 
+                pipe diameter [m]
         """
         self._d_pipe = value
-        self._A = pi * 0.25 * self.d_pipe**2
-        self._V_dot = self._A * self.v
+        self._A = np.pi * 0.25 * self.d_pipe**2
+        self._V_dot = self._A * self.v()
         self._m_dot = self._V_dot * self.fluid.rho(self.T(), self.p(), 0.)
+
+    @property
+    def w_h_pipe(self) -> Tuple[float, float]:
+        """
+        Returns:
+            width and height of rectangular cross-section [m]
+        """
+        return self._w_h_pipe
+
+    @w_h_pipe.setter
+    def w_h_pipe(self, value: Tuple[float, float]) -> None:
+        """
+        Sets width and height of cross-sectional area of pipe with 
+            rectangular cross-section
+        Updates area, volume and mass flow rate
+
+        Args:
+            width and height of rectangular cross-section [m]
+        """
+        self._w_h_pipe = np.atleast_1d(value)
+        assert len(self._w_h_pipe) == 2, str(self._w_h_pipe)
+
+        self._A = self._w_h_pipe[0] * self._w_h_pipe[1]
+        self._V_dot = self._A * self.v()
+        rho = self.fluid.rho(self.T(), self.p(), 0.)
+        self._m_dot = self._V_dot * rho
+
+    @property
+    def A(self) -> float:
+        """
+        Returns:
+            cross-sectional area [m2]
+        """
+        return self._A
 
     @property
     def m_dot(self) -> float:
@@ -133,7 +199,7 @@ class FlowIncompressible(Property):
         Returns:
             mass flow rate [kg/s]
         """
-        return self._mDot
+        return self._m_dot
 
     @m_dot.setter
     def m_dot(self, value: float) -> None:
@@ -141,11 +207,12 @@ class FlowIncompressible(Property):
         Sets mass flow rate and updates volume flow rate and speed
 
         Args:
-            value: mass flow rate [kg/s]
+            value: 
+                mass flow rate [kg/s]
         """
         self._m_dot = value
         self._V_dot = self.m_dot / self.fluid.rho(self.T(), self.p())
-        self._v = self.V_dot / self._A
+        self._v = self.V_dot / self.A
 
     @property
     def V_dot(self) -> float:
@@ -158,23 +225,38 @@ class FlowIncompressible(Property):
     @V_dot.setter
     def V_dot(self, value: float) -> None:
         """
+        Sets volume flow rate and updates mass flow rate and speed
+
         Args:
-            value: volume flow rate [m3/s]
+            value: 
+                volume flow rate [m3/s]
         """
         self._V_dot = value
         self._m_dot = self.V_dot * self.fluid.rho(self.T(), self.p())
         self._v = self.V_dot / self._A
 
+    @property
     def Re(self) -> float:
-        return self.dPipe * self.v / self.fluid.nu(self.T(), self.p())
+        """
+        Returns:
+            Reynolds number
+        """
+        if self.d_pipe is not None:
+            d_eqivalent = self.d_pipe
+        else:
+            a, b = self.w_h_pipe
+            d_eqivalent = 2 * a * b / (a + b)
+        return d_eqivalent * self.v / self.fluid.nu(self.T(), self.p())
 
+    @property
     def is_laminar(self):
         """
         Returns:
             True if flow is laminar
         """
-        return self.Re() <= 2100.
+        return self.Re <= 2100.
 
+    @property
     def is_transition(self) -> bool:
         """
         Returns:
@@ -182,16 +264,33 @@ class FlowIncompressible(Property):
         """
         return not self.is_laminar() and not self.is_turbulent()
 
+    @property
     def is_turbulent(self) -> bool:
         """
         Returns:
-            (bool): True if flow is turbulent
+            True if flow is turbulent
         """
-        return self.Re() >= 4000.
+        return self.Re >= 4000.
 
+    @property
     def is_ultra_sonic(self) -> float:
         """
         Returns:
             True if flow is ultra sonic (v > v_sound)
         """
         return self.v() < self.fluid.c_sound(self.T(), self.p())
+    
+    def __str__(self):
+        s = self._fluid.identifier                    + '\n' + \
+            '           A: ' + str(self.A)            + '\n' + \
+            '      d_pipe: ' + str(self._d_pipe)      + '\n' + \
+            '  is_laminar: ' + str(self.is_laminar)   + '\n' + \
+            'is_turbulent: ' + str(self.is_turbulent) + '\n' + \
+            '           p: ' + str(self.p.val)        + '\n' + \
+            '           T: ' + str(self.T.val)        + '\n' + \
+            '          Re: ' + str(self.Re)           + '\n' + \
+            '       m_dot: ' + str(self._m_dot)       + '\n' + \
+            '       V_dot: ' + str(self._V_dot)       + '\n' + \
+            '           v: ' + str(self._v)           + '\n' + \
+            '    w_h_pipe: ' + str(self._w_h_pipe)
+        return s
