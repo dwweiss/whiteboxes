@@ -17,14 +17,13 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-17 DWW
+      2019-09-27 DWW
 """
 
 import numpy as np
 
 from coloredlids.matter.gases import Air
 from coloredlids.matter.generic import Fluid
-from coloredlids.matter.parameter import C2K
 
 
 class FreeConvectionPlate(object):
@@ -67,7 +66,7 @@ class FreeConvectionPlate(object):
 
             foo = PlateConvRad()
             foo.fluid = Air()
-            foo.epsRad = 0.95
+            foo.eps_rad = 0.95
             alpha = foo.alpha_conv_rad(T_surf, T_inf, L, phi_plate)
     """
 
@@ -96,22 +95,23 @@ class FreeConvectionPlate(object):
     def eps_rad(self, value):
         self._eps_rad = np.clip(value, 0, 1)
 
-    def alpha_conv(self, T_surf, T_inf, L, phi_plate=0):
+    def alpha_conv(self, T_surf: float, T_inf: float, L: float, 
+                   phi_plate: float=0.) -> float:
         """
         Convective heat transfer coefficient for natural convection
 
         Args:
-            T_surf (float):
+            T_surf:
                 surface temperature [K]
 
-            T_inf (float):
+            T_inf:
                 temperature outside film [K]
 
-            L (float):
+            L:
                 characteristic length [m],
                 vertical plate: L = height, horizontal: L = width
 
-            phi_plate (float, optional):
+            phi_plate:
                 counter-clockwise rotation of plate around y-axis [deg],
                 - phi = 0        deg : horizontal upper face of heated plate
                 - phi = 90       deg : vertical heated plate
@@ -119,8 +119,7 @@ class FreeConvectionPlate(object):
                 - 30 <= phi < 90 deg : inclined face of heated plate
 
         Returns:
-            (float):
-                Convective heat transfer coefficient alpha_conv [W/(m^2 K)]
+            Convective heat transfer coefficient alpha_conv [W/(m^2 K)]
 
            z ^
            |
@@ -131,25 +130,26 @@ class FreeConvectionPlate(object):
         """
         assert T_surf > T_inf
 
-        if phi_plate == 0:
+        phi_plate = float(phi_plate)
+        if phi_plate == 0.:
             return self.alpha_LUpper(T_surf, T_inf, L)
-        elif 30 <= phi_plate and phi_plate <= 90:
-            return self.alpha_L_vert(T_surf, T_inf, L, np.abs(90 - phi_plate))
-        elif phi_plate == 180:
+        elif 30. <= phi_plate and phi_plate <= 90.:
+            return self.alpha_L_vert(T_surf, T_inf, L, np.abs(90. - phi_plate))
+        elif phi_plate == 180.:
             return self.alpha_L_upper(T_surf, T_inf, L)
         else:
-            print('??? alphaConv() phi_plate:', phi_plate)
+            print('??? invalid alpha_conv() phi_plate:', phi_plate)
             return np.inf
 
-    def alpha_rad(self, T_surf, T_inf):
+    def alpha_rad(self, T_surf: float, T_inf: float) -> float:
         """
         Computes equivalent heat transfer coefficient for radiation
 
         Args:
-            T_surf (float):
+            T_surf:
                 surface temperature [K]
 
-            T_inf (float):
+            T_inf:
                 fluid temperature outside film [K]
 
         Returns:
@@ -200,22 +200,23 @@ class FreeConvectionPlate(object):
         return self.alpha_conv(T_surf, T_inf, L, phi_plate) + \
             self.alpha_rad(T_surf, T_inf)
 
-    def alpha_L_vert(self, T_surf, T_inf, L, theta=0):
+    def alpha_L_vert(self, T_surf: float, T_inf: float, L: float, 
+                     theta: float=0.) -> float:
         """
         Computes convective heat transfer coefficient for natural
         convection on vertical or inclined plates
 
         Args:
-            T_surf (float):
+            T_surf:
                 surface temperature [K]
 
-            T_inf (float):
+            T_inf:
                 fluid temperature outside film [K]
 
-            L (float):
+            L:
                 characteristic length [m], vertical plate: L = heigth
 
-            theta (float):
+            theta:
                 angle between vertical and inclined plate, 0 <= theta <= 60,
                 theta=0 corresponds to the full vertical plate [deg]
 
@@ -228,8 +229,7 @@ class FreeConvectionPlate(object):
              / theta|
 
         Returns:
-            (float):
-                Convective heat transfer coefficient alpha_conv [W/(m^2 K)]
+            Convective heat transfer coefficient alpha_conv [W/(m^2 K)]
 
         """
         isinstance(self.fluid, Fluid)
@@ -241,24 +241,23 @@ class FreeConvectionPlate(object):
 
         return self.nusselt_L_vert(Ra_L, L) * self.fluid.Lambda(T_film) / L
 
-    def alpha_L_upper(self, T_surf, T_inf, L):
+    def alpha_L_upper(self, T_surf: float, T_inf: float, L: float) -> float:
         """
         Computes convective heat transfer coefficient for natural convection at
         the upper side of a HEATED horizontal plate T_surf > T_inf
 
         Args:
-            T_surf (float):
+            T_surf:
                 surface temperature [K]
 
-            T_inf (float):
+            T_inf:
                 fluid temperature outside film [K]
 
-            L (float):
+            L:
                 characteristic length of geometry [m]
 
         Returns:
-            (float):
-                Convective heat transfer coefficient [W/(m K)]
+            Convective heat transfer coefficient [W/(m K)]
 
         Note:
             This function is also applicable to upper COOLED plates with
@@ -272,25 +271,24 @@ class FreeConvectionPlate(object):
 
         return self.nusselt_L_upper(Ra_L) * self.fluid.Lambda(T_film) / L
 
-    def alpha_L_lower(self, T_surf, T_inf, L):
+    def alpha_L_lower(self, T_surf: float, T_inf: float, L: float) -> float:
         """
         Computes convective heat transfer coefficient for natural 
         convection at lower side of a HEATED horizontal plate where 
         T_surf > T_inf
 
         Args:
-            T_surf (float):
+            T_surf:
                 surface temperature [K]
 
-            T_inf (float):
+            T_inf:
                 fluid temperature outside film [K]
 
-            L (float):
+            L:
                 characteristic length of geometry [m]
 
         Returns:
-            (float):
-                Convective heat transfer coefficient [W/(m K)]
+            Convective heat transfer coefficient [W/(m K)]
 
         Note:
             This function is also applicable to upper COOLED plates with
@@ -304,21 +302,20 @@ class FreeConvectionPlate(object):
 
         return self.nusselt_L_lower(Ra_L) * self._fluid.Lambda(T_film) / L
 
-    def nusselt_L_vert(self, Ra_L, Pr):
+    def nusselt_L_vert(self, Ra_L: float, Pr: float) -> float:
         """
         Computes Nusselt number Nu = Nu( Ra_L, Pr ) for natural convection
         at the vertical plate
 
         Args:
-           Ra_L (float):
+           Ra_L:
                Rayleigh number [/] Ra = Gr_L * Pr
 
-           Pr (float):
+           Pr:
                Prandtl number [/]
 
         Returns:
-            (float):
-                Nusselt number [/]
+            Nusselt number [/]
 
         Reference:
             [INCR96] Equ (9.26) if Ra_L <= 1e9 and Equ. (9.27)
@@ -334,17 +331,17 @@ class FreeConvectionPlate(object):
             return np.sqr(0.825 + 0.387 * np.pow(Ra_L, 1./6)
                           / pow(1 + pow(0.492 / Pr, 9./16), 8./27))
 
-    def nusselt_L_upper(self, Ra_L):
+    def nusselt_L_upper(self, Ra_L: float) -> float:
         """
         Computed Nusselt number Nu = Nu( Ra_L ) for natural convection
         at the upper surface of a heated plate
 
         Args:
-            Ra_L Raleigh number [/] Ra = Gr_L * Pr
+            Ra_L:
+                Raleigh number [/] Ra = Gr_L * Pr
 
         Returns:
-            (float):
-                Nusselt number [/]
+            Nusselt number [/]
 
         Reference:
             [INCR96] Equ (9.30) if Ra_L <= 1e7 and
@@ -357,17 +354,17 @@ class FreeConvectionPlate(object):
         else:
             return 0.15 * Ra_L**0.3333333
 
-    def nusselt_L_lower(self, Ra_L):
+    def nusselt_L_lower(self, Ra_L: float) -> float:
         """
         Computes Nusselt number Nu = Nu( Ra_L ) for natural convection at
         the lower surface of a heated plate
 
         Args:
-            Ra_L Raleigh number [/], Ra = Gr_L * Pr
+            Ra_L:
+                Raleigh number [/], Ra = Gr_L * Pr
 
         Returns:
-            (float):
-                Nusselt number [/]
+            Nusselt number [/]
 
         References:
             [INCR96] Equ (9.32) if Ra_L <= 1e10
@@ -376,29 +373,29 @@ class FreeConvectionPlate(object):
 
         return 0.27 * Ra_L**0.25
 
-    def rayleigh_L(self, T_surf, T_inf, L, theta=0):
+    def rayleigh_L(self, T_surf: float, T_inf: float, L: float, 
+                   theta: float=0.) -> float:
         """
         Computes Rayleigh number Ra_L = Gr_L * Pr as function of
         temperature and characteristic length; theta can be optionally
         used for tuning of Ra_L in case of inclined plates
 
         Args:
-            T_surf (float):
+            T_surf:
                 surface temperature [K]
 
-            T_inf (float):
+            T_inf:
                 fluid temperature outside film [K]
 
-            L (float):
+            L:
                 chacteristic length of geometry [m]
 
-            theta (float, optional):
+            theta:
                 angle between vertical axis and inclined plate [deg],
                   theta_plate = 0 corresponds to the vertical plate
 
         Returns:
-            (float):
-                Rayleigh number Ra [/]
+            Rayleigh number Ra [/]
 
         Note:
              Maximum of theta is 60 deg
@@ -420,61 +417,33 @@ class FreeConvectionPlate(object):
         assert T_surf > 0 and np.abs(T_surf - T_inf) > 0
         assert L > 0
 
-        TFilm = 0.5 * (T_surf + T_inf)
-        beta = 1.0 / TFilm
-        nu = self.fluid.nu(TFilm)
-        a = self.fluid.a(TFilm)
+        T_film = 0.5 * (T_surf + T_inf)
+        beta = 1.0 / T_film
+        nu = self.fluid.nu(T_film)
+        a = self.fluid.a(T_film)
         g = 9.81 * np.cos(np.radians(theta))
 
         return g * beta * np.abs(T_surf - T_inf) * L**3 / (nu * a)
 
-    def prandtl(self, T_surf, T_inf):
+    def prandtl(self, T_surf: float, T_inf: float) -> float:
         """
         Computes Prandtl number Pr as function of film temperature
         T_film = (T_surf + T_inf) / 2
 
         Args:
-            T_surf (float):
+            T_surf:
                 surface temperature [K]
 
-            T_inf (float):
+            T_inf:
                 fluid temperature outside film [K]
 
         Returns:
-            (float):
-                Prandtl number [/]
+            Prandtl number [/]
         """
 
         assert isinstance(self.fluid, Fluid)
         assert T_surf > 0 and T_inf > 0
 
-        TFilm = 0.5 * (T_surf + T_inf)
+        T_film = 0.5 * (T_surf + T_inf)
 
-        return self.fluid.Pr(TFilm)
-
-
-# Test #################################################################
-
-def main():
-    T_surf = C2K(40)      # [K]
-    T_inf = C2K(20)       # [K]
-    phi_plate = 90        # [deg], vertical plate
-    L = 0.1
-
-    foo = FreeConvectionPlate(fluid=Air(), eps_rad=0.5)
-    alpha_conv = foo.alpha_conv(T_surf=T_surf, T_inf=T_inf, L=L,
-                               phi_plate=phi_plate)
-    alpha_rad = foo.alpha_rad(T_surf=T_surf, T_inf=T_inf)
-    alpha_comb = foo.alpha_combined(T_surf=T_surf, T_inf=T_inf, L=L,
-                                    phi_plate=phi_plate)
-
-    for key in sorted(locals(), key=lambda s: s.lower()):
-        if key not in ('foo', 'kwargs'):
-            x = locals()[key]
-            if isinstance(x, float) and abs(x) > 0.1:
-                x = round(x, 3)
-            print('{:>15}: {}'.format(key, x))
-
-
-if __name__ == '__main__':
-    main()
+        return self.fluid.Pr(T_film)
