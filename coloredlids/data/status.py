@@ -27,7 +27,7 @@ from enum import Enum
 class Status(Enum):
     """
     Defines status of data. 
-    A symbol and a color is connected to status name.
+    A symbol and a color is connected to a status name.
     """
     BLOCK    = ('#', 'black')       # data is blocked for processing
     FAIL     = ('-', 'red')         # failure

@@ -141,8 +141,8 @@ class ToleranceRange(object):
 
     def evaluate(self, P=None, tolerance=1e-10):
         """
-        Checks that point P or all points are in "expected" or "tolerated"
-        ranges
+        Checks that point P or all points are within "expected" or 
+        "tolerated" ranges
 
         Args:
             P (tuple of float, optional):

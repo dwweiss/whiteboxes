@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-18 DWW
+      2019-09-27 DWW
 """
 
 from collections import OrderedDict
@@ -39,11 +39,11 @@ class FunctionPoolRegression1D(object):
     A pool of candidate functions f(x) is employed for finding the 
     optimal theoretical model
     """
-    def __init__(self, identifier='Regression1D'):
+    def __init__(self, identifier='FunctionPoolRegression1D'):
         self.identifier = identifier
         self.version = '09.19_dww'
 
-        self.functionPool = OrderedDict({
+        self.function_pool = OrderedDict({
           'f2a': self.f2a,
           'f3a': self.f3a, 'f3b': self.f3b, 'f3c': self.f3c,
           'f3d': self.f3d, 'f3e': self.f3e,
@@ -89,9 +89,9 @@ class FunctionPoolRegression1D(object):
     def f5l(self, x, a, b, c, d, e, f, g):
         return a * np.exp(-b * x) + c + d * x + e * x*x
 
-    def functionCall(self, key, x, C):
-        return self.functionPool[key](x,
-                                      C[0], C[1], C[2], C[3], C[4], C[5], C[6])
+    def function_call(self, key, x, C):
+        return self.function_pool[key](x,
+            C[0], C[1], C[2], C[3], C[4], C[5], C[6])
 
     def load(self):
         """
@@ -100,7 +100,7 @@ class FunctionPoolRegression1D(object):
         Note:
             This method is called by method pre()
         """
-        self.csvSeparator = ';'
+        self.csv_separator = ';'
         s = StringIO("""t;y1;y2;y3;y4
             1.00E-03; 20;      20;      20
             5.00E-03; 20;      20;      20
@@ -127,7 +127,7 @@ class FunctionPoolRegression1D(object):
             200;      85.7;    85.717;  84.486
             """)
 
-        df = pd.read_csv(s, sep=self.csvSeparator, comment='#')
+        df = pd.read_csv(s, sep=self.csv_separator, comment='#')
         df.rename(columns=df.iloc[0])
         df = df.apply(pd.to_numeric, errors='coerce')
         xlabel = df.keys()[0]
@@ -161,7 +161,7 @@ class FunctionPoolRegression1D(object):
         # Y is mean of y1..4
         self.Y = (self.data['y1'] + self.data['y2'] + self.data['y3']) / 3
 
-        keys = list(self.functionPool.keys())
+        keys = list(self.function_pool.keys())
         # keys = ['f5l', 'f4l']
 
         plt.title('f = (' + str(keys)[1:-1] + ')')
@@ -171,8 +171,8 @@ class FunctionPoolRegression1D(object):
 
         for key in keys:
             print("+++ key: '", key, "'", end='')
-            coeff, co = curve_fit(self.functionPool[key], self.X, self.Y)
-            y = self.functionCall(key, x=self.X, C=coeff)
+            coeff, co = curve_fit(self.function_pool[key], self.X, self.Y)
+            y = self.function_call(key, x=self.X, C=coeff)
 
             L2 = L2_norm(y, self.Y)
             if self.best['L2_norm'] > L2:
@@ -193,14 +193,14 @@ class FunctionPoolRegression1D(object):
         C = [str(round(x, 3)) for x in self.best['coefficients'] if x != 1.0]
         key = self.best['key']
         print("\n+++ Best, key:'", key, ', C:', C)
-        f = getsourcelines(self.__dict__['functionPool'][key])[0]
-        sourceCode = [' '.join(x.split()) for x in f]
-        for line in sourceCode:
+        f = getsourcelines(self.__dict__['function_pool'][key])[0]
+        source_code = [' '.join(x.split()) for x in f]
+        for line in source_code:
             print('    ', line)
 
         plt.title('Absolute error of best approximation')
-        y = self.functionCall(self.best['key'], x=self.X,
-                              C=self.best['coefficients'])
+        y = self.function_call(self.best['key'], x=self.X,
+                               C=self.best['coefficients'])
         plt.plot(self.X, y-self.Y, label=r"$\Delta y$ for best: " +
                  self.best['key'] + "'")
         plt.legend(bbox_to_anchor=(1.1, 1.01), loc='upper left')
