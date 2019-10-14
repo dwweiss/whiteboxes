@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-17 DWW
+      2019-09-27 DWW
 """
 
 import __init__
@@ -26,8 +26,9 @@ __init__.init_path()
 import unittest
 import os
 
+from coloredlids.heat.free_convection import FreeConvectionPlate
+from coloredlids.matter.gases import Air
 from coloredlids.matter.generic import C2K
-from coloredlids.matter.matter import Matter
 
 
 class TestUM(unittest.TestCase):
@@ -38,33 +39,29 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-        print('collection:', [m.identifier for m in Matter()('all')])
 
-        matter = Matter()
-        for mat in matter('all'):
-            print('mat:', mat.identifier)
-            if True:
-                mat.plot()
-
-        self.assertTrue(True)
-
-    def test2(self):
-        s = 'Water'
-        print('-' * len(s) + '\n' + s + '\n' + '-' * len(s))
-
-        collection = Matter()
-        print('Collection:', collection)
-        mat = collection('Water')
-        mat.plot('c_p')
-
-        rho = mat.plot('rho')
-        print('rho:', rho)
-        Lambda = mat.Lambda(T=C2K(100))
-        print('Lambda:', Lambda)
-        c_p = mat.c_p(T=C2K(20), p=mat.p.ref)
-        print('c_p:', c_p)
-
-        mat.plot('all')
+        def main():
+            T_surf = C2K(40)      # [K]
+            T_inf = C2K(20)       # [K]
+            phi_plate = 90.       # [deg], 90=vertical plate
+            L = 0.1
+        
+            foo = FreeConvectionPlate(fluid=Air(), eps_rad=0.5)
+            alpha_conv = foo.alpha_conv(T_surf=T_surf, T_inf=T_inf, L=L,
+                                        phi_plate=phi_plate)
+            alpha_rad = foo.alpha_rad(T_surf=T_surf, T_inf=T_inf)
+            alpha_comb = foo.alpha_combined(T_surf=T_surf, T_inf=T_inf, L=L,
+                                            phi_plate=phi_plate)
+        
+            # print local variables
+            for key in sorted(locals(), key=lambda s: s.lower()):
+                if key not in ('foo', 'kwargs'):
+                    x = locals()[key]
+                    if isinstance(x, float) and abs(x) > 0.1:
+                        x = round(x, 3)
+                    print('{:>15}: {}'.format(key, x))
+                
+        main()
 
         self.assertTrue(True)
 

@@ -24,6 +24,7 @@ import __init__
 __init__.init_path()
 
 import unittest
+import os
 
 from coloredlids.matter.generic import Generic, Fluid, Metal, Property, Solid
 from coloredlids.matter.parameter import Parameter
@@ -31,7 +32,7 @@ from coloredlids.matter.parameter import Parameter
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        pass
+        print('///', os.path.basename(__file__))
 
     def tearDown(self):
         pass
@@ -74,7 +75,6 @@ class TestUM(unittest.TestCase):
         fluid = Fluid(identifier='fluid')
         fluid.rho.plot()
         fluid.rho(T=300)
-        fluid.rho.plot()
         fluid.plot('rho')
         print('-' * 60)
 

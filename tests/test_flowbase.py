@@ -24,6 +24,7 @@ import __init__
 __init__.init_path()
 
 import unittest
+import os
 
 from coloredlids.flow.flowbase import FlowBase
 from coloredlids.matter.parameter import C2K
@@ -32,7 +33,7 @@ from coloredlids.matter.liquids import HydraulicOil
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        pass
+        print('///', os.path.basename(__file__))
 
     def tearDown(self):
         pass
@@ -42,8 +43,8 @@ class TestUM(unittest.TestCase):
         foo.T.val = C2K(50)
         foo.v = 2.0
 
-        print('foo.T:', foo.T())
-        print('foo.T:', foo.T.val)
+        print('foo.T():', foo.T())
+        print('foo.T.val:', foo.T.val)
         print('*' * 60)
 
         self.assertTrue(foo.T.val == foo.T())

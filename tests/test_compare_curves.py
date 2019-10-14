@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-08-28 DWW
+      2019-10-10 DWW
 """
 
 import __init__
@@ -25,45 +25,34 @@ __init__.init_path()
 
 import unittest
 import os
-import numpy as np
-import matplotlib.pyplot as plt
+import sys
 
-from coloredlids.flow.pipe_velocity import v_axial
-
+from coloredlids.data.compare_curves import CompareCurves
 
 class TestUM(unittest.TestCase):
+
     def setUp(self):
         print('///', os.path.basename(__file__))
 
     def tearDown(self):
         pass
+       
+    def _test1(self):
+        foo = CompareCurves(argv=sys.argv)
+        foo.gui = False
+        foo.bars = 32
+        foo.filenames = [
+            './default_2019-08-16T22.13.10_spectrum_device0.data',
+            './default_reference_spectrum_device0.data', 
+            ]
+        foo()
 
-    def test1(self):
-        D = 50e-3
-        v_mean = 1
-        r = np.linspace(0, D*0.5, num=100)
-        n_seq = [3, 4, 6, 8, 10]
-        nu_seq = [1e-6, 1e-2]
-    
-        for n in n_seq:
-            for nu in nu_seq:
-                vz = v_axial(v_mean=v_mean, d_pipe=D, r=r, nu=nu, n=n)
-                plt.plot(vz, r, label='$n:'+str(n)+r',\ \nu: '+str(nu)+'$')
-    
-        fontsize = 12
-        plt.title(r'Axial velocity $v_z(r) = f(n, \nu)$')
-        plt.rcParams.update({'font.size': fontsize})
-        plt.rcParams['legend.fontsize'] = fontsize
-        plt.xlim(0, 2.2 * v_mean)
-        plt.ylabel('$r$ [m]')
-        plt.xlabel('$v_z$ [m/s]')
-        plt.grid()
-        plt.legend(bbox_to_anchor=(1.1, 1.03), loc='upper left')
-        plt.show()
- 
-        self.assertTrue(True)
-        
+    def _test2(self):
+        foo = CompareCurves(argv=sys.argv)
+        foo.gui = True
+        foo.bars = 32
+        foo()
+
         
 if __name__ == '__main__':
     unittest.main()
-

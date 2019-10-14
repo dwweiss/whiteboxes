@@ -17,13 +17,14 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-12 DWW
+      2018-09-27 DWW
 """
 
 import __init__
 __init__.init_path()
 
 import unittest
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -50,18 +51,20 @@ D1 = 80e-3
 D3, L3 = D1, L1
 
 eps_rough = 10e-6
-k_functions = (resistance_square_pipe_reduction, 
-               resistance_square_pipe_expansion,
-               resistance_tapered_pipe_reduction, 
-               resistance_tapered_pipe_expansion)
 
 
 class TestUM(unittest.TestCase):
-
     def setUp(self):
+        print('///', os.path.basename(__file__))
+
         fontsize = 10
         plt.rcParams.update({'font.size': fontsize})
         plt.rcParams['legend.fontsize'] = fontsize
+
+        self.k_functions = (resistance_square_pipe_reduction, 
+                            resistance_square_pipe_expansion,
+                            resistance_tapered_pipe_reduction, 
+                            resistance_tapered_pipe_expansion)
 
     def tearDown(self):
         pass
@@ -196,7 +199,7 @@ class TestUM(unittest.TestCase):
         self.assertTrue(True)
 
     def test5(self):
-        # plot of k(r_bend), phiBend=const
+        # plot of k(r_bend), phi_bend=const
         k = resistance_pipe_bend
 
         # D1 = 40e-3 ; r_bend = 112.5e-3
@@ -221,12 +224,12 @@ class TestUM(unittest.TestCase):
         self.assertTrue(True)
 
     def test6(self):
-        # plot dp(nu)  for v-sequence
+        # plot dp(v, nu)  for v-sequence
         for v in [0.05, 0.1, 0.2, 1, 10]:
             plt.xlabel(r'$\nu$ [mm$^2$/s]')
             plt.ylabel('$p$ [kPa]')
             nu_seq = np.linspace(1e-7, 1e-3, 1000)
-            for k in k_functions:
+            for k in self.k_functions:
                 print('\n\n***', k.__name__)
                 if str(k).find('Expansion') == -1:
                     v1 = v
@@ -245,53 +248,62 @@ class TestUM(unittest.TestCase):
 
     def test7(self):
         # dp(nu)  for a v-sequence
-        for k in k_functions:
+        for k in self.k_functions:
             print('\n\n***', k.__name__)
-            if 1:
-                nu_seq = [x * 1e-7 for x in range(1, int(1e5))]
-                dp1 = [pressure_drop(k(v1=v1, D1=D1, D2=D2, nu=nu,
-                                      eps_rough=eps_rough), v1, rho)
-                       for nu in nu_seq]
-                x = [x * 1e6 for x in nu_seq]
-                y = [y * 1e-3 for y in dp1]
-                plt.title('v: '+str(v1))
-                plt.xlabel(r'$\nu$ [mm$^2$/s]')
-                plt.ylabel('$p$ [kPa]')
-                plt.plot(x, y)
-                plt.show()
 
-            if 1:
-                plt.xlabel('$v$ [m/s]')
-                plt.ylabel('$p$ [kPa]')
-                v_seq = np.linspace(0.1, 10., 50)
-                nu_seq = [1e-7, 1e-6, 1e-5, 1e-4, 1e-3]
-                for nu in nu_seq:
-                    dp2 = [pressure_drop(k(v1=v1, D1=D1, D2=D2, nu=nu,
-                                           eps_rough=eps_rough), v1, rho)
-                           for v1 in v_seq]
-                    y = [y * 1e-3 for y in dp2]
-                    plt.plot(v_seq, y,
-                             label='nu:'+str(round(nu*1e6, 1))+'e-6')
-                plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-                plt.show()
-
-            if 1:
-                plt.xlabel(r'$Re \cdot 10^{-3}$ [/]')
-                plt.ylabel('$p$ [kPa]')
-                v1_seq = np.array([.1, .2, .4, .6, .8, 1, 2, 3, 4, 5, 6, 7, 8,
-                                   9, 10])
-                nu_seq = np.array([1e-7, 1e-6, 1e-5, 1e-4, 1e-3])
-                for nu in nu_seq:
-                    Re_seq = v1_seq * D1 / nu
-                    dp_seq = [pressure_drop(k(v1=v1, D1=D1, D2=D2, nu=nu,
-                              eps_rough=eps_rough), v1, rho) for v1 in v1_seq]
-                    dp_kPa = 1e-3 * np.array(dp_seq)
-                    plt.plot(Re_seq * 1e-3, dp_kPa,
-                             label='nu:'+str(round(nu*1e6, 1))+'e-6')
-                plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
-                plt.show()
+            nu_seq = [x * 1e-7 for x in range(1, int(1e5))]
+            dp1 = [pressure_drop(k(v1=v1, D1=D1, D2=D2, nu=nu,
+                                  eps_rough=eps_rough), v1, rho)
+                   for nu in nu_seq]
+            x = [x * 1e6 for x in nu_seq]
+            y = [y * 1e-3 for y in dp1]
+            plt.title('v: '+str(v1))
+            plt.xlabel(r'$\nu$ [mm$^2$/s]')
+            plt.ylabel('$p$ [kPa]')
+            plt.plot(x, y)
+            plt.show()
 
         self.assertTrue(True)
+
+    def test8(self):
+        # dp(nu)  for a v-sequence
+        for k in self.k_functions:
+            plt.xlabel('$v$ [m/s]')
+            plt.ylabel('$p$ [kPa]')
+            v_seq = np.linspace(0.1, 10., 50)
+            nu_seq = [1e-7, 1e-6, 1e-5, 1e-4, 1e-3]
+            for nu in nu_seq:
+                dp2 = [pressure_drop(k(v1=v1, D1=D1, D2=D2, nu=nu,
+                                       eps_rough=eps_rough), v1, rho)
+                       for v1 in v_seq]
+                y = [y * 1e-3 for y in dp2]
+                plt.plot(v_seq, y,
+                         label='nu:'+str(round(nu*1e6, 1))+'e-6')
+            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+            plt.show()
+
+        self.assertTrue(True)
+
+    def test9(self):
+        # dp(v)  for a v-sequence
+        for k in self.k_functions:
+            plt.xlabel(r'$Re \cdot 10^{-3}$ [/]')
+            plt.ylabel('$p$ [kPa]')
+            v1_seq = np.array([.1, .2, .4, .6, .8, 1, 2, 3, 4, 5, 6, 7, 8,
+                               9, 10])
+            nu_seq = np.array([1e-7, 1e-6, 1e-5, 1e-4, 1e-3])
+            for nu in nu_seq:
+                Re_seq = v1_seq * D1 / nu
+                dp_seq = [pressure_drop(k(v1=v1, D1=D1, D2=D2, nu=nu,
+                          eps_rough=eps_rough), v1, rho) for v1 in v1_seq]
+                dp_kPa = 1e-3 * np.array(dp_seq)
+                plt.plot(Re_seq * 1e-3, dp_kPa,
+                         label='nu:'+str(round(nu*1e6, 1))+'e-6')
+            plt.legend(bbox_to_anchor=(1.05, 1), loc='upper left')
+            plt.show()
+
+        self.assertTrue(True)
+
 
 if __name__ == '__main__':
     unittest.main()

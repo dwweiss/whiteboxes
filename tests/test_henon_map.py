@@ -24,6 +24,7 @@ import __init__
 __init__.init_path()
 
 import unittest
+import os
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -32,15 +33,17 @@ from coloredlids.data.henon_map import henon_map
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        pass
+        print("/// file:'" + os.path.basename(__file__) + "'")
 
     def tearDown(self):
         pass
 
     def test1(self):
-        X, Y, Z = henon_map(a=1.4, b=0.3, n=1000)
+        print("\n/// test:'" + self.id()[self.id().rfind('.')+1:] + "'")
         
-        print(len(X))
+        X, Y, Z = henon_map(a=1.4, b=0.3, n=1000)
+        print('+++ n:', len(X))
+        
         plt.xlabel('$x$')
         plt.ylabel('$y$')
         plt.plot(X, Y, 'b,')
@@ -70,6 +73,8 @@ class TestUM(unittest.TestCase):
         self.assertTrue(True)
 
     def test2(self):
+        print("\n/// test:'" + self.id()[self.id().rfind('.')+1:] + "'")
+
         n = 1000
         X = np.linspace(-1.5, 1.5, n)
         Y = np.full_like(X, 0.0)

@@ -21,23 +21,23 @@
 """
 
 import unittest
-import sys
 import os
 import numpy as np
 
-sys.path.append(os.path.abspath('..'))
-
-from grayboxes.___ import ___
+# from grayboxes.___ import ___
+# from coloredlids... . ... import ...
 
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        pass
+        print("/// file:'" + os.path.basename(__file__) + "'")
 
     def tearDown(self):
         pass
 
     def test1(self):
+        print("\n/// test:'" + self.id()[self.id().rfind('.')+1:] + "'")
+
         foo = ___()
         foo()
 
@@ -48,8 +48,10 @@ class TestUM(unittest.TestCase):
         foo()
 
         self.assertFalse(True)
-        self.assertAlmostEqual
-        self.assertDictEqual
+#       self.assertAlmostEqual(first, second)
+#       self.assertEqual(first, second)
+#       self.assertGreater(first, second)
+#       self.assertDictEqual(first, equal)
 
 
 if __name__ == '__main__':

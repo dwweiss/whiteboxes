@@ -24,6 +24,7 @@ import __init__
 __init__.init_path()
 
 import unittest
+import os
 
 from coloredlids.data.function_pool_regression1d \
     import FunctionPoolRegression1D
@@ -31,7 +32,7 @@ from coloredlids.data.function_pool_regression1d \
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        pass
+        print('///', os.path.basename(__file__))
 
     def tearDown(self):
         pass

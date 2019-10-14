@@ -24,6 +24,7 @@ import __init__
 __init__.init_path()
 
 import unittest
+import os
 import numpy as np
 
 from coloredlids.tools.isarray import is_array
@@ -31,7 +32,8 @@ from coloredlids.tools.isarray import is_array
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        pass
+        print('///', os.path.basename(__file__))
+
 
     def tearDown(self):
         pass
@@ -40,11 +42,11 @@ class TestUM(unittest.TestCase):
         l = [1., 2., 3.]
         a = np.array(l)
         t = tuple(l)
-        b = np.asfarray(l)
+        ff = np.asfarray(l)
         i = 2
         f = 3.3
     
-        for x in [l, a, t, b, i, f]:
+        for x in [l, a, t, ff, i, f]:
             print('x:', x, '-> isArray:', is_array(x))
     
         self.assertTrue(True)

@@ -24,13 +24,14 @@ import __init__
 __init__.init_path()
 
 import unittest
+import os
 
 from doc.examples.fvm1d_conductivity import fvm1d_conductivity
 
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        pass
+        print('///', os.path.basename(__file__))
 
     def tearDown(self):
         pass

@@ -24,6 +24,7 @@ import __init__
 __init__.init_path()
 
 import unittest
+import os
 
 from coloredlids.tools.date_to_seconds import date_to_seconds
 
@@ -33,7 +34,7 @@ class TestUM(unittest.TestCase):
     Test of function date_to_seconds() 
     """
     def setUp(self):
-        pass
+        print('///', os.path.basename(__file__))
 
     def tearDown(self):
         pass
@@ -51,6 +52,7 @@ class TestUM(unittest.TestCase):
         print('difference in hours:', dt // 3600,
               ', minutes:', (dt % 3600) // 60, 
               ', seconds:', (dt % 3600 % 60))
+        
         self.assertEqual(dt // 3600, 9)
         self.assertEqual((dt % 3600) // 60, 33)
         self.assertEqual((dt % 3600 % 60), 54)
@@ -68,6 +70,7 @@ class TestUM(unittest.TestCase):
         print('difference in hours:', dt // 3600,
               ', minutes:', (dt % 3600) // 60, 
               ', seconds:', (dt % 3600 % 60))
+        
         self.assertEqual(dt // 3600, 9)
         self.assertEqual((dt % 3600) // 60, 33)
         self.assertEqual((dt % 3600 % 60), 54)

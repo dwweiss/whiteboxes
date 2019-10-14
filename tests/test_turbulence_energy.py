@@ -17,13 +17,14 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-14 DWW
+      2018-09-27 DWW
 """
 
 import __init__
 __init__.init_path()
 
 import unittest
+import os
 import matplotlib.pyplot as plt
 
 from coloredlids.flow.turbulence_energy import \
@@ -32,7 +33,7 @@ from coloredlids.flow.turbulence_energy import \
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        pass
+        print('///', os.path.basename(__file__))
 
     def tearDown(self):
         pass
@@ -40,8 +41,7 @@ class TestUM(unittest.TestCase):
     def test1(self):
         D = 25e-3
         nu = 1e-6
-        v_seq = [0.1, 0.2, 0.5, 1, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 7, 8, 9,
-                 10]
+        v_seq = [.1, .2, .5, 1, 2, 2.5, 3, 3.5, 4, 4.5, 5, 5.5, 6, 7, 8, 9, 10]
         nu_seq = [1e-7, 1e-6, 1e-5, 1e-4, 1e-3, 1e-2]
 
         for nu in nu_seq:

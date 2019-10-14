@@ -24,6 +24,7 @@ import __init__
 __init__.init_path()
 
 import unittest
+import os
 
 from coloredlids.data.tolerance_range import ToleranceRange
 from coloredlids.data.status import Status
@@ -31,7 +32,7 @@ from coloredlids.data.status import Status
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        pass
+        print('///', os.path.basename(__file__))
 
     def tearDown(self):
         pass

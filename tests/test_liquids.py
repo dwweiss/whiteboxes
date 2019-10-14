@@ -17,28 +17,31 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-19 DWW
+      2018-09-27 DWW
 """
 
 import __init__
 __init__.init_path()
 
 import unittest
+import os
 
 import coloredlids.matter.liquids as module_under_test
 from coloredlids.matter.liquids import HydraulicOil
 
+
 class TestUM(unittest.TestCase):
     def setUp(self):
-        pass
+        print('///', os.path.basename(__file__))
+
 
     def tearDown(self):
         pass
 
     def test1(self):
         classes = [v for c, v in module_under_test.__dict__.items()
-                   if isinstance(v, type) and
-                   v.__module__ == module_under_test.__name__]
+                         if isinstance(v, type) and
+                             v.__module__ == module_under_test.__name__ ]
 
         for mat in classes:
             print('class:', mat.__name__)

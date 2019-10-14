@@ -24,6 +24,7 @@ import __init__
 __init__.init_path()
 
 import unittest
+import os
 
 from coloredlids.tools.string_manipulation import (ensure_hex_format, 
     scientific_to_standard_if_greater_1, reverse)
@@ -31,7 +32,7 @@ from coloredlids.tools.string_manipulation import (ensure_hex_format,
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        pass
+        print('///', os.path.basename(__file__))
 
     def tearDown(self):
         pass

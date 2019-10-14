@@ -24,13 +24,14 @@ import __init__
 __init__.init_path()
 
 import unittest
+import os
 
 import coloredlids.matter.gases as module_under_test
 
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        pass
+        print('///', os.path.basename(__file__))
 
     def tearDown(self):
         pass

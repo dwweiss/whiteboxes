@@ -24,13 +24,14 @@ import __init__
 __init__.init_path()
 
 import unittest
+import os
 
 from coloredlids.matter.roughness import roughness, roughness_list
 
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        pass
+        print('///', os.path.basename(__file__))
 
     def tearDown(self):
         pass
