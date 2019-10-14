@@ -28,7 +28,7 @@ from coloredlids.matter.generic import NonFerrous
 
 class Aluminum(NonFerrous):
     """
-        Properties of aluminum
+    Properties of aluminum
     """
 
     def __init__(self, identifier: str='Al',
@@ -75,7 +75,7 @@ class Aluminum(NonFerrous):
 
 class Copper(NonFerrous):
     """
-        Properties of copper
+    Properties of copper
     """
 
     def __init__(self, identifier: str='Cu',

@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-17 DWW
+      2019-10-14 DWW
 """
 
 import numpy as np
@@ -64,11 +64,11 @@ class St1_4301(Ferrous):
         super().__init__(identifier, latex=latex, comment=comment)
         self.T.ref = C2K(20)
         self.T_sol = C2K(1400)
-        self.E.calc = lambda T=0, p=0, x=0: 200e+9
-        self.beta.calc = lambda T=0, p=0, x=0: 17.5e-6
-        self.c_p.calc = lambda T=0, p=0, x=0: 500
+        self.E.calc      = lambda T=0, p=0, x=0: 200e+9
+        self.beta.calc   = lambda T=0, p=0, x=0: 17.5e-6
+        self.c_p.calc    = lambda T=0, p=0, x=0: 500
         self.Lambda.calc = lambda T=0, p=0, x=0: 15
-        self.rho.calc = lambda T=0, p=0, x=0: 7900
+        self.rho.calc    = lambda T=0, p=0, x=0: 7900
 
 
 class St1_4541(Ferrous):
@@ -77,11 +77,11 @@ class St1_4541(Ferrous):
         super().__init__(identifier, latex=latex, comment=None)
         self.T.ref = C2K(20)
         self.T_sol = None
-        self.E.calc = lambda T=0, p=0, x=0: 200e+9
-        self.beta.calc = lambda T=0, p=0, x=0: 17.5e-6
-        self.c_p.calc = lambda T=0, p=0, x=0: 500
+        self.E.calc      = lambda T=0, p=0, x=0: 200e+9
+        self.beta.calc   = lambda T=0, p=0, x=0: 17.5e-6
+        self.c_p.calc    = lambda T=0, p=0, x=0: 500
         self.Lambda.calc = lambda T=0, p=0, x=0: 15
-        self.rho.calc = lambda T=0, p=0, x=0: 7900
+        self.rho.calc    = lambda T=0, p=0, x=0: 7900
 
 
 class St1_4401(Ferrous):
@@ -90,11 +90,11 @@ class St1_4401(Ferrous):
         super().__init__(identifier, latex=latex, comment=comment)
         self.T.ref = C2K(20)
         self.T_sol = None
-        self.E.calc = lambda T=0, p=0, x=0: 200e+9
-        self.beta.calc = lambda T=0, p=0, x=0: 17.5e-6
-        self.c_p.calc = lambda T=0, p=0, x=0: 500
+        self.E.calc      = lambda T=0, p=0, x=0: 200e+9
+        self.beta.calc   = lambda T=0, p=0, x=0: 17.5e-6
+        self.c_p.calc    = lambda T=0, p=0, x=0: 500
         self.Lambda.calc = lambda T=0, p=0, x=0: 15
-        self.rho.calc = lambda T=0, p=0, x=0: 8000
+        self.rho.calc    = lambda T=0, p=0, x=0: 8000
 
 
 class St1_4571(Ferrous):
@@ -103,11 +103,11 @@ class St1_4571(Ferrous):
         super().__init__(identifier, latex=latex, comment=comment)
         self.T.ref = C2K(20)
         self.T_sol = None
-        self.E.calc = lambda T=0, p=0, x=0: 200e+9
-        self.beta.calc = lambda T=0, p=0, x=0: 18.5e-6
-        self.c_p.calc = lambda T=0, p=0, x=0: 500
+        self.E.calc      = lambda T=0, p=0, x=0: 200e+9
+        self.beta.calc   = lambda T=0, p=0, x=0: 18.5e-6
+        self.c_p.calc    = lambda T=0, p=0, x=0: 500
         self.Lambda.calc = lambda T=0, p=0, x=0: 15
-        self.rho.calc = lambda T=0, p=0, x=0: 8000
+        self.rho.calc    = lambda T=0, p=0, x=0: 8000
 
 
 class St1_4362(Ferrous):
@@ -115,11 +115,11 @@ class St1_4362(Ferrous):
         super().__init__(identifier, latex=latex, comment=comment)
         self.T.ref = C2K(20)
         self.T_sol = None
-        self.E.calc = lambda T=0, p=0, x=0: 200e+9
-        self.beta.calc = lambda T=0, p=0, x=0: 17.5e-6
-        self.c_p.calc = lambda T=0, p=0, x=0: 500
+        self.E.calc      = lambda T=0, p=0, x=0: 200e+9
+        self.beta.calc   = lambda T=0, p=0, x=0: 17.5e-6
+        self.c_p.calc    = lambda T=0, p=0, x=0: 500
         self.Lambda.calc = lambda T=0, p=0, x=0: 15
-        self.rho.calc = lambda T=0, p=0, x=0: 7800
+        self.rho.calc    = lambda T=0, p=0, x=0: 7800
 
 
 class St1_4462(Ferrous):
@@ -128,11 +128,11 @@ class St1_4462(Ferrous):
         super().__init__(identifier, latex=latex, comment=comment)
         self.T.ref = C2K(20)
         self.T_sol = None
-        self.E.calc = lambda T=0, p=0, x=0: 200e+9
-        self.beta.calc = lambda T=0, p=0, x=0: 14.5e-6
-        self.c_p.calc = lambda T=0, p=0, x=0: 500
+        self.E.calc      = lambda T=0, p=0, x=0: 200e+9
+        self.beta.calc   = lambda T=0, p=0, x=0: 14.5e-6
+        self.c_p.calc    = lambda T=0, p=0, x=0: 500
         self.Lambda.calc = lambda T=0, p=0, x=0: 15
-        self.rho.calc = lambda T=0, p=0, x=0: 7800
+        self.rho.calc    = lambda T=0, p=0, x=0: 7800
         
         
 class Iron(Ferrous, Liquid):
@@ -167,27 +167,27 @@ class Iron(Ferrous, Liquid):
         self.version = '110118_dww'
         self.T.ref = C2K(20)
 
-        self.nu_mech      = None
-        self.friction     = None
-        self.E.calc       = lambda T=0, p=0, x=0: 211e9
+        self.nu_mech       = None
+        self.friction      = None
+        self.E.calc        = lambda T=0, p=0, x=0: 211e9
 
-        self.T_sol        = C2K(1430)
-        self.T_liq        = self.T_sol + 50
-        self.T_vap        = C2K(2700)
-        self.T_deform     = self.T_sol + 0.66 * (self.T_liq - self.T_sol)
-        self.M            = 55.845e-3
-        self.h_melt       = 270e+3
-        self.h_vap        = 6.35e+6
-        self.beta.calc    = lambda T=0, p=0, x=0: 23.1e-6
-        self.workFunction = 4.3                 # JAP Vol6 1973 p.2250 [QUIG73]
+        self.T_sol         = C2K(1430)
+        self.T_liq         = self.T_sol + 50
+        self.T_vap         = C2K(2700)
+        self.T_deform      = self.T_sol + 0.66 * (self.T_liq - self.T_sol)
+        self.M             = 55.845e-3
+        self.h_melt        = 270e+3
+        self.h_vap         = 6.35e+6
+        self.beta.calc     = lambda T=0, p=0, x=0: 23.1e-6
+        self.work_function = 4.3         # JAP Vol6 1973 p.2250 [QUIG73]
 
-        self.c_p.calc     = self._c_p
-        self.Lambda.calc  = self._Lambda
-        self.mu.calc      = self._mu
-        self.nu.calc      = lambda T=0, p=0, x=0: self.mu(T, p, x) / \
+        self.c_p.calc      = self._c_p
+        self.Lambda.calc   = self._Lambda
+        self.mu.calc       = self._mu
+        self.nu.calc       = lambda T=0, p=0, x=0: self.mu(T, p, x) / \
                                                   self.rho(T, p, x)
-        self.rho.calc     = self._rho
-        self.rho_el.calc  = self._rho_el
+        self.rho.calc      = self._rho
+        self.rho_el.calc   = self._rho_el
 
     def _c_p(self, T=0, p=0, x=0):
         Tp = [300, 600, 900, 1033, 1040, 1184, 1184.1, 1400, 1673, 1673.1,
@@ -248,30 +248,3 @@ class Iron(Ferrous, Liquid):
         else:
             rho_el = 2 * 1.2e-6
         return rho_el
-
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-    import ferrous as thisModule
-    classes = [v for c, v in thisModule.__dict__.items()
-               if isinstance(v, type) and v.__module__ == thisModule.__name__]
-
-    print('list of defined matter:', [c().identifier for c in classes])
-
-    if True:
-        for mat in classes:
-            print('class:', mat.__name__)
-            foo = mat()
-            print(foo.identifier, '*' * 50)
-            foo.plot()
-
-    if True:
-        print('-' * 55 + '\nTable of all steels defined (id, lambda, rho, '
-              'c_p, E)\n' + '-' * 55)
-        for mat in classes:
-            foo = mat()
-            T = foo.T.ref
-            print('Steel: {:>8s}  {:3.1f}  {:5.1f}  {:5.1f}  {:5.3e}'.format(
-                  foo.identifier, foo.Lambda(T),  foo.rho(T), foo.c_p(T), 
-                  foo.E(T)))

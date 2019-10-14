@@ -17,22 +17,22 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-17 DWW
+      2019-09-17 DWW
 """
 
 from collections import OrderedDict
 from typing import Optional
 
 
-roughness_list = OrderedDict({"al_new":           1.4e-6,
-                              "brass_new":        1.4e-6,
-                              "brass_used":        30e-6,
-                              "cu_new":           1.4e-6,
-                              "cu_used":           30e-6,
-                              "st_seamless_new":   40e-6,
-                              "st_seamless_rust": 150e-6,
-                              "st_weld_galv":       8e-6,
-                              })
+roughnesses = OrderedDict({"al_new":           1.4e-6,
+                           "brass_new":        1.4e-6,
+                           "brass_used":        30e-6,
+                           "cu_new":           1.4e-6,
+                           "cu_used":           30e-6,
+                           "st_seamless_new":   40e-6,
+                           "st_seamless_rust": 150e-6,
+                           "st_weld_galv":       8e-6,
+                          })
 
 
 def roughness(matter: Optional[str]=None) -> Optional[float]:
@@ -42,17 +42,17 @@ def roughness(matter: Optional[str]=None) -> Optional[float]:
             identifier of matter
 
     Returns:
-        Ra roughness of the metal surface [m]
+        Ra-roughness of the metal surface [m]
 
     Note:
-        if matter is None or not contained in _roughnessList, then a
-        list of available materials is printed
+        if matter is None or not contained in 'roughnesses', then a
+        list of the available matter is printed
     """
 
     key = str(matter).lower()
-    if key in roughness_list:
-        return roughness_list[key]
+    if key in roughnesses:
+        return roughnesses[key]
 
     print("??? invalid matter: '" + str(matter) + "'\n    valid keys:'",
-          list(roughness_list.keys()), "'\n")
+          list(roughnesses.keys()), "'\n")
     return None

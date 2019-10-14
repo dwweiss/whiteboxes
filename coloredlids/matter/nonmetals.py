@@ -61,14 +61,14 @@ class R4_230NA(NonMetal):
                            'polyphenylene sulfide resins'
         self.T.ref = C2K(20)
 
-        self.nu_mech = 0.38        # TODO from Solvay Spec. Polymers Ryton R-4
+        self.nu_mech = 0.38 # TODO from Solvay Spec. Polymers Ryton R-4
         self.friction = 0.5
         self.R_compr.calc = lambda T=0, p=0, x=0: 0*K2C(T) + 268e6
 
         self.E.calc = lambda T=0, p=0, x=0: 14.5e+9
         self.beta.calc = lambda T=0, p=0, x=0: 15e-6
         self.c_p.calc = lambda T=0, p=0, x=0: 1000
-        #      TODO difference between c_p of reference [2]: 1003 and [3]: 1000
+        # TODO difference between c_p of reference [2]:1003 and [3]:1000
         self.Lambda.calc = lambda T=0, p=0, x=0: 3.63
         self.rho.calc = lambda T=0, p=0, x=0: 1680
         self.rho_el.calc = lambda T=0, p=0, x=0: 1e+12

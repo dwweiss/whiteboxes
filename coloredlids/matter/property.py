@@ -32,6 +32,14 @@ class Property(Parameter):
     Adds temperature and pressure Parameter to a Parameter and provides
     call of Property value as function of temperature, pressure and
     spare parameter 'x'
+    
+    
+    Parameter
+        ^
+        |
+    Property  <== Aggregation ==  T: Parameter, 
+                                  p: Parameter, 
+                                  x: Parameter
 
     Note:
       - calc(T, p, x) is the implementation of the dependency on
@@ -47,6 +55,7 @@ class Property(Parameter):
                  val: Optional[float]=None,
                  ref: Optional[float]=None,
                  comment: str=None) -> None:
+        
         super().__init__(identifier=identifier, unit=unit, absolute=absolute,
                          latex=latex, val=val, ref=ref, comment=comment)
         T_Celsius = 15.
@@ -96,7 +105,8 @@ class Property(Parameter):
                 plt.grid()
                 plt.show()
 
-    def calc(self, T: Union[float, Sequence[float]]=0.,
+    def calc(self, 
+             T: Union[float, Sequence[float]]=0.,
              p: Union[float, Sequence[float]]=0.,
              x: Union[float, Sequence[float]]=0.) \
             -> Union[float, Sequence[float]]:
@@ -112,19 +122,20 @@ class Property(Parameter):
                 Spare variable as scalar or as 1D array
 
         Returns:
-            Approximation of 'val' as function of T, p and x
-            if T, p and x are scalar, the method returns a scaler.
+            Approximation of value as function of T, p and x
+            if T, p and x are scalars, the method returns a scaler.
             Otherwise a 1D array will be returned
 
         Example:
             class X():
                 def __init__(self):
                     self.abc = Property('abc', 'kg/m3')
-                    self.abc.calc = lambda T, p, x=0: 2 + 3 * T - 2 * p
+                    self.abc.calc = lambda T, p, x=0: 2 + 3*T - 2*p
         """
         return self.val
 
-    def __call__(self, T: Optional[Union[float, Sequence[float]]]=None,
+    def __call__(self,
+                 T: Optional[Union[float, Sequence[float]]]=None,
                  p: Optional[Union[float, Sequence[float]]]=None,
                  x: Optional[Union[float, Sequence[float]]]=None) \
             -> Union[float, Sequence[float]]:
@@ -140,8 +151,8 @@ class Property(Parameter):
                 Spare variable as scalar or as 1D array
 
         Returns:
-            Approximation of 'val' as function of T, p and x
-            if T, p and x are scalar, the method returns a scaler.
+            Approximation of value as function of T, p and x
+            if T, p and x are scalars, then method returns a scalar.
             Otherwise a 1D array will be returned
         """
         if T is None:
