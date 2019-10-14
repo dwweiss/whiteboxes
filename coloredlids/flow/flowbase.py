@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-19 DWW
+      2019-09-27 DWW
 """
 
 import numpy as np
@@ -30,7 +30,7 @@ from coloredlids.matter.liquids import Water
 
 class FlowBase(Property):
     """
-    Properties of flow in pipework with circular or rectangulat 
+    Properties of flow in pipework with circular or rectangular 
     cross-section
     """
 
@@ -40,6 +40,12 @@ class FlowBase(Property):
                  v: float=1.,
                  fluid: Optional[Fluid]= None) -> None:
         """
+           ------              _---_      ^
+        h |      |           _-     -_    |
+          |      |           -_     _-    | d_pipe
+           ------              -___-      v
+             w           
+        
         Args:
             identifier:
                 indentifier of flow
@@ -48,7 +54,7 @@ class FlowBase(Property):
                 inner diameter if circular cross-section [m]
 
             w_h_pipe:
-                Width and height of rectangular cross-section [m, m]
+                width and height of rectangular cross-section [m, m]
 
             v:
                 speed (mean velocity) [m/s]
@@ -61,7 +67,7 @@ class FlowBase(Property):
         """
         super().__init__(identifier=identifier)
 
-        self._fluid: Fluid = Water()
+        self._fluid: Optional[Fluid] = None
 
         self.T.val: float = C2K(20)
         self.p.val: float = self.p.ref
@@ -125,7 +131,7 @@ class FlowBase(Property):
     @v.setter
     def v(self, value: float) -> None:
         """
-        Sets speed and updates volume and mass flow rate
+        Sets speed 
         Updates volume and mass flow rate
 
         Args:
@@ -140,7 +146,7 @@ class FlowBase(Property):
     def d_pipe(self) -> float:
         """
         Returns:
-            pipe diameter [m]
+            inner pipe diameter [m]
         """
         return self._d_pipe
 
@@ -148,11 +154,11 @@ class FlowBase(Property):
     def d_pipe(self, value: float) -> None:
         """
         Sets diameter of pipe with circular cross-section
-        Updates area, volume and mass flow rate
+        Updates area, volume flow rate and mass flow rate
 
         Args:
             value: 
-                pipe diameter [m]
+                inner pipe diameter [m]
         """
         self._d_pipe = value
         self._A = np.pi * 0.25 * self.d_pipe**2
@@ -281,16 +287,17 @@ class FlowBase(Property):
         return self.v() < self.fluid.c_sound(self.T(), self.p())
     
     def __str__(self):
-        s = self._fluid.identifier                    + '\n' + \
-            '           A: ' + str(self.A)            + '\n' + \
-            '      d_pipe: ' + str(self._d_pipe)      + '\n' + \
-            '  is_laminar: ' + str(self.is_laminar)   + '\n' + \
-            'is_turbulent: ' + str(self.is_turbulent) + '\n' + \
-            '           p: ' + str(self.p.val)        + '\n' + \
-            '           T: ' + str(self.T.val)        + '\n' + \
-            '          Re: ' + str(self.Re)           + '\n' + \
-            '       m_dot: ' + str(self._m_dot)       + '\n' + \
-            '       V_dot: ' + str(self._V_dot)       + '\n' + \
-            '           v: ' + str(self._v)           + '\n' + \
-            '    w_h_pipe: ' + str(self._w_h_pipe)
+        s = self._fluid.identifier                        + '\n' + \
+            '             A: ' + str(self.A)              + '\n' + \
+            '        d_pipe: ' + str(self._d_pipe)        + '\n' + \
+            '    is_laminar: ' + str(self.is_laminar)     + '\n' + \
+            '  is_turbulent: ' + str(self.is_turbulent)   + '\n' + \
+            'is_ultra_sonic: ' + str(self.is_ultra_sonic) + '\n' + \
+            '         m_dot: ' + str(self._m_dot)         + '\n' + \
+            '             p: ' + str(self.p.val)          + '\n' + \
+            '            Re: ' + str(self.Re)             + '\n' + \
+            '             T: ' + str(self.T.val)          + '\n' + \
+            '         V_dot: ' + str(self._V_dot)         + '\n' + \
+            '             v: ' + str(self._v)             + '\n' + \
+            '      w_h_pipe: ' + str(self._w_h_pipe)
         return s

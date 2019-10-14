@@ -575,7 +575,7 @@ def dp_in_red_mid_exp_out(v1, D1, L1, D2, L2, D3, L3, nu=1e-6, rho=1e3,
 
 
 def dp_tapered_in_red_mid_exp_out(v1, D1, L1, D2, L2, D3, L3,
-                                  alpha12=90, alpha23=90,
+                                  alpha12=90., alpha23=90.,
                                   nu=1e-6, rho=1e3, eps_rough=10e-6):
     """
     Pressure drop of the combination:

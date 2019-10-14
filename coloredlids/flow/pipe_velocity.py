@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-08-28 DWW
+      2019-09-27 DWW
 """
 
 import numpy as np
@@ -25,13 +25,13 @@ from typing import Optional, Union
 
 
 def v_axial(v_mean: Union[float, np.ndarray]=1., 
-            D_pipe: Union[float, np.ndarray]=1., 
+            d_pipe: Union[float, np.ndarray]=1., 
             r: Union[float, np.ndarray]=0., 
             nu: Union[float, np.ndarray]=1e-6, 
             Lambda: Optional[int]=None, 
             n: Optional[int]=6) -> float:
     """
-    Computes axial velocity distribution v_z(r) in a pipe.
+    Computes the axial velocity distribution v_z(r) in a pipe
 
     r
     ^
@@ -44,16 +44,16 @@ def v_axial(v_mean: Union[float, np.ndarray]=1.,
     ---------------------------> z
 
     Args:
-        v_mean (float or array of float):
+        v_mean:
             mean of axial velocity component [m/s]
 
-        D_pipe (float or array of float, optional):
+        d_pipe:
             inner pipe diameter [m]
 
-        r (float or array of float):
+        r:
             actual radius for which axial velocity is computed [m]
 
-        nu (float or array of float):
+        nu:
             kinematic viscosity [m^2/s]
 
         Lambda:
@@ -72,10 +72,10 @@ def v_axial(v_mean: Union[float, np.ndarray]=1.,
             Verlag fuer Bauwesen, Berlin 1988
             (laminar: equ. 1.6 and 1.8, turbulent: equ. 1.02, 1.21, 1.23)
     """
-    Re = v_mean * D_pipe / nu
+    Re = v_mean * d_pipe / nu
     if Re < 2300:
         v_max = 2 * v_mean
-        return v_max * (1.0 - 4 * (r / D_pipe)**2)
+        return v_max * (1.0 - 4 * (r / d_pipe)**2)
     else:
         # smooth pipe surface: n=6..10, rough: n=4
         if Lambda is None:
@@ -86,5 +86,4 @@ def v_axial(v_mean: Union[float, np.ndarray]=1.,
             reciprocal_of_n = np.sqrt(Lambda)
         x = (reciprocal_of_n + 2) * (reciprocal_of_n + 1)
         v_max = v_mean * x / 2
-        return v_max * (1.0 - 2 * r / D_pipe)**reciprocal_of_n
-    
+        return v_max * (1.0 - 2 * r / d_pipe)**reciprocal_of_n
