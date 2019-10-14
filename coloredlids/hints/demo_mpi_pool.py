@@ -10,7 +10,7 @@ def f(k):
     dy = (y1 - y0) / ny
     c = complex(0, 0.65)
 
-    xArr = bytearray(nx)
+    x_arr = bytearray(nx)
     y = y1 - k * dy
     for j in range(nx):
         x = x0 + j * dx
@@ -19,8 +19,8 @@ def f(k):
         while abs(z) < 3 and n > 1:
             z = z**2 + c
             n -= 1
-        xArr[j] = n
-    return xArr
+        x_arr[j] = n
+    return x_arr
 
 
 if __name__ == '__main__':
