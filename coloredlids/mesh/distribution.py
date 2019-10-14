@@ -20,7 +20,6 @@
       2018-06-25 DWW
 """
 
-
 from enum import Enum
 from numpy import log, clip, sqrt
 from random import random

@@ -24,8 +24,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
-def partly_regular(nCells, *ranges, spacing='lin', dtype=np.float32,
-                  silent=True):
+def partly_regular(n_cells, *ranges, spacing='lin', dtype=np.float32,
+                   silent=True):
     """
     Coordinates of vertices and cell centers for partly regular spaced grid
     (rectilinear) in 1D, 2D and 3D space.
@@ -58,14 +58,14 @@ def partly_regular(nCells, *ranges, spacing='lin', dtype=np.float32,
 
 
     Args:
-        nCells (int, or 1D array_like of int):
-            number of cells per axis for which coordinates are generated.
-            If nCells is single and negative, arrays will be transformed to 2D
-                and transposed:
+        n_cells (int, or 1D array_like of int):
+            number of cells per axis for which coordinates are generated
+            If n_cells is single and negative, arrays will be transformed 
+                to 2D and transposed:
                     e.g. partlyRegular(nCells, [0, 1])
-                    nCells: -5 ==> X1d:[[0], [.25], [.5], [.75], [1]]
-                    nCells: +5 ==> X1d:[[0, .25, .5, .75, 1]]
-            nCells or all elements of nCells must be greater 0 and less than 4
+                    n_cells: -5 ==> X1d:[[0], [.25], [.5], [.75], [1]]
+                    n_cells: +5 ==> X1d:[[0, .25, .5, .75, 1]]
+            n_cells or all elements of nCells must be greater 0 and less than 4
 
         ranges (variable length argument list of pairs of float):
             list of (min, max) pairs of vertex node ranges
@@ -95,9 +95,9 @@ def partly_regular(nCells, *ranges, spacing='lin', dtype=np.float32,
             - list of cell volumes V
     """
     ranges, spacing = list(ranges), list(np.atleast_1d(spacing))
-    N = list(np.atleast_1d(nCells))
+    N = list(np.atleast_1d(n_cells))
     n = N + [N[-1]] * (len(ranges) - len(N))  # fill n-array up to: len(ranges)
-    assert len(n) == len(ranges), str(n)+' '+str(nCells)+' '+str(ranges)
+    assert len(n) == len(ranges), str((n, n_cells, ranges))
     ranges = np.asfarray(ranges)
     spacing = spacing + [spacing[-1]] * (len(ranges) - len(spacing))
 

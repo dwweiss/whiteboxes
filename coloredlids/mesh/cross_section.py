@@ -17,12 +17,13 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-25 DWW
+      2019-09-17 DWW
 """
 
 from copy import deepcopy
 from math import pi, radians
 from collections import OrderedDict
+from typing import List, Optional, Tuple, Union
 
 from grayboxes.xyz import xyz
 
@@ -49,7 +50,7 @@ class CrossSection(object):
           |        \ :                r_star = (NE_star - C).magnitude()
           C----------E--->
     """
-    def __init__(self, identifier='?'):
+    def __init__(self, identifier: str='?') -> None:
         self.identifier = identifier
         self.points = OrderedDict()
         self.points['C'] = xyz(0., 0., 0.)
@@ -63,78 +64,78 @@ class CrossSection(object):
         self.next = None
 
     @property
-    def C(self):
+    def C(self) -> xyz:
         return self.points['C']
 
     @C.setter
-    def C(self, value):
+    def C(self, value: xyz) -> None:
         self.points['C'] = value
 
     @property
-    def W(self):
+    def W(self) -> xyz:
         return self.points['W']
 
     @W.setter
-    def W(self, value):
+    def W(self, value: xyz) -> None:
         self.points['W'] = value
 
     @property
-    def E(self):
+    def E(self) -> xyz:
         return self.points['E']
 
     @E.setter
-    def E(self, value):
+    def E(self, value: xyz):
         self.points['E'] = value
 
     @property
-    def S(self):
+    def S(self) -> xyz:
         return self.points['S']
 
     @S.setter
-    def S(self, value):
+    def S(self, value: xyz):
         self.points['S'] = value
 
     @property
-    def N(self):
+    def N(self) -> xyz:
         return self.points['N']
 
     @N.setter
-    def N(self, value):
+    def N(self, value: xyz):
         self.points['N'] = value
 
     @property
-    def SW(self):
+    def SW(self) -> xyz:
         return self.points['SW']
 
     @SW.setter
-    def SW(self, value):
+    def SW(self, value: xyz):
         self.points['SW'] = value
 
     @property
-    def SE(self):
+    def SE(self) -> xyz:
         return self.points['SE']
 
     @SE.setter
-    def SE(self, value):
+    def SE(self, value: xyz):
         self.points['SE'] = value
 
     @property
-    def NW(self):
+    def NW(self) -> xyz:
         return self.points['NW']
 
     @NW.setter
-    def NW(self, value):
+    def NW(self, value: xyz):
         self.points['NW'] = value
 
     @property
-    def NE(self):
+    def NE(self) -> xyz:
         return self.points['NE']
 
     @NE.setter
-    def NE(self, value):
+    def NE(self, value: xyz) -> None:
         self.points['NE'] = value
 
-    def __str__(self):
+    def __str__(self) -> str:
         s = "+++ id: '" + '{:10}'.format(str(self.identifier) + "',")
         for compass, coor in self.points.items():
             s += compass + ': [' + '{:7.5f},'.format(coor.x) + \
@@ -145,15 +146,15 @@ class CrossSection(object):
             s += 'way: ' + '{:7.5f}'.format(self.wayToNext)
         return s
 
-    def translate(self, offset):
+    def translate(self, offset: xyz) -> None:
         for el in self.points.values():
             el.translate(offset)
 
-    def rotate(self, phiRad, rotAxis):
+    def rotate(self, phiRad: xyz, rotAxis: xyz) -> None:
         for el in self.points.values():
             el.rotate(phiRad, rotAxis)
 
-    def scale(self, factor):
+    def scale(self, factor: Union[float, List[float]]) -> None:
         for el in self.points.values():
             el.scale(factor)
         if self.rotAxis is not None:
@@ -164,14 +165,14 @@ class CrossSection(object):
                     else:
                         self.rotAxis[i] *= float(factor)
 
-    def diameter(self):
+    def diameter(self) -> float:
         """
         Returns:
             Equivalent diameter
         """
         return (self.E - self.C).magnitude() + (self.N - self.C).magnitude()
 
-    def area(self):
+    def area(self) -> float:
         """
         Returns:
             Cross-sectional area
@@ -179,7 +180,7 @@ class CrossSection(object):
         return pi * (self.E - self.C).magnitude() * (self.N -
                                                      self.C).magnitude()
 
-    def normal(self):
+    def normal(self) -> xyz:
         """
         Returns:
             Normal vector
@@ -187,7 +188,7 @@ class CrossSection(object):
         n = self.vectorProduct(self.E - self.C, self.N - self.C)
         return n / n.magnitude()
 
-    def extractRotationData(self):
+    def extractRotationData(self) -> Tuple[float, float, float]:
         """
         Extracts rotation data from 'rotAxis' list which must contain one
             string and two floats; the rotation is around the axis for which
@@ -238,7 +239,7 @@ class CrossSection(object):
 
         return (rot, rBend, phiInRad)
 
-    def wayToNextCenter(self):
+    def wayToNextCenter(self) -> Optional[xyz]:
         if self.next is None:
             return None
         elif self.rotAxis is None:

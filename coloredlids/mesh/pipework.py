@@ -24,8 +24,8 @@ from copy import deepcopy
 
 from grayboxes.base import Base
 from grayboxes.xyz import xyz
-from grayboxes.plotarrays import plotTrajectory
-from . cross_section import CrossSection
+from grayboxes.plot import plot_trajectory
+from coloredlids.mesh.cross_section import CrossSection
 
 
 class PipeworkBase(Base):
@@ -56,10 +56,10 @@ class PipeworkBase(Base):
             crossSection = crossSection.next
         return None
 
-    def nCrossSection(self):
+    def n_cross_section(self):
         return len(self.keys())
 
-    def nPipeSection(self):
+    def n_pipe_section(self):
         return max(0, self.nCrossSection() - 1)
 
     def keys(self):
@@ -70,7 +70,7 @@ class PipeworkBase(Base):
             crossSection = crossSection.next
         return k
 
-    def setBegin(self, identifier, C, E, N):
+    def set_begin(self, identifier, C, E, N):
         """
         Sets characteristic points (C, E, N) of initial cross section
 
@@ -146,11 +146,11 @@ class PipeworkBase(Base):
             self.way += crossSection.wayToNext
             crossSection = crossSection.next
 
-        self.write('+++ nCrossSection: ', self.nCrossSection())
-        self.write('+++ nPipeSection: ', self.nPipeSection())
-        self.write('+++ keys: ', self.keys())
-        self.write('+++ way: ', self.way)
-        self.write('+++ ', self)
+        self.write('+++ nCrossSection: ' + str(self.nCrossSection()))
+        self.write('+++ nPipeSection: ' + str(self.nPipeSection()))
+        self.write('+++ keys: ' + str(self.keys()))
+        self.write('+++ way: ' + str(self.way))
+        self.write('+++ ' + str(self))
         if not self.silent:
             self.plot()
 
@@ -189,7 +189,7 @@ class PipeworkBase(Base):
 
             crossSection = crossSection.next
 
-        plotTrajectory(x, y, z, x2, y2, z2, x3, y3, z3,
+        plot_trajectory(x, y, z, x2, y2, z2, x3, y3, z3,
                        labels=['x', 'y', 'z', 'C', 'E', 'N'])
 
     def scale(self, factor):
@@ -216,22 +216,22 @@ class Pipework(PipeworkBase):
     def __init__(self, identifier='', argv=None):
         super().__init__(identifier, argv)
 
-    def createDoubleOutOfPlaneBends(self, rPipe=15e-3*0.5):
+    def create_double_out_of_plane_bends(self, r_pipe=15e-3*0.5):
         """
         create test geometry 1: 'double out-of-plane bends + straight segment'
         """
-        rBow = (rPipe * 2) * 1.5
-        lOutSegment = 2 * (2 * rPipe)
+        rBow = (r_pipe * 2) * 1.5
+        lOutSegment = 2 * (2 * r_pipe)
 
         hasCEN = True
         if hasCEN:
             C = (-rBow, -2*rBow,  -rBow)
-            E = (C[0], C[1]-rPipe, C[2])
-            N = (C[0], C[1], C[2]-rPipe)
+            E = (C[0], C[1]-r_pipe, C[2])
+            N = (C[0], C[1], C[2]-r_pipe)
             self.setBegin('begin', C, E, N)
         else:
             cs = self.add('begin', offset=None, rotAxis=['-90deg', -rBow, 0],
-                          scaling=[rPipe, rPipe, 0])
+                          scaling=[r_pipe, r_pipe, 0])
             cs.rotate([-rBow, -rBow, '-90deg'])
         self.add('middle1', offset=None, rotAxis=[-rBow, -rBow, '90deg'])
         self.add('middle2', offset=None, rotAxis=['90deg', -rBow, 0])
@@ -239,7 +239,7 @@ class Pipework(PipeworkBase):
 
         return self.head
 
-    def createStraightPipe(self, rPipe=15e-3*0.5, lPipe=1.):
+    def create_straight_pipe(self, rPipe=15e-3*0.5, lPipe=1.):
         """
         create pipe as test geometry 2
         """
@@ -250,32 +250,39 @@ class Pipework(PipeworkBase):
 # Examples ####################################################################
 
 if __name__ == '__main__':
+    import os
+    import sys
+    sys.path.append(os.path.abspath('../..'))
+    sys.path.append(os.path.abspath('../../../grayboxes'))
+
+    
+    
     foo = Pipework()
 
-    if 0:
-        rPipe = 15e-3 * 0.5
-        lPipe = 0.5
-        foo.createStraightPipe(rPipe, lPipe)
-        print('foo:', foo)
-
-    if 0:
-        rPipe = 15e-3 * 0.5
-        lPipe = 0.5
-        foo.createDoubleOutOfPlaneBends(rPipe)
+    if 1:
+        r_pipe = 15e-3 * 0.5
+        l_pipe = 0.5
+        foo.create_straight_pipe(r_pipe, l_pipe)
         print('foo:', foo)
 
     if 1:
-        rPipe = 15e-3 * 0.5
-        rBow = (rPipe * 2) * 1.5
-        lOutSegment = rBow  # 2 * (2 * rPipe)
+        r_pipe = 15e-3 * 0.5
+        l_pipe = 0.5
+        foo.create_double_out_of_plane_bends(r_pipe)
+        print('foo:', foo)
 
-        C = (-rBow, -2*rBow,  -rBow)
-        E = (C[0], C[1]-rPipe, C[2])
-        N = (C[0], C[1], C[2]-rPipe)
+    if 1:
+        r_pipe = 15e-3 * 0.5
+        r_bow = (r_pipe * 2) * 1.5
+        l_out_segment = r_bow  # 2 * (2 * rPipe)
+
+        C = (-r_bow, -2*r_bow,  -r_bow)
+        E = (C[0], C[1]-r_pipe, C[2])
+        N = (C[0], C[1], C[2]-r_pipe)
         foo.setBegin('begin', C, E, N)
-        foo.add('middle1', None, [-rBow,   -rBow, '90deg'])
-        foo.add('middle2', None, ['90deg', -rBow, 0])
-        foo.add('end', [0., 0., lOutSegment])
+        foo.add('middle1', None, [-r_bow,   -r_bow, '90deg'])
+        foo.add('middle2', None, ['90deg', -r_bow, 0])
+        foo.add('end', [0., 0., l_out_segment])
 
     foo()
     foo.scale(1000)
