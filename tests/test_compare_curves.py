@@ -47,7 +47,7 @@ class TestUM(unittest.TestCase):
             ]
         foo()
 
-    def _test2(self):
+    def test2(self):
         foo = CompareCurves(argv=sys.argv)
         foo.gui = True
         foo.bars = 32
