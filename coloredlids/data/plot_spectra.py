@@ -22,11 +22,11 @@
 
 __all__ = ['plot_spectra']
 
+import os
+import csv
 import matplotlib.pyplot as plt
 import numpy as np
-from typing import List
-
-from coloredlids.data.read_csv_two_columns import read_csv_two_columns
+from typing import List, Tuple
 
 
 def plot_spectra(path: str, 
@@ -230,3 +230,61 @@ def _plot_file_set(path: str,
     if save_image:
         plt.savefig(path + identifier + date_time + '_transmission.png')
     plt.show()
+
+
+def read_csv_two_columns(path: str, 
+                         file: str, 
+                         skip: int=0,
+                         delimiter: str=',',
+                         plot: bool=True) \
+        -> Tuple[np.ndarray, np.ndarray]:
+    """
+    Reads two colums with floating point numbers from comma separated file
+    
+        # optional header lines 
+        1.2, 3.4
+        5.6, 7.8
+          ...
+        9.0, 1.2
+
+    Args:
+        path:
+            path to file
+
+        file:
+            file name incl. extension
+            
+        skip:
+            number of header rows to be skipped
+            
+        delimiter:
+            delimiter between first and second column
+            
+        plot:
+            if True, loaded data will be plotted
+            
+    Returns:
+        (1D array of float, 1D array of float):
+            X and Y arrays 
+            The returned arrays are empty if file not found
+    """
+    path.replace('\\', '/')
+    full_path = os.path.join(path, file)
+    X, Y = [], []
+    if os.path.isfile(full_path):
+        with open(full_path, 'r') as csv_file:
+            reader = csv.reader(csv_file, delimiter=',')
+            for i_skip in range(skip):
+                next(reader)
+            for row in reader:
+                X.append(float(row[0]))
+                Y.append(float(row[1]))
+        csv_file.close()
+        if plot:
+            print('+++ plot:', full_path)
+            plt.plot(X, Y)
+            plt.show()
+    else:
+        print('??? file not found:', full_path)
+        
+    return np.asfarray(X), np.asfarray(Y)
