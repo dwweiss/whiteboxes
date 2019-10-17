@@ -17,28 +17,25 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-10-10 DWW
+      2019-10-16 DWW
 """
 
 import __init__
 __init__.init_path()
 
 import unittest
-import os
-import sys
-
 from coloredlids.data.compare_curves import CompareCurves
 
-class TestUM(unittest.TestCase):
 
+class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
+        pass
 
     def tearDown(self):
         pass
        
     def _test1(self):
-        foo = CompareCurves(argv=sys.argv)
+        foo = CompareCurves()
         foo.gui = False
         foo.bars = 32
         foo.filenames = [
@@ -48,7 +45,7 @@ class TestUM(unittest.TestCase):
         foo()
 
     def test2(self):
-        foo = CompareCurves(argv=sys.argv)
+        foo = CompareCurves()
         foo.gui = True
         foo.bars = 32
         foo()

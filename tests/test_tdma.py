@@ -24,7 +24,6 @@ import __init__
 __init__.init_path()
 
 import unittest
-import os
 import numpy as np
 
 from coloredlids.numerics.tdma import tdma
@@ -32,8 +31,6 @@ from coloredlids.numerics.tdma import tdma
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
-
         self.is_32bit = False
 
     def tearDown(self):
