@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-10-15 DWW
+      2019-10-17 DWW
 */
 
 
@@ -27,7 +27,7 @@
 #undef HAVE_PLOT_SPECTROGRAPHS
 
 #ifdef HAVE_PLOT_SPECTROGRAPHS
-    #define PLOT_SCRIPT "/home/pi/projects/moos/plot/plot_spectrographs.py"
+    #define PLOT_SCRIPT "/home/pi/projects/moos/plot/plot_spectra.py"
 #endif
  
 #include <cassert>
