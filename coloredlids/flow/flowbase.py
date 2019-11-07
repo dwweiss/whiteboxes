@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-27 DWW
+      2019-11-07 DWW
 """
 
 import numpy as np
@@ -38,7 +38,7 @@ class FlowBase(Property):
                  d_pipe: Optional[float]=None, 
                  w_h_pipe: Optional[Tuple[float, float]] = None,
                  v: float=1.,
-                 fluid: Optional[Fluid]= None) -> None:
+                 fluid: Optional[Fluid]=None) -> None:
         """
            ------              _---_      ^
         h |      |           _-     -_    |
@@ -67,7 +67,11 @@ class FlowBase(Property):
         """
         super().__init__(identifier=identifier)
 
-        self._fluid: Optional[Fluid] = None
+        if fluid is None:
+            self._fluid: Fluid = Water()
+        else:
+            self._fluid: Fluid = fluid 
+            assert isinstance(self.fluid, Fluid)
 
         self.T.val: float = C2K(20)
         self.p.val: float = self.p.ref
@@ -87,11 +91,6 @@ class FlowBase(Property):
         else:
             self.d_pipe = 1.
 
-        if fluid is None:
-            self.fluid = Water()
-        else:
-            self.fluid = fluid 
-            assert isinstance(self.fluid, Fluid)
 
     @property
     def fluid(self) -> Fluid:
@@ -284,7 +283,7 @@ class FlowBase(Property):
         Returns:
             True if flow is ultra sonic (v > v_sound)
         """
-        return self.v() < self.fluid.c_sound(self.T(), self.p())
+        return self.v < self.fluid.c_sound(self.T(), self.p())
     
     def __str__(self):
         s = self._fluid.identifier                        + '\n' + \
