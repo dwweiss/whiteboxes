@@ -20,13 +20,16 @@
       2019-11-07 DWW
 """
 
+import __init__
+__init__.init_path()
+
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 from matplotlib.axes._subplots import Axes
 from typing import Any, Dict, List
 import random
 import time
 import unittest
-from guibase1 import GuiBase1
+from coloredlids.gui.guibase1 import GuiBase1
 
 
 def model(data: Dict[str, Any], 
