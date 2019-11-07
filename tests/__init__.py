@@ -26,6 +26,7 @@ import os
 
 def init_path():
     sys.path.append(os.path.abspath('..'))
+    sys.path.append(os.path.abspath('../..'))
     sys.path.append(os.path.abspath('../../coloredlids')) # for coloredlids/doc
     sys.path.append(os.path.abspath('../../grayboxes'))         # for grayboxes
 
