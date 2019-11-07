@@ -25,9 +25,7 @@ from datetime import datetime
 import json
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.axes._subplots import Axes
-import random
-import time
+# from matplotlib.axes._subplots import Axes
 import tkinter
 from tkinter import filedialog
 from typing import Any, Callable, Dict, List, Optional, Tuple
