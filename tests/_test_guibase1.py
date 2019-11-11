@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-11-07 DWW
+      2019-11-11 DWW
 """
 
 import __init__
@@ -25,46 +25,52 @@ __init__.init_path()
 
 import unittest
 
-from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
-from matplotlib.axes._subplots import Axes
-from typing import Any, Dict, List
 import random
 import time
+from matplotlib.figure import Figure
+from tkinter.ttk import Progressbar
+from typing import Any, Dict, Optional
 
 from coloredlids.gui.guibase1 import GuiBase1
 
 
-def model(data: Dict[str, Any], 
-          canvas: FigureCanvasTkAgg,
-          axes: List[Axes]) -> float:
+def model2(data: Dict[str, Any], 
+           figure: Optional[Figure]=None, 
+           progress: Optional[Progressbar]=None) -> float:
     """
-    Implements user-defined model 
+    Implements user-defined model, plots otput on canvas, 
+        updates progress bar   
     
     Args:
         data:
             parameter and results of model
             
-        canvas:
-            plotting canvas
+        figure:
+            figure on plotting canvas, contains: .axes and .canvas
             
-        axes:
-            subplot of matplotlib figure
+        progress 
+            progress bar, update: progress['value'] = int/float(percentage)
             
     Returns:
-        result of analyis
+        result indicator of simulation
+        
+    Note:
+        The canvas cann be updated with: figure.canvas.draw()
     """
-    res = 0.123456
 
-    n = int(data['time [days]'])
-    ax1, ax2 = axes
-    
-    ax1.set_xlim(0, n)   
-    ax1.set_ylim(-2, 2)
-    ax1.plot(0., 0., color='red', marker='x', linestyle='')
-    canvas.draw()
-    
+    n = int(data.get('time [days]', 1))
     start = time.time()
     prev = start
+    res = 0.123456
+
+    if figure is not None:
+        ax1 = figure.axes[0]
+        ax2 = figure.axes[1] if len(figure.axes) > 1 else None        
+        ax1.set_xlim(0, n)   
+        ax1.set_ylim(-2, 2)
+        ax1.plot(0., 0., color='red', marker='x', linestyle='')
+        figure.canvas.draw()
+    
     for it in range(n):
 
         ###############################
@@ -73,20 +79,27 @@ def model(data: Dict[str, Any],
         ###############################
         
         x = it+1
-        ax1.plot(x, y1, marker='o', markersize=3, color='red')
-        ax2.plot(x, y2, marker='o', markersize=3, color='blue')
+        if figure is not None:
+            ax1.plot(x, y1, marker='o', markersize=3, color='red')
+            if ax2:
+                ax2.plot(x, y2, marker='o', markersize=3, color='blue')
 
         now = time.time()
         dt = now - prev
         if dt > 2.:
-            if not data['silent']:
-                print('wall clock time:', now - start)
             prev = now
-            canvas.draw()
+
+            if not data.get('silent', True):
+                print('wall clock time:', now - start)
+            if figure is not None:
+                figure.canvas.draw()
             
+        if progress is not None:
+            progress['value'] = it / n * 100
         time.sleep(0.1)
-        
-    canvas.draw()
+
+    if figure is not None:        
+        figure.canvas.draw()
     
     return res
 
@@ -103,26 +116,32 @@ class TestUM(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test1(self):
+    def _test1(self):
+        gui = GuiBase1()
+        gui()
+
+        self.assertTrue(True)
+
+    def test2(self):
         gui = GuiBase1(
-            identifier='Test 1', 
-            model=model, 
+            identifier='Test 1',
+            path = None,
+            model=model2, 
             labels=['$t$ [days]', '$y_1$ [/]', '$y_2$ [/]', ],
-            param_list = (
-                ('spin',   ['mode', 0, 4, 'ref'], 
-                           ['boxcar']),
-                ('slider', ['iterations', 0, 500, 50], 
-                           ['time [days]', 0, 1000, 100], 
-                           ['n3']),
-                ('entry',  ['relaxation', 0., 1., '0.66'], 
-                           ['limit', 0., 1., 8.9]),
-                ('slider', ['n5']),
-                ('slider', ['sl2', 0, 500, 33]),
-                ('check',  ['calibrate', None, None, False], 
-                           ['silent', None, None, True]),
-                ('label',  ['result', None, None, '?']), 
-            )
-)
+            param_list = [
+                # widget   name  min max default (widget+name mandatory)
+                ('spin',   'mode', 0, 4, 3), 
+                ('spin',   'boxcar',-1, 3, 2),
+                ('slider', 'iterations', 0, 500, 50), 
+                ('slider', 'time [days]', 0, 1000, 100), 
+                ('slider', 'n3'),
+                ('slider', 'n4'),
+                ('slider', 'n5'),
+                ('entry',  'relaxation', 0., 1., '0.66'), 
+                ('slider', 'n5'),
+            ]
+        )
+
         gui()
         
         self.assertTrue(True)
