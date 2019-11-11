@@ -34,9 +34,9 @@ from typing import Any, Dict, Optional
 from coloredlids.gui.guibase1 import GuiBase1
 
 
-def model2(data: Dict[str, Any], 
-           figure: Optional[Figure]=None, 
-           progress: Optional[Progressbar]=None) -> float:
+def model_random_data(data: Dict[str, Any], 
+                      figure: Optional[Figure]=None, 
+                      progress: Optional[Progressbar]=None) -> float:
     """
     Implements user-defined model, plots otput on canvas, 
         updates progress bar   
@@ -61,6 +61,7 @@ def model2(data: Dict[str, Any],
     n = int(data.get('time [days]', 1))
     start = time.time()
     prev = start
+    
     res = 0.123456
 
     if figure is not None:
@@ -72,7 +73,6 @@ def model2(data: Dict[str, Any],
         figure.canvas.draw()
     
     for it in range(n):
-
         ###############################
         y1 = random.uniform(-1, 1)
         y2 = random.uniform(-1, 1)
@@ -95,8 +95,8 @@ def model2(data: Dict[str, Any],
                 figure.canvas.draw()
             
         if progress is not None:
-            progress['value'] = it / n * 100
-        time.sleep(0.1)
+            progress[0]['value'] = it / n * 100
+        time.sleep(0.025)
 
     if figure is not None:        
         figure.canvas.draw()
@@ -117,16 +117,22 @@ class TestUM(unittest.TestCase):
         pass
 
     def _test1(self):
+        gui = GuiBase1(model=lambda data, figure, progress: 0.0)
+        gui()
+
+        self.assertTrue(True)
+
+    def _test2(self):
         gui = GuiBase1()
         gui()
 
         self.assertTrue(True)
 
-    def test2(self):
+    def test3(self):
         gui = GuiBase1(
             identifier='Test 1',
             path = None,
-            model=model2, 
+            model=model_random_data, 
             labels=['$t$ [days]', '$y_1$ [/]', '$y_2$ [/]', ],
             param_list = [
                 # widget   name  min max default (widget+name mandatory)
@@ -136,7 +142,6 @@ class TestUM(unittest.TestCase):
                 ('slider', 'time [days]', 0, 1000, 100), 
                 ('slider', 'n3'),
                 ('slider', 'n4'),
-                ('slider', 'n5'),
                 ('entry',  'relaxation', 0., 1., '0.66'), 
                 ('slider', 'n5'),
             ]
