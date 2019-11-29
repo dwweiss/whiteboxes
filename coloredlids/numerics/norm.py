@@ -17,44 +17,45 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2017-12-18 DWW
+      2019-11-19 DWW
 """
 
+__all__ = ['L2_norm', 'SSE', 'MSE']
+
 import numpy as np
+from typing import Sequence
 
 
-def L2_norm(y, Y):
+def L2_norm(y: Sequence[float], Y: Sequence[float]) -> float:
     """
     Square root of mean squared difference between arrays y and Y
 
     Args:
-        y (array_like of float):
+        y:
             indicated values
 
-        Y (array_like of float):
+        Y:
             conventional true values
 
     Returns:
-        (double):
-            Error
+        Error
     """
     return np.sqrt(np.mean(np.square(np.asfarray(y) - np.asfarray(Y))))
 
 
-def SSE(y, Y):
+def SSE(y: Sequence[float], Y: Sequence[float]) -> float:
     """
     Sum of squared difference between arrays y and Y
 
     Args:
-        y (array_like of float):
+        y:
             indicated values
 
-        Y (array_like of float):
+        Y:
             conventional true values
 
     Returns:
-         (double):
-             Error
+        Error
 
     Note:
          SSE = 0.5 * np.square(L2_norm(y, Y)) * y.size
@@ -62,19 +63,18 @@ def SSE(y, Y):
     return 0.5 * np.sum(np.square(np.asfarray(y) - np.asfarray(Y)))
 
 
-def MSE(y, Y):
+def MSE(y: Sequence[float], Y: Sequence[float]) -> float:
     """
     Mean squared difference between arrays y and Y
 
     Args:
-        y (array_like of float):
+        y:
             indicated values
 
-        Y (array_like of float):
+        Y:
             conventional true values
 
     Returns:
-        (double):
-            Error
+        Error
     """
     return np.mean(np.square(np.asfarray(y) - np.asfarray(Y)))
