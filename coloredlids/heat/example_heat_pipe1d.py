@@ -348,7 +348,7 @@ class TransHeat1DPipe(object):
                   r'  $t_{end}$ : ' + '{:5.3f}'.format(self.t) + ' s')
         plt.show()
         if self.save:
-            self.fig.savefig(self.path / __name__ + '.png',
+            self.fig.savefig(self.path / (__name__ + '.png'),
                              bbox_inches='tight')
         plt.close()
 
@@ -368,15 +368,13 @@ class TransHeat1DPipe(object):
 # Examples ####################################################################
 
 if __name__ == "__main__":
-    ALL = 0
-
     foo = TransHeat1DPipe()
 
-    if 1 or ALL:
+    if 1:
         #  Single call of response time computation
         t_response = foo(nx=128, is_cylinder=True, v=10, T_in=100, T_out=20,
                          t_max=100, alpha_out=5, delta_T_wal=0.1)
-    if 0 or ALL:
+    if 0:
         # Demonstrates effect of space step size
         collect_t_nx = []
         for nx in [4, 8, 16, 32, 64, 128, 256, 512]:

@@ -17,10 +17,11 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-27 DWW
+      2019-11-19 DWW
 """
 
 import numpy as np
+from typing import Optional
 
 from coloredlids.matter.gases import Air
 from coloredlids.matter.generic import Fluid
@@ -60,6 +61,8 @@ class FreeConvectionPlate(object):
                 Transfer, Wiley 1996
 
         Example:
+            from colordlids.data.conversion import C2K
+            
             T_surf = C2K(100)     # [K]
             T_inf = C2K(20)       # [K]
             phi_plate = 90        # [deg], vertical plate
@@ -70,33 +73,34 @@ class FreeConvectionPlate(object):
             alpha = foo.alpha_conv_rad(T_surf, T_inf, L, phi_plate)
     """
 
-    def __init__(self, fluid=None, eps_rad=None):
+    def __init__(self, fluid: Optional[Fluid] = None, 
+                       eps_rad: Optional[float] = None) -> None:
         self._fluid = fluid if fluid is not None else Air()
 
         # emissivity of plate surface
         self._eps_rad = eps_rad if eps_rad is not None else 0.5
 
     @property
-    def fluid(self):
+    def fluid(self) -> Fluid:
         return self._fluid
 
     @fluid.setter
-    def fluid(self, value):
+    def fluid(self, value: Fluid) -> None:
         if value is not None:
             if self._fluid is not None:
                 del self._fluid
             self._fluid = value
 
     @property
-    def eps_rad(self):
+    def eps_rad(self) -> float:
         return self._eps_rad
 
     @eps_rad.setter
-    def eps_rad(self, value):
+    def eps_rad(self, value: float) -> None:
         self._eps_rad = np.clip(value, 0, 1)
 
     def alpha_conv(self, T_surf: float, T_inf: float, L: float, 
-                   phi_plate: float=0.) -> float:
+                   phi_plate: float = 0.) -> float:
         """
         Convective heat transfer coefficient for natural convection
 
@@ -163,7 +167,7 @@ class FreeConvectionPlate(object):
         return e / dT
 
     def alpha_combined(self, T_surf: float, T_inf: float, L: float, 
-                       phi_plate: float=0.) -> float:
+                       phi_plate: float = 0.) -> float:
         """
         Computes convective heat transfer coefficient for natural
         convection and radiation
@@ -201,7 +205,7 @@ class FreeConvectionPlate(object):
             self.alpha_rad(T_surf, T_inf)
 
     def alpha_L_vert(self, T_surf: float, T_inf: float, L: float, 
-                     theta: float=0.) -> float:
+                     theta: float = 0.) -> float:
         """
         Computes convective heat transfer coefficient for natural
         convection on vertical or inclined plates
@@ -239,7 +243,7 @@ class FreeConvectionPlate(object):
         T_film = 0.5 * (T_surf + T_inf)
         Ra_L = self.rayleigh_L(T_surf, T_inf, L, theta)
 
-        return self.nusselt_L_vert(Ra_L, L) * self.fluid.Lambda(T_film) / L
+        return self.nusselt_L_vert(Ra_L, L) * self.fluid.lambda_(T_film) / L
 
     def alpha_L_upper(self, T_surf: float, T_inf: float, L: float) -> float:
         """
@@ -269,7 +273,7 @@ class FreeConvectionPlate(object):
         T_film = 0.5 * (T_surf + T_inf)
         Ra_L = self.rayleigh_L(T_surf, T_inf, L)
 
-        return self.nusselt_L_upper(Ra_L) * self.fluid.Lambda(T_film) / L
+        return self.nusselt_L_upper(Ra_L) * self.fluid.lambda_(T_film) / L
 
     def alpha_L_lower(self, T_surf: float, T_inf: float, L: float) -> float:
         """
@@ -300,7 +304,7 @@ class FreeConvectionPlate(object):
         T_film = 0.5 * (T_surf + T_inf)
         Ra_L = self.rayleigh_L(T_surf, T_inf, L)
 
-        return self.nusselt_L_lower(Ra_L) * self._fluid.Lambda(T_film) / L
+        return self.nusselt_L_lower(Ra_L) * self._fluid.lambda_(T_film) / L
 
     def nusselt_L_vert(self, Ra_L: float, Pr: float) -> float:
         """
@@ -374,7 +378,7 @@ class FreeConvectionPlate(object):
         return 0.27 * Ra_L**0.25
 
     def rayleigh_L(self, T_surf: float, T_inf: float, L: float, 
-                   theta: float=0.) -> float:
+                   theta: float = 0.) -> float:
         """
         Computes Rayleigh number Ra_L = Gr_L * Pr as function of
         temperature and characteristic length; theta can be optionally
