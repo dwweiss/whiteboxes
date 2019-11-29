@@ -24,7 +24,6 @@ import __init__
 __init__.init_path()
 
 import unittest
-import os
 
 from coloredlids.heat.free_convection import FreeConvectionPlate
 from coloredlids.matter.gases import Air
@@ -33,7 +32,7 @@ from coloredlids.matter.generic import C2K
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
+        pass
 
     def tearDown(self):
         pass

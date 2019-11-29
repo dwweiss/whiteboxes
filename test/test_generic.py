@@ -17,22 +17,22 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-17 DWW
+      2019-11-19 DWW
 """
 
 import __init__
 __init__.init_path()
 
 import unittest
-import os
 
-from coloredlids.matter.generic import Generic, Fluid, Metal, Property, Solid
-from coloredlids.matter.parameter import Parameter
+from coloredlids.matter.generic import Generic, Fluid, Metal, Solid
+from coloredlids.property.property import Property
+from coloredlids.property.parameter import Parameter
 
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
+        pass
 
     def tearDown(self):
         pass
@@ -63,8 +63,8 @@ class TestUM(unittest.TestCase):
         fluid = Fluid(identifier='fluid')
         fluid.c_p.plot()
         fluid.plot('c_p')
-        fluid.Lambda.plot()
-        fluid.plot('Lambda')
+        fluid.lambda_.plot()
+        fluid.plot('lambda')
         fluid.plot()
         print('-' * 60)
 
@@ -83,13 +83,13 @@ class TestUM(unittest.TestCase):
     def test4(self):
         # Example of Fluid
         fluid = Fluid(identifier='fluid')
-        fluid.Lambda.plot()
+        fluid.lambda_.plot()
         fluid.c_p.plot()
         fluid.rho.plot()
         fluid.a.plot()
         print('cp:', fluid.c_p(T=300, p=0, x=0),
               'rho:', fluid.rho(T=300, p=0, x=0),
-              'lambda:', fluid.Lambda(T=300, p=0, x=0),
+              'lambda:', fluid.lambda_(T=300, p=0, x=0),
               'a:', fluid.a(T=300, p=0, x=0))
         print('-' * 60)
 

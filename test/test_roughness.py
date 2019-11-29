@@ -17,27 +17,26 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-13 DWW
+      2019-11-14 DWW
 """
 
 import __init__
 __init__.init_path()
 
 import unittest
-import os
 
-from coloredlids.matter.roughness import roughness, roughness_list
+from coloredlids.matter.roughness import roughness, roughnesses
 
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
+        pass
 
     def tearDown(self):
         pass
 
     def test1(self):
-        for m in roughness_list.keys():
+        for m in roughnesses.keys():
             print('metal:', m,  'Ra:', roughness(m))
         print()
 

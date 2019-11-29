@@ -26,7 +26,7 @@ __init__.init_path()
 import unittest
 import sys
 
-from coloredlids.data.plot_spectra import plot_spectra
+from coloredlids.instruments.plot_spectra import plot_spectra
 
 
 class TestUM(unittest.TestCase):

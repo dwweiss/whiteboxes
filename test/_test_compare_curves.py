@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-19 DWW
+      2019-10-16 DWW
 """
 
 import __init__
@@ -25,15 +25,7 @@ __init__.init_path()
 
 import unittest
 
-from coloredlids.tools.isfunction import is_function
-
-
-def f():
-    return 0.0
-
-class C(object):
-    def f(self): 
-        pass
+from coloredlids.tools.compare_curves import CompareCurves
 
 
 class TestUM(unittest.TestCase):
@@ -42,27 +34,23 @@ class TestUM(unittest.TestCase):
 
     def tearDown(self):
         pass
+       
+    def _test1(self):
+        foo = CompareCurves()
+        foo.gui = False
+        foo.bars = 32
+        foo.filenames = [
+            './default_2019-08-16T22.13.10_spectrum_device0.data',
+            './default_reference_spectrum_device0.data', 
+            ]
+        foo()
 
-    def test1(self):
-        c = C()
-    
-        for x in [f, lambda a: 1.0, c.f, c]:
-            print('x:', str(x)[:str(x).index('at')-1] + str(x)[-1],
-                  '=> is_function:', is_function(x))
-        print()
-    
-        n = None
-        i = 1
-        b = True
-        d = 1.0
-        l = [1, 2]
-        t = (1, 2)
-        s = 'abc'
-        for x in [n, i, b, d, l, t, s]:
-            print('x:', x, '=> isFunction:', is_function(x))
-    
-        self.assertTrue(True)
+    def test2(self):
+        foo = CompareCurves()
+        foo.gui = True
+        foo.bars = 32
+        foo()
 
-
+        
 if __name__ == '__main__':
     unittest.main()

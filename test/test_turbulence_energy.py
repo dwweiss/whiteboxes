@@ -24,7 +24,6 @@ import __init__
 __init__.init_path()
 
 import unittest
-import os
 import matplotlib.pyplot as plt
 
 from coloredlids.flow.turbulence_energy import \
@@ -33,7 +32,7 @@ from coloredlids.flow.turbulence_energy import \
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
+        pass
 
     def tearDown(self):
         pass

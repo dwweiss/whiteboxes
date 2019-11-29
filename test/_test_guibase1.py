@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-11-11 DWW
+      2019-11-13 DWW
 """
 
 import __init__
@@ -48,17 +48,21 @@ def model_random_data(data: Dict[str, Any],
         figure:
             figure on plotting canvas, contains: .axes and .canvas
             
-        progress 
-            progress bar, update: progress['value'] = int/float(percentage)
+        progress: 
+            progress bar, update with:
+                progress['value'] = int/float(percentage)
             
     Returns:
         result indicator of simulation
         
     Note:
-        The canvas cann be updated with: figure.canvas.draw()
+        The figure can be updated with: figure.canvas.draw()
     """
 
     n = int(data.get('time [days]', 1))
+    ylo1, yhi1 = data.get('n3', -3), data.get('n4', 7)
+    ylo2, yhi2 = data.get('n5', -7), 7
+
     start = time.time()
     prev = start
     
@@ -68,14 +72,16 @@ def model_random_data(data: Dict[str, Any],
         ax1 = figure.axes[0]
         ax2 = figure.axes[1] if len(figure.axes) > 1 else None        
         ax1.set_xlim(0, n)   
-        ax1.set_ylim(-2, 2)
+        ax1.set_ylim(ylo1, yhi1)
+        if ax2:
+            ax2.set_ylim(ylo2, yhi2)
         ax1.plot(0., 0., color='red', marker='x', linestyle='')
         figure.canvas.draw()
     
     for it in range(n):
         ###############################
-        y1 = random.uniform(-1, 1)
-        y2 = random.uniform(-1, 1)
+        y1 = random.uniform(ylo1, yhi1)
+        y2 = random.uniform(ylo2, yhi2)
         ###############################
         
         x = it+1
@@ -95,10 +101,10 @@ def model_random_data(data: Dict[str, Any],
                 figure.canvas.draw()
             
         if progress is not None:
-            progress[0]['value'] = it / n * 100
-        time.sleep(0.025)
+            progress['value'] = it / n * 100
+        time.sleep(0.01)
 
-    if figure is not None:        
+    if figure is not None:            
         figure.canvas.draw()
     
     return res
@@ -140,8 +146,8 @@ class TestUM(unittest.TestCase):
                 ('spin',   'boxcar',-1, 3, 2),
                 ('slider', 'iterations', 0, 500, 50), 
                 ('slider', 'time [days]', 0, 1000, 100), 
-                ('slider', 'n3'),
-                ('slider', 'n4'),
+                ('slider', 'n3', -30, 0, -10),
+                ('slider', 'n4', 0, 50, 10),
                 ('entry',  'relaxation', 0., 1., '0.66'), 
                 ('slider', 'n5'),
             ]

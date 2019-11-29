@@ -17,21 +17,20 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-16 DWW
+      2019-11-25 DWW
 """
 
 import __init__
 __init__.init_path()
 
 import unittest
-import os
 
 import coloredlids.matter.gases as module_under_test
 
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
+        pass
 
     def tearDown(self):
         pass

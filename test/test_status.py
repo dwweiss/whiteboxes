@@ -24,14 +24,13 @@ import __init__
 __init__.init_path()
 
 import unittest
-import os
 
-from coloredlids.data.status import Status
+from coloredlids.property.status import Status
 
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
+        pass
 
     def tearDown(self):
         pass
@@ -51,7 +50,7 @@ class TestUM(unittest.TestCase):
         print('-' * 40)
     
         x = '-'
-        print("Name(symbol='" + x + "'):", Status.Name('-'))
+        print("Name(symbol='" + x + "'):", Status.name_('-'))
         print('-' * 40)
 
         self.assertTrue(True)

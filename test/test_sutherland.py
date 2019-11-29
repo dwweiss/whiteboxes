@@ -24,14 +24,13 @@ import __init__
 __init__.init_path()
 
 import unittest
-import os
 
 from coloredlids.matter.sutherland import sutherland_viscosity
 
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
+        pass
 
     def tearDown(self):
         pass

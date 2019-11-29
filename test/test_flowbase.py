@@ -17,29 +17,28 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-19 DWW
+      2019-11-19 DWW
 """
 
 import __init__
 __init__.init_path()
 
 import unittest
-import os
 
 from coloredlids.flow.flowbase import FlowBase
-from coloredlids.matter.parameter import C2K
-from coloredlids.matter.liquids import HydraulicOil
+from coloredlids.property.conversion import C2K
+from coloredlids.matter.liquids import HydraulicOil, Water
 
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
+        pass
 
     def tearDown(self):
         pass
 
     def test1(self):
-        foo = FlowBase()
+        foo = FlowBase(fluid=Water())
         foo.T.val = C2K(50)
         foo.v = 2.0
 
@@ -60,7 +59,7 @@ class TestUM(unittest.TestCase):
         self.assertTrue(True)
 
     def test3(self):
-        foo = FlowBase(d_pipe=25e-3)
+        foo = FlowBase(d_pipe=25e-3, fluid=Water())
 
         foo.T.val = C2K(50)
         foo.v = 1.

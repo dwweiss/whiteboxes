@@ -24,7 +24,6 @@ import __init__
 __init__.init_path()
 
 import unittest
-import os
 import numpy as np
 
 from coloredlids.data.scale import scale, batch_normalize, batch_denormalize
@@ -32,7 +31,7 @@ from coloredlids.data.scale import scale, batch_normalize, batch_denormalize
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
+        pass
 
     def tearDown(self):
         pass

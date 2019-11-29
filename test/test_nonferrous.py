@@ -24,17 +24,18 @@ import __init__
 __init__.init_path()
 
 import unittest
-import os
 
 import coloredlids.matter.nonferrous as module_under_test
 
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
+        pass
+
 
     def tearDown(self):
         pass
+
 
     def test1(self):
         classes = [v for c, v in module_under_test.__dict__.items()

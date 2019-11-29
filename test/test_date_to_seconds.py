@@ -24,7 +24,6 @@ import __init__
 __init__.init_path()
 
 import unittest
-import os
 
 from coloredlids.tools.date_to_seconds import date_to_seconds
 
@@ -34,7 +33,7 @@ class TestUM(unittest.TestCase):
     Test of function date_to_seconds() 
     """
     def setUp(self):
-        print('///', os.path.basename(__file__))
+        pass
 
     def tearDown(self):
         pass

@@ -9,7 +9,7 @@
   This software is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  Lesser General Public License for more details.
+  Lesser General Public Licqense for more details.
 
   You should have received a copy of the GNU Lesser General Public
   License along with this software; if not, write to the Free
@@ -24,7 +24,6 @@ import __init__
 __init__.init_path()
 
 import unittest
-import os
 
 from coloredlids.matter.generic import C2K
 from coloredlids.matter.matter import Matter
@@ -32,7 +31,7 @@ from coloredlids.matter.matter import Matter
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
+        pass
 
     def tearDown(self):
         pass
@@ -59,8 +58,8 @@ class TestUM(unittest.TestCase):
 
         rho = mat.plot('rho')
         print('rho:', rho)
-        Lambda = mat.Lambda(T=C2K(100))
-        print('Lambda:', Lambda)
+        lambda_ = mat.lambda_(T=C2K(100))
+        print('lambda_:', lambda_)
         c_p = mat.c_p(T=C2K(20), p=mat.p.ref)
         print('c_p:', c_p)
 

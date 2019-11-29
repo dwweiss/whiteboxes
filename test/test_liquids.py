@@ -24,7 +24,6 @@ import __init__
 __init__.init_path()
 
 import unittest
-import os
 
 import coloredlids.matter.liquids as module_under_test
 from coloredlids.matter.liquids import HydraulicOil
@@ -32,13 +31,12 @@ from coloredlids.matter.liquids import HydraulicOil
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
-
+        pass
 
     def tearDown(self):
         pass
 
-    def test1(self):
+    def _test1(self):
         classes = [v for c, v in module_under_test.__dict__.items()
                          if isinstance(v, type) and
                              v.__module__ == module_under_test.__name__ ]

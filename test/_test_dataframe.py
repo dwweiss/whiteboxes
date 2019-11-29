@@ -35,8 +35,6 @@ from coloredlids.data.dataframe import select_frame, split_frame
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
-
         self.df = DataFrame({'x': [10, 32, 20, 40, 10],
                              'y': [31, 41, 41, 31, 10],
                              'z': [32, 61, 44, 33, 7]})

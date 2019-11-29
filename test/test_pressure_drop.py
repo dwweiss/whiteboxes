@@ -24,7 +24,6 @@ import __init__
 __init__.init_path()
 
 import unittest
-import os
 import numpy as np
 import matplotlib.pyplot as plt
 
@@ -55,8 +54,6 @@ eps_rough = 10e-6
 
 class TestUM(unittest.TestCase):
     def setUp(self):
-        print('///', os.path.basename(__file__))
-
         fontsize = 10
         plt.rcParams.update({'font.size': fontsize})
         plt.rcParams['legend.fontsize'] = fontsize
