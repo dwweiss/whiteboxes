@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-25 DWW
+      2019-11-19 DWW
 """
 
 from enum import Enum
@@ -25,7 +25,8 @@ from enum import Enum
 
 class Face(Enum):
     """
-    Identifier of faces of geometric objects in compass notation
+    Identifier of faces of objects in compass notation, 
+    limited to 6 dimensions
 
 
     Face identifiers for dimension 1-2:
@@ -84,7 +85,7 @@ class Face(Enum):
 
 if __name__ == '__main__':
     for x in Face:
-        print(x.name, ": '" + str(x.value) + "'")
+        print(x.name, 8, ": '" + str(x.value) + "'")
     print()
     
     a = Face.WEST 
