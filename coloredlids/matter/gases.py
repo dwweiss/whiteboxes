@@ -17,12 +17,14 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-17 DWW
+      2019-11-27 DWW
 """
 
 import numpy as np
+from typing import Optional
 
-from coloredlids.matter.parameter import C2K, K2C
+from coloredlids.property.range import Range
+from coloredlids.property.conversion import C2K, K2C
 from coloredlids.matter.generic import Gas
 
 
@@ -31,33 +33,36 @@ class Air(Gas):
     Physical and chemical properties of air
     """
 
-    def __init__(self, identifier='Air', latex=None, comment=None):
+    def __init__(self, identifier: str='Air', 
+                 latex: Optional[str]=None, 
+                 comment: Optional[str]=None):
         """
         Args:
-            identifier (string, optional):
+            identifier:
                 identifier of matter
 
-            latex (string, optional):
-                Latex-version of identifier. If None, identical with identifier
+            latex:
+                Latex-version of identifier. 
+                If None, latex is identical with identifier
 
-            comment (string, optional):
+            comment:
                 comment on matter
         """
         super().__init__(identifier=identifier, latex=latex, comment=comment)
         self.version = '160118_dww'
 
         # reference point and operational range
-        self.T.operational = C2K((0, 100)).tolist()
+        self.T['operational'] = Range(C2K(0), C2K(100))
         self.T.ref = C2K(15)
         self.T.val = self.T.ref
-        self.p.operational = (np.array([0., 100e5]) + 1.01325e5).tolist()
+        self.p['operational'] = Range(0. + 1.01325e5, 100e5 + 1.01325e5)
         self.p.ref = 1.01325e5
         self.p.val = self.p.ref
 
         # constants
         self.E = 2.2e9
-        self.hMelt = 334e3
-        self.hVap = 2270e3
+        self.h_melt = 334e3
+        self.h_vap = 2270e3
         self.T_liq = C2K(0)
         self.T_boil = 83
         self.composition['N2'] = 0.76   # weight percentage, dry air
@@ -68,7 +73,7 @@ class Air(Gas):
         self.nu.calc = self._nu
         self.mu.calc = self._mu
         self.c_p.calc = self._c_p
-        self.Lambda.calc = self._lambda
+        self.lambda_.calc = self._lambda
         self.c_sound.calc = self._c_sound
         self.beta.calc = self._beta
 
@@ -154,26 +159,29 @@ class Argon(Gas):
     Physical and chemical properties of Argon
     """
 
-    def __init__(self, identifier='Ar', latex=None, comment=None):
+    def __init__(self, identifier: str='Ar', 
+                 latex: Optional[str]=None, 
+                 comment: Optional[str]=None):
         """
         Args:
-            identifier (string, optional):
+            identifier:
                 identifier of matter
 
-            latex (string, optional):
-                Latex-version of identifier. If None, identical with identifier
+            latex:
+                Latex-version of identifier. 
+                If None, latex is identical with identifier
 
-            comment (string, optional):
+            comment:
                 comment on matter
         """
         super().__init__(identifier=identifier, latex=latex, comment=comment)
         self.version = '160118_dww'
 
         # reference point and operational range
-        self.T.operational = C2K(np.array([0, 100])).tolist()
+        self.T['operational'] = Range(C2K(0), C2K(100))
         self.T.ref = C2K(15)
         self.T.val = self.T.ref
-        self.p.operational = (np.array([0, 100e5]) + 1.01325e5).tolist()
+        self.p['operational'] = Range(0. + 1.01325e5, 100e5 + 1.01325e5)
         self.p.ref = 1.01325e5
         self.p.val = self.p.ref
 
@@ -192,7 +200,7 @@ class Argon(Gas):
         self.nu.calc = self._nu
         self.mu.calc = self._mu
         self.c_p.calc = self._c_p
-        self.Lambda.calc = self._lambda
+        self.lambda_.calc = self._lambda
 #        self.c_sound.calc = self._c_sound
 #        self.beta.calc = self._beta
 

@@ -17,12 +17,12 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-17 DWW
+      2019-11-25 DWW
 """
 
 from typing import Optional
 
-from coloredlids.matter.parameter import C2K, K2C
+from coloredlids.property.conversion import C2K, K2C
 from coloredlids.matter.generic import NonMetal
 
 
@@ -65,19 +65,20 @@ class R4_230NA(NonMetal):
         self.friction = 0.5
         self.R_compr.calc = lambda T=0, p=0, x=0: 0*K2C(T) + 268e6
 
-        self.E.calc = lambda T=0, p=0, x=0: 14.5e+9
-        self.beta.calc = lambda T=0, p=0, x=0: 15e-6
-        self.c_p.calc = lambda T=0, p=0, x=0: 1000
+        self.E.calc       = lambda T=0, p=0, x=0: 14.5e+9
+        self.beta.calc    = lambda T=0, p=0, x=0: 15e-6
+        self.c_p.calc     = lambda T=0, p=0, x=0: 1000
         # TODO difference between c_p of reference [2]:1003 and [3]:1000
-        self.Lambda.calc = lambda T=0, p=0, x=0: 3.63
-        self.rho.calc = lambda T=0, p=0, x=0: 1680
-        self.rho_el.calc = lambda T=0, p=0, x=0: 1e+12
+        self.lambda_.calc = lambda T=0, p=0, x=0: 3.63
+        self.rho.calc     = lambda T=0, p=0, x=0: 1680
+        self.rho_el.calc  = lambda T=0, p=0, x=0: 1e+12
 
         self.T_melt = (C2K(1399), C2K(1454))
 
 
 class Concrete(NonMetal):
-    def __init__(self, identifier: str='concrete', latex: Optional[str]=None, 
+    def __init__(self, identifier: str='concrete', 
+                 latex: Optional[str]=None, 
                  comment: Optional[str]=None) -> None:
         """
         Args:
@@ -91,13 +92,14 @@ class Concrete(NonMetal):
                 comment on matter
         """
         super().__init__(identifier, latex=latex, comment=comment)
-        self.c_p.calc = lambda T=0, p=0, x=0: 0.8
-        self.rho.calc = lambda T=0, p=0, x=0: 2300
-        self.Lambda.calc = lambda T=0, p=0, x=0: 1.8
+        self.c_p.calc     = lambda T=0, p=0, x=0: 0.8
+        self.rho.calc     = lambda T=0, p=0, x=0: 2300
+        self.lambda_.calc = lambda T=0, p=0, x=0: 1.8
 
 
 class Ceramic(NonMetal):
-    def __init__(self, identifier: str='ceramic', latex: Optional[str]=None, 
+    def __init__(self, identifier: str='ceramic', 
+                 latex: Optional[str]=None, 
                  comment: Optional[str]=None) -> None:
         """
         Args:
@@ -111,6 +113,6 @@ class Ceramic(NonMetal):
                 comment on matter
         """
         super().__init__(identifier, latex=latex, comment=comment)
-        self.c_p.calc = lambda T=0, p=0, x=0: 835
-        self.rho.calc = lambda T=0, p=0, x=0: 1920
-        self.Lambda.calc = lambda T=0, p=0, x=0: 0.72
+        self.c_p.calc     = lambda T=0, p=0, x=0: 835
+        self.rho.calc     = lambda T=0, p=0, x=0: 1920
+        self.lambda_.calc = lambda T=0, p=0, x=0: 0.72

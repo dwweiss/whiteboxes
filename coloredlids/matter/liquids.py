@@ -17,15 +17,16 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-19 DWW
+      2019-11-25 DWW
 """
 
 import numpy as np
 from scipy.interpolate import interp2d
 from typing import Optional
 
+from coloredlids.property.conversion import C2K, K2C
+from coloredlids.property.range import Range
 from coloredlids.matter.generic import Liquid
-from coloredlids.matter.parameter import C2K, K2C
 
 
 class Diesel(Liquid):
@@ -57,10 +58,10 @@ class Diesel(Liquid):
         self.version = '09.19_dww'
 
         # reference point and operational range
-        self.T.operational = [x for x in C2K([0, 100])]
+        self.T.operational = Range(C2K(0), C2K(100))
         self.T.ref = C2K(15)
         self.T.val = self.T.ref
-        self.p.operational = [x + 1.01325e5 for x in [0, 100e5]]
+        self.p.operational = Range(0. + 1.01325e5, 100e5 + 1.01325e5)
         self.p.ref = 1.01325e5
         self.p.val = self.p.ref
 
@@ -76,7 +77,7 @@ class Diesel(Liquid):
         self.nu.calc = self._nu
         self.mu.calc = self._mu
         self.c_p.calc = self._c_p
-        self.Lambda.calc = self._lambda
+        self.lambda_.calc = self._lambda
 #        self.c_sound.calc = self._c_sound
 #        self.E.calc = self._E
 
@@ -116,7 +117,8 @@ class HydraulicOil(Liquid):
                 identifier of matter
 
             latex:
-                Latex-version of identifier. If None, latex = identifier
+                Latex-version of identifier. 
+                If None, latex is identical with identifier
 
             comment:
                 comment on matter
@@ -125,10 +127,10 @@ class HydraulicOil(Liquid):
         self.version = '160118_dww'
 
         # reference point and operational range
-        self.T.operational = C2K([0, 100]).tolist()
+        self.T.operational = Range(C2K(0), C2K(100))
         self.T.ref = C2K(15)
         self.T.val = self.T.ref
-        self.p.operational = (np.array([0, 100e5]) + 1.01325e5).tolist()
+        self.p.operational = Range(0. + 1.01325e5, 100e5 + 1.01325e5)
         self.p.ref = 1.01325e5
         self.p.val = self.p.ref
 
@@ -144,7 +146,7 @@ class HydraulicOil(Liquid):
         self.nu.calc = self._nu
         self.mu.calc = self._mu
         self.c_p.calc = self._c_p
-        self.Lambda.calc = self._lambda
+        self.lambda_.calc = self._lambda
 #        self.c_sound.calc = self._c_sound
 #        self.E.calc = self._E
 
@@ -196,7 +198,8 @@ class Water(Liquid):
                 identifier of matter
 
             latex:
-                Latex-version of identifier. If None, identical with identifier
+                Latex-version of identifier. 
+                If None, latex is identical with identifier
 
             comment:
                 comment on matter
@@ -205,10 +208,10 @@ class Water(Liquid):
         self.version = '301017_dww'
 
         # reference point and operational range
-        self.T.operational = [val for val in C2K([0, 100])]
+        self.T.operational = Range(C2K(0), C2K(100))
         self.T.ref = C2K(15)
         self.T.val = self.T.ref
-        self.p.operational = [val + 1.01325e5 for val in [0, 100e5]]
+        self.p.operational = Range(0. + 1.01325e5, 100e5 + 1.01325e5)
         self.p.ref = 1.01325e5
         self.p.val = self.p.ref
 
@@ -220,13 +223,13 @@ class Water(Liquid):
         self.composition['H2O'] = 100.
 
         # functions of temperature, pressure and spare parameter 'x'
-        self.rho.calc = self._rho
-        self.nu.calc = self._nu
-        self.mu.calc = self._mu
-        self.c_p.calc = self._c_p
-        self.Lambda.calc = self._lambda
+        self.rho.calc     = self._rho
+        self.nu.calc      = self._nu
+        self.mu.calc      = self._mu
+        self.c_p.calc     = self._c_p
+        self.lambda_.calc = self._lambda
         self.c_sound.calc = self._c_sound
-        self.E.calc = self._E
+        self.E.calc       = self._E
 
     def _rho(self, T, p=0., x=0.):
         """

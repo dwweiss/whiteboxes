@@ -17,14 +17,14 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-16 DWW
+      2019-11-14 DWW
 """
 
 import numpy as np
 from typing import Optional
 
-from coloredlids.matter.parameter import C2K
-from coloredlids.matter.property import Property
+from coloredlids.property.conversion import C2K
+from coloredlids.property.property import Property
 
 
 class Generic(Property):
@@ -32,16 +32,17 @@ class Generic(Property):
     Collection of physical and chemical properties of generic matter
     """
 
-    def __init__(self, identifier: str='generic_matter',
-                 latex: Optional[str]=None,
-                 comment: Optional[str]=None) -> None:
+    def __init__(self, identifier: str = 'generic_matter',
+                 latex: Optional[str] = None,
+                 comment: Optional[str] = None) -> None:
         """
         Args:
             identifier:
                 Identifier of matter
 
             latex:
-                Latex-version of identifier. If None, identical with identifier
+                Latex-version of identifier. 
+                If None, latex is identical with identifier
 
             comment:
                 Comment on matter
@@ -56,10 +57,15 @@ class Generic(Property):
         self.phases = 1
         self.composition = {}
 
-        self.beta = Property('beta',    '1/K', latex=r'$\beta_{th}$')
+        self.beta = Property('beta', '1/K', latex=r'$\beta_{th}$')
+        self.beta.calc = lambda T, p, x: 1.
+        
         self.c_sound = Property('c_sound', 'm/s', latex='$c_{sound}$')
+        self.c_sound.calc = lambda T, p, x: 1.
 
         self.E = Property('E', 'Pa', comment="Young's (elastic) modulus")
+        self.E.calc = lambda T, p, x: 1.
+        
         self.nu_mech = 0.
         self.T_sol = 0.
         self.T_liq = 0.
@@ -73,7 +79,9 @@ class Generic(Property):
                             comment='density')
         self.rho.T.ref = C2K(20)
         self.rho.p.ref = 101.325e3
-        if np.abs(self.E()) < 1e-20:
+        self.rho.calc = lambda T, p, x: 1.
+        
+        if self.E() is None or np.abs(self.E()) < 1e-20:
             self.rho.calc = lambda T, p, x: self.rho.ref \
                 / (1. + (T - self.rho.T.ref) * self.beta())
         else:
@@ -81,14 +89,16 @@ class Generic(Property):
                 / (1. + (T - self.rho.T.ref) * self.beta()) \
                 / (1. - (p - self.rho.p.ref) / self.E())
 
-        self.c_p = Property('c_p', 'J/(kg K)',
-                            comment='specific heat capacity')
-        self.Lambda = Property('lambda', 'W/(m K)', latex=r'$\lambda$',
-                               comment='thermal conductivity')
-        self.rho_el = Property('rho_el', r'$\Omega$', latex=r'$\varrho_{el}$',
-                               comment='electric resistance')
-        self.a = Property('a', 'm$^2$/s', comment='thermal diffusity')
-        self.a.calc = lambda T, p, x: self.Lambda.calc(T, p, x) / \
+        self.c_p     = Property('c_p', 'J/(kg K)',
+                                comment='specific heat capacity')
+        self.c_p.calc = lambda T, p, x: 1.
+        self.lambda_ = Property('lambda', 'W/(m K)', latex=r'$\lambda$',
+                                comment='thermal conductivity')
+        self.lambda_.calc = lambda T, p, x: 1.
+        self.rho_el  = Property('rho_el', r'$\Omega$', latex=r'$\varrho_{el}$',
+                                comment='electric resistance')
+        self.a       = Property('a', 'm$^2$/s', comment='thermal diffusity')
+        self.a.calc = lambda T, p, x: self.lambda_.calc(T, p, x) / \
             (self.c_p.calc(T, p, x) * self.rho.calc(T, p, x))
 
     def plot(self, prop: Optional[Property]=None) -> None:
@@ -120,7 +130,8 @@ class Solid(Generic):
                 Identifier of matter
 
             latex:
-                Latex-version of identifier. If None, identical with identifier
+                Latex-version of identifier. 
+                If None, latex identical with identifier
 
             comment:
                 Comment on matter
@@ -130,13 +141,13 @@ class Solid(Generic):
         """
         super().__init__(identifier=identifier, latex=latex, comment=comment)
 
-        self.R_p02 = Property('Rp0.2', 'Pa', latex='$R_{p,0.2}$',
-                              comment='yield strength')
-        self.R_m = Property('R_m', 'Pa', latex='$R_{m}$',
-                            comment='tensile strength')
+        self.R_p02   = Property('Rp0.2', 'Pa', latex='$R_{p,0.2}$',
+                                comment='yield strength')
+        self.R_m     = Property('R_m', 'Pa', latex='$R_{m}$',
+                                comment='tensile strength')
         self.R_compr = Property('R_compr', 'Pa', latex='$R_{compr}$',
                                 comment='compressive strength')
-        self.T_recry = 0.
+        self.T_recryst = 0.
 
 
 class NonMetal(Solid):

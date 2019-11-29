@@ -25,11 +25,11 @@ def molecular_weight(identifier: str) -> Optional[float]:
     """
     Args:
         identifier:
-            Element or organic compound
+            identifier of chemical element or organic compound
 
     Returns:
-        - Molecular weight (molar mass) in [kg/mol] or
-        - None if identifier is not valid
+        Molecular weight (molar mass) in [kg/mol]
+        or None if identifier is invalid
 
     Reference:
         https://www.lenntech.com/calculators/molecular/

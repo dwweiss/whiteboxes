@@ -22,7 +22,7 @@
 
 from typing import Optional
 
-from coloredlids.matter.parameter import C2K
+from coloredlids.property.conversion import C2K
 from coloredlids.matter.generic import NonFerrous
 
 
@@ -40,7 +40,8 @@ class Aluminum(NonFerrous):
                 identifier of matter
 
             latex:
-                Latex-version of identifier. If None, identifier is assigned
+                Latex-version of identifier. 
+                If None, latex is identical with identifier
 
             comment:
                 comment on matter. If None, comment is empty
@@ -67,7 +68,7 @@ class Aluminum(NonFerrous):
 
         self.beta.calc    = lambda T=0, p=0, x=0: 23.1e-6
         self.c_p.calc     = lambda T=0, p=0, x=0: 24.2 / self.M
-        self.Lambda.calc  = lambda T=0, p=0, x=0: 237
+        self.lambda_.calc = lambda T=0, p=0, x=0: 237
         self.rho.calc     = lambda T=0, p=0, x=0: 2700 if T < self.T_sol \
                                                            else 2375
         self.rho_el.calc  = lambda T=0, p=0, x=0: 26.5e-9
@@ -87,7 +88,8 @@ class Copper(NonFerrous):
                 identifier of matter
 
             latex:
-                Latex-version of identifier. If None, identifier is assigned
+                Latex-version of identifier. 
+                If None, latex is identical with identifier
 
             comment:
                 comment on matter. If None, comment is empty
@@ -103,5 +105,5 @@ class Copper(NonFerrous):
         self.T_sol        = C2K(2560)
         self.beta.calc    = lambda T=0, p=0, x=0: 16.3e-6
         self.c_p.calc     = lambda T=0, p=0, x=0: 129
-        self.Lambda.calc  = lambda T=0, p=0, x=0: 386
+        self.lambda_.calc = lambda T=0, p=0, x=0: 386
         self.rho.calc     = lambda T=0, p=0, x=0: 8960

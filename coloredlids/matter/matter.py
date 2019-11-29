@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-18 DWW
+      2019-09-19 DWW
 """
 
 from typing import Optional, Sequence, Union
@@ -37,7 +37,10 @@ class Matter(Base):
     Convenience class providing properties of all matter in modules:
         (ferrous, nonferrous, nonmetals, liquids, gases)
         
-    For a list of all matter write:
+    Note:
+        For getting a list of all matter write:
+            all_matter = Matter('all') or 
+            all_matter = Matter(None) 
         
     """
 
@@ -71,13 +74,16 @@ class Matter(Base):
                 If None or 'all', then all matter will be returned
 
         Returns:
-            - Selected matter or:
-            - List all matter if identifier is None or 'all' or
-            - None if identifier is unknown
+            Selected matter 
+            or 
+            list of all matter if identifier is None
+            or 
+            None if identifier is invalid
 
         Example:
             collection = Matter()
-            mat = collection('iron')
+            iron = collection('iron')
+            
         """
         if identifier is None or identifier == 'all':
             return self.data.values()

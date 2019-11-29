@@ -17,23 +17,21 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version
-      2018-09-17 DWW
+      2019-11-25 DWW
 """
 
 from math import sqrt
 from typing import Optional
 
 
-def sutherland_viscosity(identifier: str,
-                         T: float,
-                         T0: float,
+def sutherland_viscosity(identifier: str, T: float, T0: float,
                          mu0: float) -> Optional[float]:
     """
     Sutherland approximation of gas viscosity
 
     Args:
         identifier:
-            Identifier out of [ "AIR" "CO2" "H2" "N2" "NH3" "O2" ]
+            Identifier out of [ 'AIR' 'CO2' 'H2' 'N2' 'NH3' 'O2' ]
 
         T:
             Temperature [K]
@@ -50,8 +48,8 @@ def sutherland_viscosity(identifier: str,
         None if identifier is unknown
 
     Reference:
-        Crane: Flow of fluids trough valves, fittings and pipe. Technical paper
-        No 410, 1988
+        Crane: Flow of fluids trough valves, fittings and pipe. 
+        Technical paper No 410, 1988
 
         Gas             C_s [K] T0 [K]  mu0 [micro-Pa s]
         air             120     291.15  18.27
@@ -66,12 +64,12 @@ def sutherland_viscosity(identifier: str,
     """
 
     identifier.upper()
-    if   identifier == "AIR": C_s = 120.0
-    elif identifier == "CO2": C_s = 240.0
-    elif identifier == "H2" : C_s =  72.0
-    elif identifier == "N2" : C_s = 111.0
-    elif identifier == "NH3": C_s = 370.0
-    elif identifier == "O2" : C_s = 127.0
+    if   identifier == 'AIR': C_s = 120.0
+    elif identifier == 'CO2': C_s = 240.0
+    elif identifier == 'H2' : C_s =  72.0
+    elif identifier == 'N2' : C_s = 111.0
+    elif identifier == 'NH3': C_s = 370.0
+    elif identifier == 'O2' : C_s = 127.0
     else:
         return None
 

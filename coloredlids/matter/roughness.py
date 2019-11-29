@@ -17,8 +17,10 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-17 DWW
+      2019-11-19 DWW
 """
+
+__all__ = ['roughnesses', 'roughness']
 
 from collections import OrderedDict
 from typing import Optional
@@ -35,24 +37,25 @@ roughnesses = OrderedDict({"al_new":           1.4e-6,
                           })
 
 
-def roughness(matter: Optional[str]=None) -> Optional[float]:
+def roughness(identifier: Optional[str]=None) -> Optional[float]:
     """
     Args:
-        matter:
+        identifier:
             identifier of matter
 
     Returns:
         Ra-roughness of the metal surface [m]
+        or None if identifier is not contained in dictionary roughnesses 
 
     Note:
         if matter is None or not contained in 'roughnesses', then a
         list of the available matter is printed
     """
 
-    key = str(matter).lower()
+    key = str(identifier).lower()
     if key in roughnesses:
         return roughnesses[key]
 
-    print("??? invalid matter: '" + str(matter) + "'\n    valid keys:'",
+    print("??? invalid matter: '" + str(identifier) + "'\n    valid keys:'",
           list(roughnesses.keys()), "'\n")
     return None
