@@ -26,13 +26,15 @@
 """
 
 __all__ = ['pressure_drop',
-           'poiseulle_colebrook', 'resistance_pipe',
+           'poiseulle_colebrook', 
+           'resistance_pipe',
            'resistance_pipe_bend',
            'resistance_square_pipe_expansion', 
            'resistance_square_pipe_reduction',
            'resistance_tapered_pipe_expansion', 
            'resistance_tapered_pipe_reduction',
-           'dp_in_red_mid_exp_out', 'dp_tapered_in_red_mid_exp_out']
+           'dp_in_red_mid_exp_out', 
+           'dp_tapered_in_red_mid_exp_out']
 
 from math import log10, fabs, sqrt, sin, radians
 from scipy.optimize import fsolve

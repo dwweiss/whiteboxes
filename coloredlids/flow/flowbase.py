@@ -17,13 +17,15 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-11-07 DWW
+      2019-11-19 DWW
 """
 
 import numpy as np
 from typing import Optional, Tuple
 
-from coloredlids.matter.property import Parameter, Property, C2K
+from coloredlids.property.conversion import C2K
+from coloredlids.property.parameter import Parameter
+from coloredlids.property.property import Property
 from coloredlids.matter.generic import Fluid
 from coloredlids.matter.liquids import Water
 
@@ -34,11 +36,11 @@ class FlowBase(Property):
     cross-section
     """
 
-    def __init__(self, identifier: str='Flow', 
-                 d_pipe: Optional[float]=None, 
+    def __init__(self, identifier: str = 'Flow', 
+                 d_pipe: Optional[float] = None, 
                  w_h_pipe: Optional[Tuple[float, float]] = None,
-                 v: float=1.,
-                 fluid: Optional[Fluid]=None) -> None:
+                 v: float = 1.,
+                 fluid: Optional[Fluid] = None) -> None:
         """
            ------              _---_      ^
         h |      |           _-     -_    |

@@ -17,19 +17,20 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-27 DWW
+      2019-11-19 DWW
 """
 
 import numpy as np
 from typing import Optional, Union
+from nptyping import Array
 
 
-def v_axial(v_mean: Union[float, np.ndarray]=1., 
-            d_pipe: Union[float, np.ndarray]=1., 
-            r: Union[float, np.ndarray]=0., 
-            nu: Union[float, np.ndarray]=1e-6, 
-            Lambda: Optional[int]=None, 
-            n: Optional[int]=6) -> float:
+def v_axial(v_mean: Union[float, Array[float]] = 1., 
+            d_pipe: Union[float, Array[float]] = 1., 
+            r: Union[float, Array[float]] = 0., 
+            nu: Union[float, Array[float]] = 1e-6, 
+            lambda_: Optional[int] = None, 
+            n: Optional[int] = 6) -> float:
     """
     Computes the axial velocity distribution v_z(r) in a pipe
 
@@ -56,8 +57,8 @@ def v_axial(v_mean: Union[float, np.ndarray]=1.,
         nu:
             kinematic viscosity [m^2/s]
 
-        Lambda:
-            friction coefficient (0.01 <= Lambda <= 0.1) [/]
+        lambda_:
+            friction coefficient (0.01 <= lambda_ <= 0.1) [/]
             (n,lambda) = {(4, .06), (5, .04), ()}
 
         n:
@@ -75,15 +76,17 @@ def v_axial(v_mean: Union[float, np.ndarray]=1.,
     Re = v_mean * d_pipe / nu
     if Re < 2300:
         v_max = 2 * v_mean
+        
         return v_max * (1.0 - 4 * (r / d_pipe)**2)
     else:
         # smooth pipe surface: n=6..10, rough: n=4
-        if Lambda is None:
+        if lambda_ is None:
             if n is None:
                 n = 6
             reciprocal_of_n = 1. / n
         else:
-            reciprocal_of_n = np.sqrt(Lambda)
+            reciprocal_of_n = np.sqrt(lambda_)
         x = (reciprocal_of_n + 2) * (reciprocal_of_n + 1)
         v_max = v_mean * x / 2
+        
         return v_max * (1.0 - 2 * r / d_pipe)**reciprocal_of_n
