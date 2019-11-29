@@ -20,8 +20,9 @@
       2019-09-16 DWW
 """
 
-from scipy import optimize
+from nptyping import Array
 import numpy as np
+from scipy import optimize
 
 """
     Example for employing minimizers from scipy.optimize for 
@@ -30,17 +31,17 @@ import numpy as np
        function result f(x) and target y_trg
 """
 
-def f1(x: np.ndarray) -> float:
+def f1(x: Array[float]) -> float:
     return .5*(1 - x[0])**2 + (x[1] - x[0]**2)**2
 
-def f2(x: np.ndarray) -> float:
+def f2(x: Array[float]) -> float:
     return 1*x[0]**2 + x[1]
 
 ########################################################################
 
 y_trg = 0.5   # target in inverse problem solution
 
-def objective(x: np.ndarray) -> float:
+def objective(x: Array[float]) -> float:
     """
     Objective function for inverse problem solution
 
