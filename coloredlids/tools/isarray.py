@@ -17,23 +17,23 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-06-25 DWW
+      2019-10-14 DWW
 """
 
 import collections
 import numpy as np
+from typing import Any
 
 
-def is_array(x):
+def is_array(x: Any) -> bool:
     """
     Checks if argument x is of array_like type
 
     Args:
-        x (any type):
+        x:
             variable to be checked
 
     Returns:
-        (bool):
-            True if x is of array_like type (list, tuple, set, np.array)
+        True if x is of array_like type (list, tuple, set, np.array)
     """
     return isinstance(x, (collections.Sequence, np.ndarray))

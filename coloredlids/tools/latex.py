@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-10-15 DWW
+      2019-10-14 DWW
 """
 
 from typing import Optional
@@ -161,7 +161,7 @@ def guess_unit(x: Optional[str]=None) -> str:
             Latex string
 
     Returns:
-        unit
+        unit as string
     """
     x = from_latex(x)
     if not x:
@@ -206,7 +206,7 @@ def guess_unit(x: Optional[str]=None) -> str:
         return ''
 
 
-def guess_scale(x: str) -> str:
+def guess_scale(x: str) -> float:
     """
     Guess unit-prefixes (scale) of symbols in a Latex string
 
@@ -215,7 +215,7 @@ def guess_scale(x: str) -> str:
             Latex string containing a symbol
 
     Returns:
-        guess of unit
+        guess of unit multiplicator
     """
     x = from_latex(x)
     if x == '[um]':

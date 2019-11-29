@@ -17,20 +17,21 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-19 DWW
+      2019-11-19 DWW
 """
 
+from typing import Any
 
-def is_function(x):
+
+def is_function(x: Any) -> bool:
     """
     Checks if argument x is callable
 
     Args:
-        x (any type):
+        x:
             instance to be checked
 
     Returns:
-        (bool):
-            True if x is callable
+        True if x is callable
     """
     return x is not None and hasattr(x, '__call__')
