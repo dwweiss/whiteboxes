@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-10-30 DWW
+      2019-11-19 DWW
 """
 
 __all__ = ['dialog_yes_no', 'dialog_load_filenames', 'dialog_save_filename',
@@ -35,7 +35,7 @@ except ImportError:
           '.' + str(sys.version_info.micro) + "') or 'tkinter' not imported")
 
 
-def dialog_yes_no(title: str='', icon: str='') -> str:
+def dialog_yes_no(title: str = '', icon: str = '') -> str:
     """
     Asks for Yes/No employing tkinter interface
 
@@ -55,9 +55,9 @@ def dialog_yes_no(title: str='', icon: str='') -> str:
     return result
 
 
-def dialog_load_filenames(default_ext: str='data', 
-                          initial_dir: Optional[str]=None,
-                          min_files: int=1) -> List[str]:
+def dialog_load_filenames(default_ext: str = 'data', 
+                          initial_dir: Optional[str] = None,
+                          min_files: int = 1) -> List[str]:
     """
     Asks for one or more file names to be loaded, employing tkinter interface
 
@@ -96,9 +96,9 @@ def dialog_load_filenames(default_ext: str='data',
     return result
 
 
-def dialog_save_filename(default_ext: str='data', 
-                         initial_dir: Optional[str]=None,
-                         confirm_overwrite: bool=True) -> List[str]:
+def dialog_save_filename(default_ext: str = 'data', 
+                         initial_dir: Optional[str] = None,
+                         confirm_overwrite: bool = True) -> List[str]:
     """
     Asks for file name to be saved, employing tkinter interface
 
@@ -126,7 +126,7 @@ def dialog_save_filename(default_ext: str='data',
     return result.name
 
 
-def dialog_directory(initial_dir: Optional[str]=None) -> str:
+def dialog_directory(initial_dir: Optional[str] = None) -> str:
     """
     Asks for directory, employing tkinter interface
 
@@ -147,7 +147,7 @@ def dialog_directory(initial_dir: Optional[str]=None) -> str:
     return directory
 
 
-def dialog_info(title: str='', message: str='') -> None:
+def dialog_info(title: str = '', message: str = '') -> None:
     """
     Displays information
 

@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-11-11 DWW
+      2019-11-27 DWW
 """
 
 import os
@@ -27,11 +27,13 @@ from datetime import datetime
 import json
 from matplotlib.figure import Figure
 from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
+from path import Path
 import tkinter
 from tkinter import filedialog
 from tkinter.ttk import Progressbar
 from typing import Any, Callable, Dict, List, Optional, Tuple, Union
 
+Scalar = Optional[Union[str, int, float]]
 
 class GuiBase1():
     """
@@ -71,33 +73,31 @@ class GuiBase1():
         |                                        [run] ... [quit]      |
         ----------------------------------------------------------------
     """
-
-    PAR = Optional[Union[str, int, float]]
     
     def __init__(self, 
-                 identifier: str='Simulate', 
-                 path: Optional[str] = None,
-                 model: Optional[Callable]=None,
-                 labels: List[str]=['x', 'y1', 'y2'],
-                 param_list: Optional[List[Tuple[str, PAR, PAR, PAR]]]=None,
-                 about_text: Optional[str]=None,
-                 help_text: Optional[str]=None,                 
-                ) -> None:
+         identifier: str = 'Simulate', 
+         path: Optional[Union[str, Path]] = None,
+         model: Optional[Callable] = None,
+         labels: List[str] = ['x', 'y1', 'y2'],
+         param_list: Optional[List[Tuple[str, Scalar, Scalar, Scalar]]] = None,
+         about_text: Optional[str] = None,
+         help_text: Optional[str] = None) -> None:
         """
-        Args 
-            identifier
+        Args: 
+            identifier:
                 identifier of simulation
                 
-            path
+            path:
                 file path to result filee. If None, then tempdir will 
                 be assigned 
                 
-            model
+            model:
                 implementation of user-defined model 
-                  model(data: Dict[str, Any], figure: Figure) 
+                    model(data: Dict[str, Any], figure: Figure, 
+                          progress: ProgressBar) 
                 called in self.simulation()
             
-            labels 
+            labels: 
                 list of axis labels: [x_label, y1_label, y2_label, ...]
                 
                 Note: length of label list defines number of 
@@ -117,6 +117,12 @@ class GuiBase1():
                 Note: Tuples with only one member require a comma before 
                       closing parenthesis, 
                       e.g. ('name') is invalid, but ('name',) is OK
+                      
+            about_text:
+                text to be displayed in menu 'About'
+
+            help_text:
+                text to be displayed in menu 'Help'
         """
         if param_list is None:
             # demo list of widgets
@@ -133,27 +139,30 @@ class GuiBase1():
             help_text = 'placeholder\nplaceholder\nplaceholder\n'
 
         self.identifier: str = identifier
-        self.path: str = path if path is not None else tempfile.gettempdir() 
+        self.path: Optional[Path] = path if path is not None \
+                                         else tempfile.gettempdir() 
         self.root_window: Optional[Any] = None
         self.data: Optional[Dict[str, Any]] = None
  
+        self.i_row: int = 0       # row counter in sub-frame 'frm_param'
         self.widgets: Optional[Dict[str, Tuple[Any, Any]]] = OrderedDict()        
-        self.i_row: int = 0  # row counter in sub-frame 'frm_param'
         self.labels: List[str] = labels
         self.about_text: str = about_text
-        self.help_text: str = about_text
+        self.help_text: str = help_text
         
-        self.param_list = param_list
+        self.param_list: Optional[List[Tuple[str, Scalar, Scalar, Scalar]]] \
+                         = param_list
 
         self.model: Optional[Callable] = model
         
         print('+++ path:', self.path)
-
-#    def new_file(self) -> Dict[str, Any]:
-#        self.data = OrderedDict()
-#        return self.data
         
-    def update_widget_values(self) -> bool:
+    def update_widget_values(self) -> None:
+        """
+        Updates the visible values of all parameter widgets with the 
+        actual content of self.data if key is in self.widgets and 
+        self.data
+        """
         for key, value in self.data.items():
             if key in self.widgets:                
                 wdg, var = self.widgets[key]
@@ -175,17 +184,28 @@ class GuiBase1():
                     print('widget is None, var:', var)
                 else:
                     assert 0, str(type(wdg))
-        return True
 
     def open_file(self) -> bool:
+        """
+        Asks for file name, opens config file, load data to self.data 
+        and updates visible values of parameter widgets
+        
+        Returns:
+            False if data cannot be loaded or file is empty 
+        """        
         name = filedialog.askopenfilename()
         self.data = json.load(open(name, 'r'))
         ok = self.data is not None
-        if ok:
-            ok = self.update_widget_values()        
+        self.update_widget_values()        
         return ok
 
     def save_file(self) -> bool:
+        """
+        Asks for file name and saves self.data to config file
+        
+        Returns:
+            False if data cannot be saved 
+        """        
         filetypes = [('Json Files', '*.json'),  
              ('Data Files', '*.data'), 
              ('All Files', '*.*')] 
@@ -200,7 +220,7 @@ class GuiBase1():
         sub_txt = tkinter.Text(sub, width=32, height=5) 
         sub_txt.insert(tkinter.END, self.about_text)
         sub_txt.grid(column=0, row=0)
-        sub_btn = tkinter.Button(sub, text="Quit", command=self._quit)
+        sub_btn = tkinter.Button(sub, text="Quit", command=sub.destroy)
         sub_btn.grid(column=1, row=1)
 
     def help_(self) -> None:
@@ -209,10 +229,20 @@ class GuiBase1():
         sub_txt = tkinter.Text(sub, height=25, width=72) 
         sub_txt.insert(tkinter.END, self.help_text)
         sub_txt.grid(column=0, row=0)
-        sub_btn = tkinter.Button(sub, text="Quit", command=self._quit)
+        sub_btn = tkinter.Button(sub, text="Quit", command=sub.destroy)
         sub_btn.grid(column=1, row=1)
         
-    def update_data(self, dummy=None) -> None:  # dummy is needed for Scale
+    def update_data(self, 
+                    dummy: Optional[Any]=None  # dummy is needed for Scale
+                    ) -> None:
+        """
+        Gets actual values of parameter widgets and assigns them to 
+        self.data
+        
+        Args:
+            dummy:
+                Placeholder for an argument needed by tkinter.Scale
+        """
         if self.data is not None and self.widgets is not None:
             for key, wdg_var in self.widgets.items():
                 wdg, var = wdg_var
@@ -228,7 +258,7 @@ class GuiBase1():
         now = datetime.now()
         self.data['timestamp'] = now.strftime('%Y-%m-%dT%H:%M:%S')      
 
-        file = os.path.join(self.path, '.config.json')
+        file = os.path.join(self.path,'.config.json')
         return json.dump(self.data, open(file, 'w'), indent=4)
     
     def update_and_quit(self) -> None:
@@ -238,12 +268,12 @@ class GuiBase1():
     def simulate(self) -> float:        
         figure = Figure(figsize=(10, 6))
         
-        # canvas can later be accessed via: figure.canvas
-        canvas_plot = FigureCanvasTkAgg(figure, master=self.frm_plot)
-        canvas_plot.get_tk_widget().grid(row=0, column=0)
+        # canvas can later be accessed as: figure.canvas
+        canvas = FigureCanvasTkAgg(figure, master=self.frm_plot)
+        canvas.get_tk_widget().grid(row=0, column=0)
 
-        # axes can be accessed via: figure.axes
-        axes = figure.subplots(len(self.labels)-1, sharex=True, sharey=True)
+        # axes can be accessed as: figure.axes
+        axes = figure.subplots(len(self.labels)-1, sharex=True, sharey=False)
 
         # title above first subplot
 #        axes[0].set_title(self.identifier)
@@ -258,9 +288,10 @@ class GuiBase1():
             result_label[0].configure(text='-  ', anchor='e', borderwidth=2, 
                                       relief='raised')
             
-        ### MODEL ###
+        ### CALL MODEL ###
         if self.model:
-            res = self.model(self.data, figure, self.widgets.get('progress'))
+            res = self.model(self.data, figure, 
+                             self.widgets.get('progress')[0])
         else:
             res = float('inf')
 
@@ -284,7 +315,6 @@ class GuiBase1():
         
         filemenu = tkinter.Menu(mainmenu)
         mainmenu.add_cascade(label='File', menu=filemenu)
-#        filemenu.add_command(label='New', command=self.new_file)
         filemenu.add_command(label='Load', command=self.open_file)
         filemenu.add_command(label='Save', command=self.save_file)
         filemenu.add_separator()
@@ -293,7 +323,7 @@ class GuiBase1():
         helpmenu = tkinter.Menu(mainmenu)
         mainmenu.add_cascade(label='Help', menu=helpmenu)
         helpmenu.add_command(label='About', command=self.about)
-        helpmenu.add_command(label='Help', command=self.help_)    
+        helpmenu.add_command(label='Help', command=self.help_)
 
     def create_frames_and_action_buttons(self) -> None:
         
@@ -328,13 +358,12 @@ class GuiBase1():
         """
         Creates widgets for parameter input in parameter frame 
         """
-        
         pady = 4
         lbl_width = 12
         root = self.root_window 
         self.i_row = 0
 
-        def create_slider(self, key_and_range):
+        def _create_slider(self, key_and_range):
             key = key_and_range[0]
             
             from_ = key_and_range[1] if len(key_and_range) > 1 else 0
@@ -344,7 +373,7 @@ class GuiBase1():
             
             wdg = tkinter.Scale(self.frm_param, from_=from_, 
                                 to=to, orient=tkinter.HORIZONTAL,
-                                resolution = (to - from_) / 100, width = 8,
+                                resolution=(to-from_)/100, width=8,
                                 command=self.update_data)
             wdg.set(default)
             wdg.grid(column=0, row=self.i_row, padx=10, pady=pady)
@@ -355,7 +384,7 @@ class GuiBase1():
                                            padx=10, pady=pady)
             self.i_row += 1
 
-        def create_spin_box(self, key_and_range):
+        def _create_spin_box(self, key_and_range):
             key = key_and_range[0]
             
             from_ = key_and_range[1] if len(key_and_range) > 1 else 0
@@ -369,11 +398,11 @@ class GuiBase1():
             self.widgets[key] = (wdg, var)
 
             tkinter.Label(self.frm_param, text=key, width=lbl_width, 
-                anchor='w').grid(column=1, row=self.i_row, 
-                                 padx=10, pady=pady)
+                          anchor='w').grid(column=1, row=self.i_row, 
+                                           padx=10, pady=pady)
             self.i_row += 1
 
-        def create_entry_form(self, key_and_range):
+        def _create_entry_form(self, key_and_range):
             key = key_and_range[0]
             default = key_and_range[3] if len(key_and_range) > 3 else 'abc'
 
@@ -385,11 +414,11 @@ class GuiBase1():
             self.widgets[key] = (wdg, var)
 
             tkinter.Label(self.frm_param, text=key, width=lbl_width, 
-                          anchor='w').grid(column=1, row=self.i_row, padx=10, 
-                                           pady=pady)        
+                          anchor='w').grid(column=1, row=self.i_row, 
+                                           padx=10, pady=pady)        
             self.i_row += 1
 
-        def create_check_button(self, key_and_range):
+        def _create_check_button(self, key_and_range):
             key = key_and_range[0]
             default = key_and_range[3] if len(key_and_range) > 3 else 1
 
@@ -403,11 +432,11 @@ class GuiBase1():
             self.widgets[key] = (wdg, var)
 
             tkinter.Label(self.frm_param, text=key, width=lbl_width, 
-                          anchor='w').grid(column=1, row=self.i_row, padx=0, 
-                                           pady=pady)        
+                          anchor='w').grid(column=1, row=self.i_row, 
+                                           padx=0, pady=pady)        
             self.i_row += 1
 
-        def create_label(self, key_and_range):
+        def _create_label(self, key_and_range):
             key = key_and_range[0]
             default = key_and_range[3] if len(key_and_range) > 3 else '?'
 
@@ -419,7 +448,7 @@ class GuiBase1():
                                            padx=10, pady=pady)        
             self.i_row += 1
 
-        def create_progress_bar(self, key_and_range):
+        def _create_progress_bar(self, key_and_range):
             key = key_and_range[0]
             
             to = key_and_range[2] if len(key_and_range) > 2 else 100
@@ -428,35 +457,36 @@ class GuiBase1():
             sty = tkinter.ttk.Style()
             sty.theme_use('clam')
             sty.configure('gray.Horizontal.TProgressbar')
-            wdg = Progressbar(self.frm_param,
-                value=default, maximum=to, style='ray.Horizontal.TProgressbar',
-                orient='horizontal', length=98, mode='determinate')
+            wdg = Progressbar(self.frm_param, value=default, maximum=to, 
+                              style='gray.Horizontal.TProgressbar',
+                              orient='horizontal', length=98, 
+                              mode='determinate')
             wdg.grid(column=0, row=self.i_row, padx=10, pady=pady)
             self.widgets[key] = (wdg, None)
-            tkinter.Label(self.frm_param, text=key, width=lbl_width, 
-                anchor='w').grid(column=1, row=self.i_row, 
-                                 padx=10, pady=pady)
+            tkinter.Label(self.frm_param, text=key, width=lbl_width,
+                          anchor='w').grid(column=1, row=self.i_row, 
+                                           padx=10, pady=pady)
             self.i_row += 1
 
 
         call_creation_of_widget = {
-            'spin':     create_spin_box,
-            'slider':   create_slider,
-            'entry':    create_entry_form,
-            'check':    create_check_button,
-            'label':    create_label,
-            'progress': create_progress_bar,
+            'spin':     _create_spin_box,
+            'slider':   _create_slider,
+            'entry':    _create_entry_form,
+            'check':    _create_check_button,
+            'label':    _create_label,
+            'progress': _create_progress_bar,
         }
         
-        create_progress_bar(self, ('progress', None, None, 0.)) 
+        _create_progress_bar(self, ('progress', None, None, 0.)) 
 
         if self.param_list:
             for par in self.param_list:
                 call_creation_of_widget[par[0]](self, par[1:])
         
-        create_check_button(self, ('save figure', None, None, False))        
-        create_check_button(self, ('silent', None, None, True))        
-        create_label(self, ('result', None, None, '?'))        
+        _create_check_button(self, ('save figure', None, None, False))        
+        _create_check_button(self, ('silent', None, None, True))        
+        _create_label(self, ('result', None, None, '?'))        
         self.widgets['result'][0].configure(text='-  ', borderwidth=2, 
                                             relief='raised', anchor='e')
 
