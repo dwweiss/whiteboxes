@@ -17,24 +17,25 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-10-17 DWW
+      2019-11-19 DWW
 """
 
 __all__ = ['read_csv_two_columns']
 
 import csv
 import os
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+from nptyping import Array
 from typing import Tuple
 
 
 def read_csv_two_columns(path: str, 
                          file: str, 
-                         skip: int=0,
-                         delimiter: str=',',
-                         plot: bool=True) \
-        -> Tuple[np.ndarray, np.ndarray]:
+                         skip: int = 0,
+                         delimiter: str = ',',
+                         plot: bool = True) \
+                         -> Tuple[Array[float], Array[float]]:
     """
     Reads two colums with floating point numbers from comma separated file
     
@@ -61,9 +62,8 @@ def read_csv_two_columns(path: str,
             if True, loaded data will be plotted
             
     Returns:
-        (1D array of float, 1D array of float):
-            X and Y arrays 
-            The returned arrays are empty if file not found
+        X and Y as 1D arrays 
+        The returned arrays are empty if file not found
     """
     path.replace('\\', '/')
     full_path = os.path.join(path, file)

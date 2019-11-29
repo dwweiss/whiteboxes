@@ -34,15 +34,14 @@ from coloredlids.tools.date_to_seconds import date_to_seconds
 from coloredlids.tools.extract_timestamp import extract_timestamp
 
 
-def plot_csv_sequences(
-        path: str,
-        identifier: str,
-        x_iso: List[float],
-        p1_file: str,
-        p2_file: str,
-        p3_file: str,
-        extension: str='.data',
-        legend_position: Tuple[float, float]=(1.1, 1.05), ) \
+def plot_csv_sequences(path: str,
+                       identifier: str,
+                       x_iso: List[float],
+                       p1_file: str,
+                       p2_file: str,
+                       p3_file: str,
+                       extension: str = '.data',
+                       legend_position: Tuple[float, float] = (1.1, 1.05), ) \
         -> bool:
     """
     1. Plots result curves y(t, x=const) from series of CSV fileds saved 

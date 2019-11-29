@@ -17,24 +17,24 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-03-21 DWW
+      2019-11-19 DWW
 """
 
 __all__ = ['split_frame', 'select_frame', 'xy_to_frame', 'frame_to_xy',
            'excel_to_xy', 'xy_to_excel', 'ansys_csv_to_frame']
 
-
-from typing import Optional, Sequence, Tuple, Union
 from collections import OrderedDict
-from pandas import read_csv, read_excel, DataFrame, ExcelWriter
 import numpy as np
+from pandas import read_csv, read_excel, DataFrame, ExcelWriter
 from tempfile import gettempdir
+from typing import List, Optional, Sequence, Tuple, Union
+from nptyping import Array
 
 
 def split_frame(df: DataFrame,
-                split_col: Optional[str]=None, 
-                sort_col: Optional[str]=None, 
-                min_sub_frame_size: int=1) -> Sequence[OrderedDict]:
+                split_col: Optional[str] = None, 
+                sort_col: Optional[str] = None, 
+                min_sub_frame_size: int = 1) -> List[OrderedDict]:
     """
     Splits data frame 'df' into an ordered dictionary of sub-data 
     frames. In every sub-DataFrame the values in the column with the 
@@ -82,7 +82,7 @@ def select_frame(df: DataFrame,
                  op_sel: Union[str, Sequence[str]], 
                  val_sel: Union[str, float, int, 
                                 Sequence[Union[str, float, int]]],
-                 sort_col: Optional[str]=None) -> DataFrame:
+                 sort_col: Optional[str] = None) -> DataFrame:
     """
     Extract single sub-frame of given pandas.DataFrame; selection can be
     based on multiple conditions employing the
@@ -165,10 +165,10 @@ def select_frame(df: DataFrame,
     return subFrames
 
 
-def xy_to_frame(X : np.ndarray, 
-                Y : np.ndarray, 
-                x_keys: Optional[Sequence[str]]=None, 
-                y_keys: Optional[Sequence[str]]=None) -> DataFrame:
+def xy_to_frame(X : Array[float, ..., ...], 
+                Y : Array[float, ..., ...], 
+                x_keys: Optional[Sequence[str]] = None, 
+                y_keys: Optional[Sequence[str]] = None) -> DataFrame:
     """
     Converts two 2D arrays to pandas.DataFrame
 
@@ -213,13 +213,11 @@ def xy_to_frame(X : np.ndarray,
 
 
 def frame_to_xy(df: DataFrame, 
-                x_keys: Optional[Sequence[str]]=None, 
-                y_keys: Optional[Sequence[str]]=None) \
-        -> Tuple[np.ndarray, np.ndarray]:
+                x_keys: Optional[Sequence[str]] = None, 
+                y_keys: Optional[Sequence[str]] = None) \
+        -> Tuple[Array[float, ..., ...], Array[float, ..., ...]]:
     """
     Converts pandas.DataFrame to couple of 2D arrays
-    
-    See also: grayboxes.boxmodel.frame2arr()
 
     Args:
         df:
@@ -248,12 +246,12 @@ def frame_to_xy(df: DataFrame,
     return np.asfarray(df.loc[:, x_keys]), np.asfarray(df.loc[:, y_keys])
 
 
-def excel_to_xy(x_keys: Optional[Sequence[str]]=None, 
-                y_keys: Optional[Sequence[str]]=None, 
-                file: str=gettempdir(),
-                sheet_name: str='data', 
-                startcol: int=0, 
-                startrow: int=0) -> Tuple[np.ndarray, np.ndarray]:
+def excel_to_xy(x_keys: Optional[Sequence[str]] = None, 
+                y_keys: Optional[Sequence[str]] = None, 
+                file: str = gettempdir(),
+                sheet_name: str = 'data', 
+                startcol: int = 0, 
+                startrow: int = 0) -> Tuple[np.ndarray, np.ndarray]:
     """
     Reads data frame from excel file and converts it to two 2D arrays
 
@@ -276,7 +274,6 @@ def excel_to_xy(x_keys: Optional[Sequence[str]]=None,
         startrow:
             start row in sheet
 
-
     Returns:
         X:
             independent variables in 2D array
@@ -289,14 +286,14 @@ def excel_to_xy(x_keys: Optional[Sequence[str]]=None,
     return frame_to_xy(df, x_keys, y_keys)
 
 
-def xy_to_excel(X: np.ndarray, 
-                Y: Optional[np.ndarray]=None, 
-                x_keys: Optional[Sequence[str]]=None, 
-                y_keys: Optional[Sequence[str]]=None,
-                file: str=gettempdir(),
-                sheet_name: str='data', 
-                startcol: int=0, 
-                startrow: int=0) -> bool:
+def xy_to_excel(X: Array[float, ..., ...], 
+                Y: Optional[Array[float, ..., ...]] = None, 
+                x_keys: Optional[Sequence[str]] = None, 
+                y_keys: Optional[Sequence[str]] = None,
+                file: str = gettempdir(),
+                sheet_name: str = 'data', 
+                startcol: int = 0, 
+                startrow: int = 0) -> bool:
     """
     Converts two 2D arrays to DataFrame and write it to excel file
 
@@ -340,9 +337,9 @@ def xy_to_excel(X: np.ndarray,
 
 
 def ansys_csv_to_frame(file: str, 
-                       sort_col: Optional[str]=None, 
-                       clean: bool=True, 
-                       silent: bool=False) -> DataFrame:
+                       sort_col: Optional[str] = None, 
+                       clean: bool = True, 
+                       silent: bool = False) -> DataFrame:
     """
     Reads csv-file of results from Ansys, removes 'Pxx - '-prefix from 
     column names, and removes columns whose keys contain postfix '.FD'

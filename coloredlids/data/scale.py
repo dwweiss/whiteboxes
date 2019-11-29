@@ -17,17 +17,20 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-09-17 DWW
+      2019-11-19 DWW
 """
 
 __all__ = ['scale', 'batch_normalize', 'batch_denormalize'] 
 
-from typing import Optional
 import numpy as np
+from nptyping import Array
+from typing import Dict, Optional, Union
 
            
-def scale(X: np.ndarray, lo: float=0., hi: float=1., 
-          axis: Optional[int]=None) -> np.ndarray:
+def scale(X: Array[float], 
+          lo: float = 0., 
+          hi: float = 1., 
+          axis: Optional[int] = None) -> Array[float]:
     """
     Normalizes elements of array to [lo, hi] interval (linear)
 
@@ -42,35 +45,35 @@ def scale(X: np.ndarray, lo: float=0., hi: float=1.,
             maximum of returned array
 
         axis:
-            if not None, minimum and maximum are taken from axis given by 
-            axis index (for 2D array: column=0, row=1)
+            if not None, minimum and maximum are taken from axis given 
+            by axis index (for 2D array: column=0, row=1)
 
     Returns:
-        (array of float):
-            normalized array
+        normalized 1D array
     """
     np.asarray(X)
-    _max = np.max(X, axis=axis)
-    delta = _max - np.min(X, axis=axis)
+    max_ = np.max(X, axis=axis)
+    delta = max_ - np.min(X, axis=axis)
     assert not np.isclose(delta, 0), str(delta)
 
-    return hi - (((hi - lo) * (_max - X)) / delta)
+    return hi - (((hi - lo) * (max_ - X)) / delta)
 
 
-def batch_normalize(X, eps=0):
-    """
-    Normalizes elements of array, shifted by mean of X and scaled by variance
+def batch_normalize(X: Array[float], 
+                    eps: float = 0) -> Dict[str, Array[float]]:
+    """ 
+    Normalizes elements of array, shifted by mean of X and scaled 
+    by variance
 
     Args:
-        X (array_like of float):
+        X:
             array to be normalised
 
-        eps (float, optional):
-            add-on to variance, usually in the order of a percent of variance
+        eps:
+            add-on to variance, usually around one percent of variance
 
     Returns:
-        (dict of {array of float, float, float, float}):
-            (val, mean, var, eps) of normalized array
+        dictionary of: (val, mean, var, eps) of normalized array
 
     Note:
         variance: var = mean( (x - mean(x))**2 )
@@ -84,26 +87,30 @@ def batch_normalize(X, eps=0):
     return {'val': X, 'mean': mean, 'var': var, 'eps': eps}
 
 
-def batch_denormalize(X, mean=0, var=1, eps=0):
+def batch_denormalize(X: Union[Array[float], Dict[str, Array[float]]], 
+                      mean: float = 0., 
+                      var: float = 0.1, 
+                      eps: float = 0.) -> Array[float]:
     """
-    Denormalizes elements of array, shifted by mean of X and scaled by variance
+    Denormalizes elements of array, shifted by mean of X and scaled 
+    by variance
 
     Args:
-        X (array_like of float or dict of {array_like of float, float, float}):
-            array to be denormalised or dict with members: 'val', 'mean', 'var'
+        X:
+            array to be denormalised or dictionary with the 
+            members: 'val', 'mean', 'var'
 
-        mean (float, optional):
+        mean:
             mean value of input X
 
-        var (float, optional):
+        var:
             variance of input X
 
-        eps (float, optional):
-            add-on to variance, usually in the order of a percent of variance
+        eps:
+            add-on to variance, usually around one percent of variance
 
     Returns:
-        (array of float):
-            denormalized array
+        denormalized array
 
     Note:
         X is returned unchanged if mean==0 and var==1 and eps==0
