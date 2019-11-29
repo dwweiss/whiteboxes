@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-10-17 DWW
+      2019-11-19 DWW
 """
 
 __all__ = ['plot_spectra']
@@ -26,22 +26,24 @@ import os
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
+from nptyping import Array
 from typing import List, Tuple
 
 
 def plot_spectra(path: str, 
                  identifier: str, 
                  date_time: str, 
-                 skip: int=0, 
-                 delimiter: str=',',
-                 save_image: bool=False) -> bool:
+                 skip: int = 0, 
+                 delimiter: str = ',',
+                 save_image: bool = False) -> bool:
     """
     Plots optical spectra (x, y(x)) stored in set of 8 CSV files with 
         background       spectra for device0 and device1
         reference        spectra for device0 and device1
         actual intensity spectra for device0 and device1
         transmission             for device0 and device1
-            
+    see _generate_filename_set() fro the definition of the file names. 
+
     Each data file contains two columns with floating point numbers:
         
         # optional header lines 
@@ -90,7 +92,7 @@ def _generate_filename_set(identifier: str, date_time: str) -> List[str]:
             identifier of set of data files
             
         date_time:
-            date and time in the notation: '2000-12-31T23.59.59'
+            date and time notation, eg: '2000-12-31T23.59.59'
     
     Returns:
         list of file names    
@@ -171,12 +173,12 @@ def _plot_file_set(path: str,
     """
     
     plot_all_readings = False
-    w0, r0 = read_csv_two_columns(path, fr0, plot_all_readings)
-    w1, r1 = read_csv_two_columns(path, fr1, plot_all_readings)
-    w0, i0 = read_csv_two_columns(path, fi0, plot_all_readings)
-    w1, i1 = read_csv_two_columns(path, fi1, plot_all_readings)
-    w0, b0 = read_csv_two_columns(path, fb0, plot_all_readings)
-    w1, b1 = read_csv_two_columns(path, fb1, plot_all_readings)
+    w0, r0 = _read_csv_two_columns(path, fr0, plot_all_readings)
+    w1, r1 = _read_csv_two_columns(path, fr1, plot_all_readings)
+    w0, i0 = _read_csv_two_columns(path, fi0, plot_all_readings)
+    w1, i1 = _read_csv_two_columns(path, fi1, plot_all_readings)
+    w0, b0 = _read_csv_two_columns(path, fb0, plot_all_readings)
+    w1, b1 = _read_csv_two_columns(path, fb1, plot_all_readings)
  
     if not (len(r0) and len(i0) and len(b0)):
         return False
@@ -204,8 +206,8 @@ def _plot_file_set(path: str,
                         '_reference_backgound_intensity.png')
         plt.show()
 
-    w0, t0 = read_csv_two_columns(path, ft0, plot_all_readings)
-    w1, t1 = read_csv_two_columns(path, ft1, plot_all_readings)
+    w0, t0 = _read_csv_two_columns(path, ft0, plot_all_readings)
+    w1, t1 = _read_csv_two_columns(path, ft1, plot_all_readings)
     if not len(t0) or not len(t1):
         
         print('shape:', i0.shape, i1.shape, 
@@ -232,12 +234,12 @@ def _plot_file_set(path: str,
     plt.show()
 
 
-def read_csv_two_columns(path: str, 
-                         file: str, 
-                         skip: int=0,
-                         delimiter: str=',',
-                         plot: bool=True) \
-        -> Tuple[np.ndarray, np.ndarray]:
+def _read_csv_two_columns(path: str, 
+                          file: str, 
+                          skip: int = 0,
+                          delimiter: str = ',',
+                          plot: bool = True) \
+        -> Tuple[Array[float], Array[float]]:
     """
     Reads two colums with floating point numbers from comma separated file
     
@@ -264,9 +266,8 @@ def read_csv_two_columns(path: str,
             if True, loaded data will be plotted
             
     Returns:
-        (1D array of float, 1D array of float):
-            X and Y arrays 
-            The returned arrays are empty if file not found
+        X and Y as 1D arrays 
+        The returned arrays are empty if file not found
     """
     path.replace('\\', '/')
     full_path = os.path.join(path, file)
