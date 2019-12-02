@@ -31,5 +31,5 @@ def init_path():
     sys.path.append(os.path.abspath('../../grayboxes'))         # for grayboxes
 
 
-if __file__ == '__main__':
+if __name__ == '__main__':
     init_path()
