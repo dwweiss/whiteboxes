@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-11-27 DWW
+      2019-12-02 DWW
 """
 
 __all__ = ['Range', 'Scalar', 'Floats',
@@ -25,6 +25,7 @@ __all__ = ['Range', 'Scalar', 'Floats',
            'in_range', 'in_range_full_scale', 'in_range_abs_rel_error',
            'is_bound_absolute',
            'is_bound_relative_to_reading', 'is_bound_relative_to_full_scale',
+           'is_range_absolute',
            'is_range_relative_to_reading', 'is_range_relative_to_full_scale',]
 
 import numpy as np
@@ -38,8 +39,12 @@ Floats = Optional[Union[float, List[float], np.ndarray]]
 
 
 def is_bound_absolute(bound: Scalar) -> bool:
-    return '%' not in str(bound)
-
+    try:
+        float(bound)
+        return True
+    except:
+        return False
+    
 
 def percentage_of_bound(bound: Scalar) -> Optional[float]:
     if '%' in str(bound):
@@ -69,13 +74,17 @@ def is_range_relative_to_full_scale(range_: 'Range',
        and is_bound_relative_to_full_scale(range_.up, full_scale_pattern)
 
 
+def is_range_absolute(range_: 'Range') -> bool:
+    return is_bound_absolute(range_.lo) and is_bound_absolute(range_.up)
+
+
 def relative_to_absolute_range(range_: 'Range', full_scale: 'Range',
                                relative_pattern: str = '%') \
         -> Optional['Range']:
     """
     Calculates absolute values of bounds of 'range_' which are defined
-    relative to 'full_scale'. Relative bounds are of type str and
-    must contain the character '%' after the number, e.g. '2%' or '5%FS'
+    relative to span of 'full_scale'. Relative bounds are of type str
+    and must contain '%' after the number, e.g. '2%' or '-5%FS'
 
     Args:
         range_:
@@ -96,11 +105,11 @@ def relative_to_absolute_range(range_: 'Range', full_scale: 'Range',
         
     Example:
         range_ = Range('-1%FS', 4.)
-        full_scale = Range(-11., 22.)
+        full_scale = Range(-11., 22.)           # span = 22.-(-11.) = 33
         rng = relative_to_absolute_range(range_, full_scale)
         
         # upper bound of range_ is already absolute
-        print(rng)  # => (-0.11, 4.) 
+        print(rng)  # => (-0.33, 4.) 
         
     Note:
         If range_[i] is of type int or float, full_scale[i] is 
@@ -113,78 +122,63 @@ def relative_to_absolute_range(range_: 'Range', full_scale: 'Range',
             
                                    -----------------------
                                    |                     |
-                                   |                   abs(-10%) = 0.1 
+                                   |                   '-10%' -> -0.1 
                                    |       full_scale    |
-relative_to_absolute_range(2., ('-10%', 7), (-3, 8))     V
-                                   range      |  |      0.1*(-3) --> lo:-0.3
-                                              |  v            ^
-                                              |  up: 8        |
-        lo is lower bound and up is           |               |
-        upper bound of effective range        -----------------
+    relative_to_absolute_range(('-10%', 7), (-3, 8))     V
+                                   range      |  |     -0.1*(11) -> lo:-1.1
+                                              v  v            ^
+                                            span: 11          |
+        lo is lower bound and up is            |              |
+        upper bound of effective range         ----------------
         
-                                  # range_full_scale.lo = -3 is 
-                                  # multiplied with abs(-10e-2) => -0.3 
-                                  # range_full_scale.up = 8 is ignored 
-                                  # because range_[1] = 7 
+                                  # full scale span = 8-(-3) = 11 is 
+                                  # multiplied with -10e-2 => -1.1 
+                                  # range_.up = 7 stays unchanged
     """
-    if range_ is None:
+    if not isinstance(range_, Range):
         return None
     
-    lo  = range_.lo
-    is_relative_lo = False
-    
-    try:
-        float(lo)
-    except:
-        is_relative_lo = True
-        
-        if full_scale is None:
-            return None
-        if  not isinstance(lo, str) or not relative_pattern in lo.upper():
-            return None
-        
-        lo = full_scale.lo
-        try:
-            lo = float(lo)
-        except (TypeError, ValueError) as err:
-            print('??? relative_to_absolute_range() 1:', err, 'lo:', lo)
-            return None
-        
+    lo = range_.lo
     up = range_.up
-    is_relative_up = False
-    try:
-        float(up)
-    except:
-        is_relative_up = True
+    distr = range_.distr 
 
-        if full_scale is None:
+    is_lo_relative = lo is not None and not is_bound_absolute(lo) 
+    is_up_relative = up is not None and not is_bound_absolute(up) 
+    
+    # if range_.lo is absolute, full_scale.lo can can have any value 
+    if is_lo_relative:
+        if not isinstance(full_scale, Range) \
+               or not is_bound_absolute(full_scale.lo):
             return None
-        if not isinstance(up, str) or not relative_pattern in up.upper():
+
+    # if range_.up is absolute, full_scale.up can can have any value 
+    if is_up_relative:
+        if not isinstance(full_scale, Range) \
+               or not is_bound_absolute(full_scale.up):
             return None
-        
-        up = full_scale.up
+
+    if is_lo_relative or is_up_relative:
+        if distr is None:
+            distr = full_scale.distr
         try:
-            up = float(up)
-        except (TypeError, ValueError) as err:
-            print('??? relative_to_absolute_range() 2:', err, 'up:', up)
+            span = float(full_scale.up) - float(full_scale.lo)
+        except (TypeError, ValueError):
             return None
 
-    if is_relative_lo:
+    if is_lo_relative:    
         try:
             lo = float(range_.lo[:range_.lo.find('%')]) * 1e-2
-            lo = np.abs(lo)
-            lo *=  float(full_scale.lo)
-        except (TypeError, ValueError) as err:
-            print('??? relative_to_absolute_range() 3:', err, 'lo:', lo)
-    if is_relative_up:
+        except (TypeError, ValueError):
+            return None
+        lo *= span
+
+    if is_up_relative:    
         try:
             up = float(range_.up[:range_.up.find('%')]) * 1e-2
-            up *=  float(full_scale.up)
-        except (TypeError) as err:
-            print('??? relative_to_absolute_range() 4:', err, 'up:',up)
-
-    distr = range_.distr if range_.distr is not None else full_scale.distr
-
+        except (TypeError, ValueError):
+            return None
+        up *= span
+ 
     return Range(lo, up, distr)
 
 
@@ -208,11 +202,18 @@ def in_range(val: Floats, range_: 'Range') -> bool:
         The function tolerates that lower and upper bound might be 
         mistakenly swapped 
     """
+    if val is None or range_ is None:
+        return False
+    
     try:
         val = [float(x) for x in np.atleast_1d(val)]
+    except (TypeError) as err:
+        print('??? in_range():', err, 'val:', val)
+        return False
+    try:
         lo, up = float(range_[0]), float(range_[1])
     except (TypeError) as err:
-        print('??? in_range():', err)
+        print('??? in_range():', err, 'val:', 'range_:', range_)
         return False
     
     if lo > up:
@@ -225,21 +226,28 @@ def in_range(val: Floats, range_: 'Range') -> bool:
 def in_range_full_scale(val: Floats, range_: 'Range', 
                         full_scale: 'Range') -> bool:
     """
-    Checks if val is in of bounds of 'range_' which can be defined
-    relative to 'full_scale'. Relative bounds are of type str and
-    must contain the character '%' after the number, e.g. '-1.2%'
+    Checks if val is within span of 'range_' which can be defined
+    absolute or relative to 'full_scale'. Relative bounds are of type 
+    str and must contain character '%' after the number, e.g. '-1.2%'
 
     Args:
+        val:
+            actual value as scalar (int, float, str) or sequence of it 
+        
         range_:
-            range with bounds given absolute or relative: 7, '7' or '2%'
+            range with relative or absolute bounds: 7, '7' or '2%'
 
         full_scale:
-            range with bounds given absolute: eg. -3 or '-3'
+            range with absolute bounds: eg. -3 or '-3'
             
     Returns:        
         True if val or all elements of val within the given bounds
     """
-    return in_range(val, relative_to_absolute_range(range_, full_scale))
+    converted_range = relative_to_absolute_range(range_, full_scale)
+    if converted_range is None:
+        return False
+    
+    return in_range(val, converted_range)
 
 
 def in_range_abs_rel_error(val: float, ref: float, range_: 'Range') -> bool:
@@ -326,20 +334,31 @@ class Range(object):
     The member of the range can be accessed via getter methods, indices 
     or string keys.
     
+                              y ^    simulate():
+                                |
+         up  -----   - - - - -  +    x    x    x
+          ^  | R |              |      x      x    x
+          |  | a |              |          x    x 
+          |  | n |              |            x    x
+          |  | g |              |        x       x  x
+          v  | e |              |   x       x
+         lo  -----   - - - - -  + 
+                                |
+                                ---------------------> x
     Eaxmple:
-        x = Range(-3, 7)
-        up = x.up
+        rng = Range(-3, 7)
+        up = rng.up
         
         # all statements return the same value:       
-        up = x[1]
-        up = x['up']
-        up = x['hi']
-        up = x['max']
+        up = rng[1]
+        up = rng['up']
+        up = rng['hi']
+        up = rng['max']
         
-        y = x.simulate(size=100)
+        y = rng.simulate(size=100)
         print(y)
         
-        s = str(x)  # ==> (-3, 7, None)
+        s = str(rng)  # ==> (-3, 7, None)
     """
     def __init__(self, *args: Scalar) -> None:
         """
@@ -394,6 +413,8 @@ class Range(object):
                 return self._up
             elif key_.startswith(('distr', 'prob',)):
                 return self._distr
+            elif key_.startswith(('span', 'delta',)):
+                return self.span()
             else:
                 return None
         else:
@@ -420,6 +441,12 @@ class Range(object):
             self._distr = args[2] 
         return True
             
+    def span(self) -> Optional[float]:
+        try:
+            return float(self._up) - (self._lo)
+        except:
+            return None
+        
     def simulate(self, size: Optional[Union[int, Tuple[int]]] = None,
                  full_scale: Optional['Range'] = None,
                  plot: bool = False) -> Floats:
