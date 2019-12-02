@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-11-27 DWW
+      2019-12-02 DWW
 """
 
 import __init__
@@ -41,6 +41,7 @@ class TestUM(unittest.TestCase):
 
 
     def test1(self):
+        print('-' * 40)
         print('+++ Scalar')
         x: Scalar = 9.
         print(x)
@@ -48,6 +49,7 @@ class TestUM(unittest.TestCase):
 
 
     def test2(self):
+        print('-' * 40)
         print('+++ constructor')
         x = Range('a','b','c')
         print(x)
@@ -87,6 +89,8 @@ class TestUM(unittest.TestCase):
         print(x['lo'])
         print(x['hi'])
         print(x['distr'])
+        print(x['span'])
+        print(x.span())
         print(x[0])
         print(x[1])
         print(x[2])
@@ -102,31 +106,42 @@ class TestUM(unittest.TestCase):
         
         
     def test3(self):
+        print('-' * 40)
         print('*** test: range.in_range()')
         
         ok = in_range(-2, (-10, 10))
         self.assertTrue(ok)
 
+
+        print('L116')
         ok = in_range(['-2', -100, 2], (-10, 10))
         self.assertFalse(ok)
 
+        print('L120')
         ok = in_range([-11, 3, 5], (-10, 10))
         self.assertFalse(ok)
 
+        print('L124')
         ok = in_range_full_scale(-2, Range('-20%' ,'21%'), Range(-10, 10))
         self.assertTrue(ok)
 
-        ok = in_range_full_scale(-2, Range('20%' ,'21%'), Range(-10, 10))
+        print('L128')
+        ok = in_range_full_scale(-2, Range('-10%' ,'21%'), Range(-10, 10))
         self.assertTrue(ok)
 
+        print('L132')
+        # full_scale.lo  = None is invalid because range_.up is not absolute
         ok = in_range_full_scale(-2, Range(-3 , '10%'), Range(None, 10))
-        self.assertTrue(ok)
+        self.assertFalse(ok)
 
+        print('L137')
+        # full_scale.lo  = None is in valid because range_ is not absolute
         ok = in_range_full_scale(-2, Range('3%' , '10%'), Range(None, 10))
         self.assertFalse(ok)
 
 
     def test4(self):
+        print('-' * 40)
         print('*** test: range.in_range_abs_rel_error()')
         x = np.linspace(0, np.pi*2, 20)
         Y = np.sin(x) + 2
@@ -161,13 +176,14 @@ class TestUM(unittest.TestCase):
 
 
     def test5(self):
+        print('-' * 40)
         print('+++ range.relative_to_absolute_range')
         print(relative_to_absolute_range(Range(-1, 1), Range(-11, 22)))
         print(relative_to_absolute_range(Range(None, 1), Range(-11, 22)))
         print(relative_to_absolute_range(Range(None, None), Range(-11, 22)))
         print(relative_to_absolute_range(Range('-1%', 2), Range(-11, 22)))
         print(relative_to_absolute_range(Range('1%', '-2%'), Range(-11, 22)))
-        print(relative_to_absolute_range(Range(-1, '-2%'), Range(-11, 22)))
+        print(relative_to_absolute_range(Range(-0.1, '-2%'), Range(-11, 22)))
         print(relative_to_absolute_range(Range(-1, 'abc'), Range(-11, 22)))
         print(relative_to_absolute_range(Range(-1, 'abc'), Range(-11, '100%')))
         print(relative_to_absolute_range(Range('-10%', 7), Range(-3, 8)))
