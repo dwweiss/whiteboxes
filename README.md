@@ -1,6 +1,6 @@
 # colored lids
 
-This package extends the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki) package with tools for the implementation of the theoretical submodels
+This package provides tools for the extension of the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki package with user-defined theoretical submodels.
 
 [[Link to coloredlids wiki]](https://github.com/dwweiss/coloredlids/wiki)
 
