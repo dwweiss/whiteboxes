@@ -26,21 +26,25 @@ import unittest
 class Parent(object):
     """
     Demonstrates structuring of a task
+    
+    Example:
+        foo = Parent('parent_object')
+        foo()
     """
     def __init__(self, identifier: str = 'Parent'):
         self.identifier = identifier
         self.data = 0
 
     def pre(self):
-        self.data += 2.
+        self.data += 1
         return True
 
     def task(self):
-        self.data *= 3
+        self.data *= 2
         return 0.0
 
     def post(self):
-        print('+++ data:', self.data, '  <=====')
+        print('    data:', self.data, '       <=====')
         return True
     
     def __call__(self):
@@ -48,49 +52,49 @@ class Parent(object):
         print('This is:', "'" + self.identifier + "'")
         
         print('*** Pre-process')
-        ok = self.pre()
-        print('    ok:', ok)
+        pre_ok = self.pre()
 
         print('*** Task')
         res = self.task()
-        print('    res:', res)
 
         print('*** Post-process')
-        ok = self.post()
-        print('    ok:', ok)
-
-        print('End of:', "'" + self.identifier + "'")
+        post_ok = self.post()
+        
+        ok = pre_ok and res < 1e-3 and post_ok
+        print('End of:', "'" + self.identifier + "', ok:", ok)
         
         return res
         
     
-class Child(Parent):
+class Child1(Parent):
     """
     Demonstrates derivation of a child class from a parent class
+
+    In contrast to class Child2, the pre()-method of the Parent 
+    class will be overwritten with the pre()-method of this class 
     """
-    def __init__(self, identifier: str = 'Child'):
+    def __init__(self, identifier: str = 'Child1'):
         super().__init__(identifier=identifier)
 
     def pre(self):
-        self.data += 4.
+        self.data += 3
         return True
 
 
 class Child2(Parent):
     """
     Demonstrates derivation of a child class from a parent class
-    similar to class Child; 
     
-    Additionally, the pre()-method of the Parent class will be called 
-    before executing the own pre()-method 
+    The pre()-method of the Parent class will be called before 
+    executing the code in the pre()-method of this class 
     """
     def __init__(self, identifier: str = 'Child2'):
         super().__init__(identifier=identifier)
 
     def pre(self):
-        super().pre()
+        super().pre()   # executes pre-process of parent class
         
-        self.data += 4.
+        self.data += 4
         return True
                 
 
@@ -101,15 +105,15 @@ class TestUM(unittest.TestCase):
     def tearDown(self):
         pass
 
-    def test1(self):
+    def test0(self):
         foo = Parent()
         foo()
 
-    def test2(self):
-        foo = Child()
+    def test1(self):
+        foo = Child1()
         foo()
 
-    def test3(self):
+    def test2(self):
         foo = Child2()
         foo()
 
