@@ -20,14 +20,14 @@
       2019-11-19 DWW
 """
 
-import __init__
-__init__.init_path()
+import initialize
+initialize.set_path()
 
 import unittest
 
-from coloredlids.matter.generic import Generic, Fluid, Metal, Solid
-from coloredlids.property.property import Property
+from coloredlids.property.generic import Generic, Fluid, Metal, Solid
 from coloredlids.property.parameter import Parameter
+from coloredlids.property.property import Property
 
 
 class TestUM(unittest.TestCase):

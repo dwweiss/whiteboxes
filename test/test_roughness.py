@@ -20,8 +20,8 @@
       2019-11-14 DWW
 """
 
-import __init__
-__init__.init_path()
+import initialize
+initialize.set_path()
 
 import unittest
 

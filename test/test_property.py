@@ -20,11 +20,11 @@
       2019-11-27 DWW
 """
 
-import __init__
-__init__.init_path()
+import initialize
+initialize.set_path()
 
-import unittest
 import numpy as np
+import unittest
 
 from coloredlids.property.range import Range
 from coloredlids.property.property import Property

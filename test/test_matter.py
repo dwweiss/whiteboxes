@@ -20,12 +20,12 @@
       2018-09-17 DWW
 """
 
-import __init__
-__init__.init_path()
+import initialize
+initialize.set_path()
 
 import unittest
 
-from coloredlids.matter.generic import C2K
+from coloredlids.property.generic import C2K
 from coloredlids.matter.matter import Matter
 
 

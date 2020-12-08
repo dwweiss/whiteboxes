@@ -20,14 +20,14 @@
       2019-12-02 DWW
 """
 
-import __init__
-__init__.init_path()
+import initialize
+initialize.set_path()
 
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
 import unittest
 
-from coloredlids.property.range import (Range, Scalar, in_range,  
+from coloredlids.property.range import (Range, in_range,  
     relative_to_absolute_range, in_range_abs_rel_error, in_range_full_scale)
 
 
@@ -43,7 +43,7 @@ class TestUM(unittest.TestCase):
     def test1(self):
         print('-' * 40)
         print('+++ Scalar')
-        x: Scalar = 9.
+        x = 9.
         print(x)
         print('-' * 40)
 

@@ -20,12 +20,12 @@
       2019-11-27 DWW
 """
 
-import __init__
-__init__.init_path()
+import initialize
+initialize.set_path()
 
-import unittest
-import numpy as np
 import matplotlib.pyplot as plt
+import numpy as np
+import unittest
 
 from coloredlids.property.parameter import Parameter, Range
 from coloredlids.property.conversion import deg2rad, rad2deg

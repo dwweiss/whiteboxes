@@ -20,12 +20,12 @@
       2018-09-17 DWW
 """
 
-import __init__
-__init__.init_path()
+import initialize
+initialize.set_path()
 
 import unittest
 
-import coloredlids.matter.ferrous as module_under_test
+import coloredlids.property.ferrous as module_under_test
 
 
 class TestUM(unittest.TestCase):

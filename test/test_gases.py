@@ -20,12 +20,12 @@
       2019-11-25 DWW
 """
 
-import __init__
-__init__.init_path()
+import initialize
+initialize.set_path()
 
 import unittest
 
-import coloredlids.matter.gases as module_under_test
+import coloredlids.property.gases as module_under_test
 
 
 class TestUM(unittest.TestCase):

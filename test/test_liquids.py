@@ -20,13 +20,13 @@
       2018-09-27 DWW
 """
 
-import __init__
-__init__.init_path()
+import initialize
+initialize.set_path()
 
 import unittest
 
-import coloredlids.matter.liquids as module_under_test
-from coloredlids.matter.liquids import HydraulicOil
+import coloredlids.property.liquids as module_under_test
+from coloredlids.property.liquids import HydraulicOil
 
 
 class TestUM(unittest.TestCase):
