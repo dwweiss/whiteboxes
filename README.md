@@ -15,7 +15,7 @@ This package provides tools for the extension of the [_grayboxes_](https://githu
         flow        Velocity and pressure distribution in flow of gases and liquids
         gui         Graphic user interfaces
         heat        Heat transfer by conduction, convection and radiation
-        hints       Some python tricks
+        hints       Some python hints
         instruments Tools for reading from instruments
         matter      Properties of solids, liquids and gases
         mesh        Primitives for building geometries and meshes
