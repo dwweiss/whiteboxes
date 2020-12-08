@@ -17,17 +17,17 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-11-28 DWW
+      2019-11-29 DWW
 """
 
 __all__ = ['Parameter']
 
 import collections
-from typing import Dict, Optional, Sequence, Tuple, Union
+from typing import Dict, Optional, Iterable, Tuple, Union
 import numpy as np
 import matplotlib.pyplot as plt
 
-from coloredlids.property.range import (Range, Floats, 
+from coloredlids.property.range import (Range, 
     percentage_of_bound, is_bound_absolute, is_bound_relative_to_reading) 
 
 
@@ -52,7 +52,7 @@ class Parameter(object):
                                   ^    
                                   |
       <-- error related ranges--> | <--- VAL related ranges ---->
-          (VAL<->REF relation)    |    (no reference to REF) 
+          (VAL<->REF relation)    |     (no relation to REF) 
       --------------------------- | -----------------------------
         ('expected', 'tolerated') | ('calibrated', 'operational')
                                   |
@@ -86,9 +86,9 @@ class Parameter(object):
                  unit: str = '/',
                  absolute: bool = True,
                  latex: Optional[str] = None,
-                 val: Floats = None,
-                 ref: Floats = None,
-                 range_keys: Optional[Sequence[str]] = None,
+                 val: Optional[Union[float, Iterable[float]]] = None,
+                 ref: Optional[Union[float, Iterable[float]]] = None,
+                 range_keys: Optional[Iterable[str]] = None,
                  comment: Optional[str] = None) -> None:
         """
         Args:
@@ -120,7 +120,8 @@ class Parameter(object):
                 comment text 
 
         Note:
-            Method __call__() returns self.val of type Floats
+            Method __call__() returns self.val of type float or 
+            Iterable[float]
             
             Bounds og value ranges or of repeatability range can be:
                 - absolute (e.g. 1.2),
@@ -150,8 +151,8 @@ class Parameter(object):
             if self.latex[-1] != '$':
                 self.latex = self.latex + '$'
         
-        self._val: Floats = val
-        self._ref: Floats = ref
+        self._val: Optional[Union[float, Iterable[float]]] = val
+        self._ref: Optional[Union[float, Iterable[float]]] = ref
         
         if len(np.atleast_1d(self.val)) != len(np.atleast_1d(self.ref)):
             print("!!! 'val' and 'ref' are arrays of different size:",
@@ -176,7 +177,7 @@ class Parameter(object):
         self.rate_of_change: float = 0.                # [(self.unit)/s]
         self.trust_score: int = 10  # confidence, 10: excellent, 0: poor
 
-    def __call__(self) -> Floats:
+    def __call__(self) -> Optional[Union[float, Iterable[float]]]:
         """
         Returns:
             actual value 
@@ -214,7 +215,8 @@ class Parameter(object):
         """
         return self._ranges        
 
-    def __getitem__(self, key: str) -> Union[Floats, Range]:
+    def __getitem__(self, key: str) \
+            -> Union[None, float, Iterable[float], Range]:
         """
         Args:
             key:
@@ -267,7 +269,8 @@ class Parameter(object):
         """
         return self.get_range(key)
         
-    def __setitem__(self, key: str, value: Union[Floats, Range]) -> bool:
+    def __setitem__(self, key: str, 
+                    value: Union[None, float, Iterable[float], Range]) -> bool:
         """
         Args:
             key:
@@ -294,7 +297,7 @@ class Parameter(object):
             print(ref)
             # ==> 2.3456    
             
-            foo.set_range('expected', 3.4) 
+            foo.set_range('expected', 3.4)
             rng = foo['expected']
             print(rng)
             # ==> (0.0, 1.2) 
@@ -311,8 +314,8 @@ class Parameter(object):
         """
         return self.set_range(key, value)
 
-    def set_range(self, key: str, value: Union[Floats, Range, 
-                                               Sequence[float]])-> bool:            
+    def set_range(self, key: str, 
+                  value: Union[None, float, Iterable[float], Range])-> bool:            
         if key.lower().startswith('val'):
             self.val = value
         elif key.lower().startswith('ref'):
@@ -333,7 +336,8 @@ class Parameter(object):
                 assert 0
         return True
 
-    def get_range(self, key: str) -> Union[Floats, Range]:
+    def get_range(self, key: str) \
+            -> Union[None, float, Iterable[float], Range]:
         """
         See __getitem__()
         """
@@ -347,35 +351,36 @@ class Parameter(object):
             return self._ranges.get(key)
 
     @property
-    def val(self) -> Floats:
+    def val(self) -> Union[None, float, Iterable[float], Range]:
         return self._val
 
     @val.setter
-    def val(self, value: Floats) -> None:
+    def val(self, value: Union[None, float, Iterable[float], Range]) -> None:
         self._val = value
 
     @property
-    def value(self) -> Floats:
+    def value(self) -> Union[None, float, Iterable[float], Range]:
         return self._val
 
     @value.setter
-    def value(self, value: Floats) -> None:
+    def value(self, value: Union[None, float, Iterable[float], Range]) -> None:
         self._val = value
 
     @property
-    def ref(self) -> Floats:
+    def ref(self) -> Union[None, float, Iterable[float], Range]:
         return self._ref
 
     @ref.setter
-    def ref(self, value: Floats) -> None:
+    def ref(self, value: Union[None, float, Iterable[float], Range]) -> None:
         self._ref = value
 
     @property
-    def reference(self) -> Floats:
+    def reference(self) -> Union[None, float, Iterable[float], Range]:
         return self._ref
 
     @reference.setter
-    def reference(self, value: Floats) -> None:
+    def reference(self, value: Union[None, float, 
+                                     Iterable[float], Range]) -> None:
         self._ref = value
 
     @property
@@ -412,7 +417,8 @@ class Parameter(object):
 
     def simulate(self, range_key: Optional[str] = None, 
                  size: Optional[Union[int, Tuple[int]]] = None,
-                 plot: bool = False) -> Floats:
+                 plot: bool = False) \
+                     -> Union[None, float, Iterable[float], Range]:
         """
         Simulates values within absolute and relative 
         (to full_scale/reading) ranges 
@@ -432,7 +438,7 @@ class Parameter(object):
             that a bound is relative to reading, eg. (-1, '10%', None)
         """
         if range_key is None:
-            range_key = 'calibrated'
+            range_key = 'operational'
         if range_key not in self.ranges:
             return False
         if size is None and self.ref is not None:

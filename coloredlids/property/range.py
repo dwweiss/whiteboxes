@@ -17,10 +17,10 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-12-02 DWW
+      2020-11-04 DWW
 """
 
-__all__ = ['Range', 'Scalar', 'Floats',
+__all__ = ['Range',
            'relative_to_absolute_range', 'percentage_of_bound', 
            'in_range', 'in_range_full_scale', 'in_range_abs_rel_error',
            'is_bound_absolute',
@@ -31,54 +31,80 @@ __all__ = ['Range', 'Scalar', 'Floats',
 import numpy as np
 np.random.seed(19680801)
 
-from typing import List, Optional, Tuple, Union
+from typing import Iterable, Optional, Tuple, Union
 import matplotlib.pyplot as plt
-
-Scalar = Optional[Union[float, int, str]]
-Floats = Optional[Union[float, List[float], np.ndarray]]
-
-
-def is_bound_absolute(bound: Scalar) -> bool:
-    try:
-        float(bound)
-        return True
-    except:
-        return False
     
 
-def percentage_of_bound(bound: Scalar) -> Optional[float]:
+def percentage_of_bound(bound: Union[None, float, int, str]) \
+        -> Optional[float]:
+    """
+    converts argument to float, 
+    multiplies float with 1e-2 if argument is str and argument contains '%'
+    """
     if '%' in str(bound):
         return float(bound[:bound.find('%')]) * 1e-2
     else:
-        return None
+        return bound
 
 
-def is_bound_relative_to_reading(bound: Scalar, 
+def is_bound_relative_to_reading(bound: Union[None, float, int, str], 
                                  full_scale_pattern: str = '%FS') -> bool:
+    """
+    Returns:
+        True if bound contains '%' and bound does not contain '%FS'
+    """
     return '%' in str(bound) and full_scale_pattern not in str(bound).upper()
 
 
 def is_range_relative_to_reading(range_: 'Range') -> bool:
+    """
+    Returns:
+        True if both bounds of range_ contain '%' and both do not contain '%FS'
+    """
     return is_bound_relative_to_reading(range_.lo) \
        and is_bound_relative_to_reading(range_.up)
 
 
-def is_bound_relative_to_full_scale(bound: Scalar, 
+def is_bound_relative_to_full_scale(bound: Union[None, float, int, str], 
                                     full_scale_pattern: str = '%FS') -> bool:
+    """
+    Returns:
+        True if bound contains '%FS'
+    """
     return full_scale_pattern in str(bound).upper()
 
 
 def is_range_relative_to_full_scale(range_: 'Range', 
                                     full_scale_pattern: str = '%FS') -> bool:
+    """
+    Returns:
+        True if both bounds of range_ contain '%FS'
+    """
     return is_bound_relative_to_full_scale(range_.lo, full_scale_pattern) \
        and is_bound_relative_to_full_scale(range_.up, full_scale_pattern)
 
 
+def is_bound_absolute(bound: Union[None, float, int, str]) -> bool:
+    """
+    Returns:
+        True if bounds does not contain '%' and can be converted to float
+    """
+    try:
+        float(bound)
+        return True
+    except:
+        return False
+
 def is_range_absolute(range_: 'Range') -> bool:
+    """
+    Returns:
+        True if both bounds do not contain '%' and can be converted to float
+    """
     return is_bound_absolute(range_.lo) and is_bound_absolute(range_.up)
 
 
-def relative_to_absolute_range(range_: 'Range', full_scale: 'Range',
+def relative_to_absolute_range(range_: 'Range', 
+                               full_scale: 'Range',
                                relative_pattern: str = '%') \
         -> Optional['Range']:
     """
@@ -131,9 +157,9 @@ def relative_to_absolute_range(range_: 'Range', full_scale: 'Range',
         lo is lower bound and up is            |              |
         upper bound of effective range         ----------------
         
-                                  # full scale span = 8-(-3) = 11 is 
-                                  # multiplied with -10e-2 => -1.1 
-                                  # range_.up = 7 stays unchanged
+                                   # full scale span = 8-(-3) = 11 is 
+                                   # multiplied with -10e-2 => -1.1 
+                                   # range_.up = 7 stays unchanged
     """
     if not isinstance(range_, Range):
         return None
@@ -182,7 +208,8 @@ def relative_to_absolute_range(range_: 'Range', full_scale: 'Range',
     return Range(lo, up, distr)
 
 
-def in_range(val: Floats, range_: 'Range') -> bool:
+def in_range(val: Union[None, float, Iterable[float]], 
+             range_: 'Range') -> bool:
     """
     Checks if scalar 'val' or all elements of array 'val' are within 
     lower and upper bound of 'range_'. 
@@ -223,7 +250,8 @@ def in_range(val: Floats, range_: 'Range') -> bool:
     return all(np.greater_equal(val, lo)) and all(np.less_equal(val, up))
 
 
-def in_range_full_scale(val: Floats, range_: 'Range', 
+def in_range_full_scale(val: Union[None, float, Iterable[float]], 
+                        range_: 'Range', 
                         full_scale: 'Range') -> bool:
     """
     Checks if val is within span of 'range_' which can be defined
@@ -250,7 +278,9 @@ def in_range_full_scale(val: Floats, range_: 'Range',
     return in_range(val, converted_range)
 
 
-def in_range_abs_rel_error(val: float, ref: float, range_: 'Range') -> bool:
+def in_range_abs_rel_error(val: float, 
+                           ref: float, 
+                           range_: 'Range') -> bool:
     """
     Checks if absolute error (val - ref) or relative error 
     (val - ref) / ref is within the given error range. A relative error 
@@ -360,15 +390,15 @@ class Range(object):
         
         s = str(rng)  # ==> (-3, 7, None)
     """
-    def __init__(self, *args: Scalar) -> None:
+    def __init__(self, *args: Union[None, float, int, str]) -> None:
         """
         VarArgs:
             args:
                 lower bound, upper bound and/or probability/distribution
         """
-        self._lo: Scalar = None
-        self._up: Scalar = None
-        self._distr: Scalar = None
+        self._lo: Union[None, float, int, str] = None
+        self._up: Union[None, float, int, str] = None
+        self._distr: Union[None, float, int, str] = None
         self.set_range(*args)
     
     def __copy__(self):
@@ -377,25 +407,26 @@ class Range(object):
         return obj        
     
     @property
-    def lo(self) -> Scalar:
+    def lo(self) -> Union[None, float, int, str]:
         return self._lo
 
     @property
-    def up(self) -> Scalar:
+    def up(self) -> Union[None, float, int, str]:
         return self._up
 
     @property
-    def distr(self) -> Scalar:
+    def distr(self) -> Union[None, float, int, str]:
         return self._distr
 
     @property
-    def probality(self) -> Scalar:
+    def probability(self) -> Union[None, float, int, str]:
         return self._distr
     
-    def __getitem__(self, key: Union[int, str]) -> Scalar:
+    def __getitem__(self, key: Union[int, str]) \
+            -> Union[None, float, int, str]:
         return self.get_bound(key)
 
-    def get_bound(self, key: Union[int, str]) -> Scalar:
+    def get_bound(self, key: Union[int, str]) -> Union[None, float, int, str]:
         if isinstance(key, int):
             if key == 0:
                 return self._lo
@@ -420,10 +451,12 @@ class Range(object):
         else:
             return None
 
-    def get_range(self) -> Tuple[Scalar, Scalar, Scalar]:
+    def get_range(self) -> Tuple[Union[None, float, int, str], 
+                                 Union[None, float, int, str], 
+                                 Union[None, float, int, str]]:
         return (self._lo, self._up, self._distr)
 
-    def set_range(self, *args: Scalar) -> bool:
+    def set_range(self, *args: Union[None, float, int, str]) -> bool:
         self._lo = None
         self._up = None
         self._distr = None
@@ -443,13 +476,13 @@ class Range(object):
             
     def span(self) -> Optional[float]:
         try:
-            return float(self._up) - (self._lo)
+            return float(self._up) - float(self._lo)
         except:
             return None
         
-    def simulate(self, size: Optional[Union[int, Tuple[int]]] = None,
+    def simulate(self, size: Union[None, int, Tuple[int]] = None,
                  full_scale: Optional['Range'] = None,
-                 plot: bool = False) -> Floats:
+                 plot: bool = False) -> Union[None, float, np.ndarray]:
         """
         Generates random data in the range [self.lo, self.up] for the 
         following distributions:

@@ -20,11 +20,9 @@
       2019-11-28 DWW
 """
 
-import numpy as np
 import matplotlib.pyplot as plt
-from typing import Optional, Tuple, Union
-
-from coloredlids.property.parameter import Floats
+import numpy as np
+from typing import Iterable, Optional, Tuple, Union
 from coloredlids.property.conversion import C2K
 from coloredlids.property.parameter import Parameter, Range
 
@@ -55,8 +53,8 @@ class Property(Parameter):
                  unit: str = '/',
                  absolute: bool = True,
                  latex: Optional[str] = None,
-                 val: Floats = None,
-                 ref: Floats = None,
+                 val: Optional[Union[float, Iterable[float]]] = None,
+                 ref: Optional[Union[float, Iterable[float]]] = None,
                  comment: Optional[str] = None) -> None:
         
         super().__init__(identifier=identifier, unit=unit, absolute=absolute,
@@ -113,7 +111,11 @@ class Property(Parameter):
                 plt.grid()
                 plt.show()
 
-    def calc(self, T: Floats = 0., p: Floats = 0., x: Floats = 0.) -> Floats:
+    def calc(self, 
+             T: Optional[Union[float, Iterable[float]]] = 0., 
+             p: Optional[Union[float, Iterable[float]]] = 0., 
+             x: Optional[Union[float, Iterable[float]]] = 0.) \
+                 -> Optional[Union[float, Iterable[float]]]:
         """
         This function SHOULD be overwritten in derived classes.
         It returns the actual value(s) as a placeholder 
@@ -139,8 +141,11 @@ class Property(Parameter):
         """
         return self.val
 
-    def __call__(self, T: Floats = 0., p: Floats = 0., 
-                 x: Floats = 0.) -> Floats:
+    def __call__(self, 
+                 T: Optional[Union[float, Iterable[float]]] = 0., 
+                 p: Optional[Union[float, Iterable[float]]] = 0., 
+                 x: Optional[Union[float, Iterable[float]]] = 0.) \
+                     -> Optional[Union[float, Iterable[float]]]:
         """
         This function MUST NOT be overwritten
 
@@ -179,8 +184,8 @@ class Property(Parameter):
         if plot:
             s = r"poperty('" + self.identifier + "')"
             print('\n+++ Simulate', s + ':')
-        self.val = super().simulate(range_key=range_key, size=size, 
-                                    plot=plot)
+        self.val = Parameter.simulate(self, range_key=range_key, size=size, 
+                                      plot=plot)
         
         if self.T is not None:
             if plot:
