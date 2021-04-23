@@ -9,7 +9,7 @@
   This software is distributed in the hope that it will be useful,
   but WITHOUT ANY WARRANTY; without even the implied warranty of
   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU
-  Lesser General Public Licqense for more details.
+  Lesser General Public License for more details.
 
   You should have received a copy of the GNU Lesser General Public
   License along with this software; if not, write to the Free
@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-17 DWW
+      2019-11-19 DWW
 """
 
 import initialize
@@ -25,8 +25,10 @@ initialize.set_path()
 
 import unittest
 
-from coloredlids.property.generic import C2K
-from coloredlids.matter.matter import Matter
+from coloredlids.property.matter import Fluid, Metal, Solid
+from coloredlids.property.matter import Matter
+from coloredlids.property.parameter import Parameter
+from coloredlids.property.property import Property
 
 
 class TestUM(unittest.TestCase):
@@ -37,33 +39,79 @@ class TestUM(unittest.TestCase):
         pass
 
     def test1(self):
-        print('collection:', [m.identifier for m in Matter()('all')])
+        # Example of generic matter
+        mat = Matter(identifier='matter')
 
-        matter = Matter()
-        for mat in matter('all'):
-            print('mat:', mat.identifier)
-            if True:
-                mat.plot()
+        # Add new Parameter 'p1'
+        mat.p1 = Parameter(identifier='p1', unit='p1-unit', absolute=True,
+                           latex=None, val=200, ref=120,
+                           comment='define bounds of p1')
+        mat.p1.operational = [100, 200]
+        print(mat.p1)
+        print('-' * 60)
+
+        # Add new Property 'abc'
+        mat.abc = Property(identifier='abc')
+        mat.abc.calc = lambda T, p, x=0: 0.1 + 1e-3 * T - 1e-4 * p
+        print(mat.abc)
+        mat.abc.plot('title')
+        print('-' * 60)
 
         self.assertTrue(True)
 
     def test2(self):
-        s = 'Water'
-        print('-' * len(s) + '\n' + s + '\n' + '-' * len(s))
+        # Example of Fluid
+        fluid = Fluid(identifier='fluid')
+        fluid.c_p.plot()
+        fluid.plot('c_p')
+        fluid.lambda_.plot()
+        fluid.plot('lambda')
 
-        collection = Matter()
-        print('Collection:', collection)
-        mat = collection('Water')
-        mat.plot('c_p')
+        fluid.plot('mu')
+        fluid.plot('nu')
+        fluid.plot('Pr')
+        print('-' * 60)
 
-        rho = mat.plot('rho')
-        print('rho:', rho)
-        lambda_ = mat.lambda_(T=C2K(100))
-        print('lambda_:', lambda_)
-        c_p = mat.c_p(T=C2K(20), p=mat.p.ref)
-        print('c_p:', c_p)
+        self.assertTrue(True)
 
-        mat.plot('all')
+    def test3(self):
+        # Example of Fluid
+        fluid = Fluid(identifier='fluid')
+        fluid.rho.plot()
+        fluid.rho(T=300)
+        fluid.plot('rho')
+        print('-' * 60)
+
+        self.assertTrue(True)
+
+    def test4(self):
+        # Example of Fluid
+        fluid = Fluid(identifier='fluid')
+        fluid.lambda_.plot()
+        fluid.c_p.plot()
+        fluid.rho.plot()
+        fluid.a.plot()
+        print('cp:', fluid.c_p(T=300, p=0, x=0),
+              'rho:', fluid.rho(T=300, p=0, x=0),
+              'lambda:', fluid.lambda_(T=300, p=0, x=0),
+              'a:', fluid.a(T=300, p=0, x=0))
+        print('-' * 60)
+
+        self.assertTrue(True)
+
+    def test5(self):
+        # Example of Solid
+        solid = Solid(identifier='solid')
+        solid.plot()
+        print('-' * 60)
+
+        self.assertTrue(True)
+
+    def test6(self):
+        # Example of Metal
+        solid = Metal()
+        solid.plot()
+        print('-' * 60)
 
         self.assertTrue(True)
 
