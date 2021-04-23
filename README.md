@@ -20,7 +20,7 @@ This package provides tools for the extension of the [_grayboxes_](https://githu
         matter      Properties of solids, liquids and gases
         mesh        Primitives for building geometries and meshes
         numerics    Numerical solution of differential and integral equations
-        property    Parameters, ranges and properties of matter
+        property    Parameters, ranges and properties
         regression  regression analysis
         tools       Tools for data manipulation
         
