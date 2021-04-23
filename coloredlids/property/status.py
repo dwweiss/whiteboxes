@@ -20,8 +20,8 @@
       2019-11-19 DWW
 """
 
-from typing import Optional
 from enum import Enum
+from typing import Optional
 
 
 class Status(Enum):

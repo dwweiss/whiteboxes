@@ -23,12 +23,16 @@
 __all__ = ['Parameter']
 
 import collections
-from typing import Dict, Optional, Iterable, Tuple, Union
 import numpy as np
 import matplotlib.pyplot as plt
+from typing import Dict, Optional, Iterable, Tuple, Union
 
-from coloredlids.property.range import (Range, 
-    percentage_of_bound, is_bound_absolute, is_bound_relative_to_reading) 
+try:
+    from range import (Range, 
+        percentage_of_bound, is_bound_absolute, is_bound_relative_to_reading) 
+except:
+    from coloredlids.property.range import (Range, 
+        percentage_of_bound, is_bound_absolute, is_bound_relative_to_reading) 
 
 
 class Parameter(object):
@@ -47,6 +51,8 @@ class Parameter(object):
       - rate-of-change (d(Parameter)/dt)
       - trust score
       
+     Lower and upper bounds of ranges are stored as 'Range' members
+
 
                             identifier [unit] 
                                   ^    
@@ -159,7 +165,8 @@ class Parameter(object):
                   (self.val.dim, self.ref.dim))
         
         if range_keys is None:
-            range_keys = ('calibrated', 'tolerated', 'full_scale', 'expected')
+            range_keys = ('calibrated', 'tolerated', 'full_scale', 'expected',
+                          'operational')
                 
         self._ranges: Dict[str, Range] = {}
         if range_keys:
@@ -170,6 +177,7 @@ class Parameter(object):
         self._ranges['calibrated'] = Range('-0.5%', '+0.5%', None)
         self._ranges['accuracy'] = Range('-1%', '+1%', None)
         self._ranges['repeatability'] = Range(-0.01, 0.01, '95%')
+        self._ranges['operational'] = Range(-0.01, 0.01, '95%')
 
         self.comment: str = comment if comment is not None else ''
 
@@ -315,7 +323,9 @@ class Parameter(object):
         return self.set_range(key, value)
 
     def set_range(self, key: str, 
-                  value: Union[None, float, Iterable[float], Range])-> bool:            
+                  value: Union[None, float, Iterable[float], Range])-> bool: 
+
+           
         if key.lower().startswith('val'):
             self.val = value
         elif key.lower().startswith('ref'):
@@ -331,7 +341,12 @@ class Parameter(object):
                     distr = value[2] 
                 self.ranges[key] = Range(lo, up, distr)
             elif isinstance(value, Range):
-                self.ranges[key] = value
+                try:
+                    self.ranges[key] = value
+                except:
+                    print('par 344', key, value, type(value))
+                    print('par 345 self.ranges', self.ranges.keys())
+                    print('par 346 self.ranges', self.ranges.values())
             else:
                 assert 0
         return True

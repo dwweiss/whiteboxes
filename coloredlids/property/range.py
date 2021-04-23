@@ -31,8 +31,8 @@ __all__ = ['Range',
 import numpy as np
 np.random.seed(19680801)
 
-from typing import Iterable, Optional, Tuple, Union
 import matplotlib.pyplot as plt
+from typing import Iterable, Optional, Tuple, Union
     
 
 def percentage_of_bound(bound: Union[None, float, int, str]) \

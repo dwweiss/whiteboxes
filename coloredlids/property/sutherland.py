@@ -27,11 +27,11 @@ from typing import Optional
 def sutherland_viscosity(identifier: str, T: float, T0: float,
                          mu0: float) -> Optional[float]:
     """
-    Sutherland approximation of gas viscosity
+    Sutherland approximation of dynamic viscosity of gas
 
     Args:
         identifier:
-            Identifier out of [ 'AIR' 'CO2' 'H2' 'N2' 'NH3' 'O2' ]
+            Identifier out of [ 'Air' 'CO2' 'H2' 'N2' 'NH3' 'O2' ]
 
         T:
             Temperature [K]

@@ -17,11 +17,13 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2020-12-08 DWW
+      2020-12-22 DWW
 """
 
-__all__ = ['deg2rad', 'rad2deg', 'C2K', 'K2C', 'F2C', 'C2F', 'F2K', 'K2F',
-           'Pa2bar', 'ksi2Pa', 'msi2Pa', 'is_probably_celsius']
+__all__ = ['deg2rad', 'rad2deg', 
+           'Pa2bar', 'bar2Pa', 'ksi2Pa', 'msi2Pa', 'air_pressure', 'atm', 
+           'C2K', 'K2C', 'F2C', 'C2F', 'F2K', 'K2F', 'is_probably_celsius',
+           'cal2J', 'cal_g2J_kg',]
            
 import numpy as np
 from typing import Iterable, Union
@@ -90,6 +92,13 @@ def Pa2bar(Pa: Union[float, Iterable[float]]) -> np.ndarray:
     return np.asanyarray(Pa) * 1e-5
 
 
+def bar2Pa(bar: Union[float, Iterable[float]]) -> np.ndarray:
+    """
+    Converts pressure from [bar] to [Pascal]
+    """
+    return np.asanyarray(bar) * 1e5
+
+
 def ksi2Pa(ksi: Union[float, Iterable[float]]) -> np.ndarray:
     """
     Converts pressure from [ksi] (pounds per square inch) to [Pascal]
@@ -103,12 +112,44 @@ def msi2Pa(msi: Union[float, Iterable[float]]) -> np.ndarray:
     """
     return np.asanyarray(msi) * 6.894745e+9
 
+def atm() -> float:
+    """
+    Returns:
+        standard atmosphere pressure [Pa]
+    """
+    return 101325.
+
+def air_pressure(altitude: float = 0.) -> float:
+    """
+    Calculate air pressure above sea level at given altitude 
+    
+    Args:
+        altitude [m]
+        
+    Returns:
+        air pressure [Pa]
+    """
+    return 101325 * (1. - 2.25577e-5 * altitude)**5.25588
+
+def cal2J(cal: float) -> float:
+    """
+    Converts heat from [cal] to [J]
+    """
+    return cal * 4186.8
+
+
+def cal_g2J_kg(cal_per_g: float) -> float:
+    """
+    Converts specific heat from [cal/g] to [J/kg]
+    """
+    return cal_per_g * 4186.8
+
 
 def is_probably_celsius(T: Union[float, Iterable[float]], 
                         low: float = 200.) -> bool:
     """ 
-    Checks the assumption that a temperature less than 'low' has probably 
-    the unit 'degrees Celsius' 
+    Checks temperature unit based on the assumption that a temperature
+    less than 'low' has probably the unit 'degrees Celsius' 
     
     Args:
         T:
