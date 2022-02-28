@@ -58,6 +58,8 @@ class Aluminum(NonFerrous):
 
         self.T.ref = C2K(20)
 
+        self.M.calc       = lambda T=0, p=0, x=0: 26.9815386e-3  # [kg/mol]
+
         self.nu_mech      = None
         self.friction     = None
         self.E.calc       = lambda T=0, p=0, x=0: None
@@ -65,16 +67,15 @@ class Aluminum(NonFerrous):
         self.T_sol        = 933.47
         self.T_liq        = 933.47
         self.T_vap        = 2793.0
-        self.M            = 26.9815386e-3  # [kg/mol]
         h_melt_mol        = 10.71e3        # [J/mol]
         h_vap_mol         = 294e3          # [J/mol]
-        self.h_melt       = h_melt_mol / self.M
-        self.h_vap        = h_vap_mol / self.M
+        self.h_melt       = h_melt_mol / self.M()
+        self.h_vap        = h_vap_mol / self.M()
 
         self.beta.calc    = lambda T=0, p=0, x=0: 23.1e-6
-        self.c_p.calc     = lambda T=0, p=0, x=0: 24.2 / self.M
-        self.lambda_.calc = lambda T=0, p=0, x=0: 237
-        self.rho.calc     = lambda T=0, p=0, x=0: 2700 if T < self.T_sol \
+        self.c_p.calc     = lambda T=0, p=0, x=0: 24.2 / self.M()
+        self.k.calc       = lambda T=0, p=0, x=0: 237.
+        self.rho.calc     = lambda T=0, p=0, x=0: 2700. if T < self.T_sol \
                                                            else 2375
         self.rho_el.calc  = lambda T=0, p=0, x=0: 26.5e-9
 
@@ -112,5 +113,5 @@ class Copper(NonFerrous):
         self.T_sol        = C2K(2560)
         self.beta.calc    = lambda T=0, p=0, x=0: 16.3e-6
         self.c_p.calc     = lambda T=0, p=0, x=0: 129
-        self.lambda_.calc = lambda T=0, p=0, x=0: 386
+        self.k.calc       = lambda T=0, p=0, x=0: 386
         self.rho.calc     = lambda T=0, p=0, x=0: 8960

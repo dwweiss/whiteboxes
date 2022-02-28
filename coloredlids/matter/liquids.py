@@ -82,7 +82,7 @@ class Diesel(Liquid):
         self.nu.calc = self._nu
         self.mu.calc = self._mu
         self.c_p.calc = self._c_p
-        self.lambda_.calc = self._lambda
+        self.k.calc = self._k
 #        self.c_sound.calc = self._c_sound
 #        self.E.calc = self._E
 
@@ -103,7 +103,7 @@ class Diesel(Liquid):
     def _c_p(self, T, p=1e5, x=0):
         return 1750
 
-    def _lambda(self, T, p=1e5, x=0):
+    def _k(self, T, p=1e5, x=0):
         return 0.15
 
 
@@ -151,7 +151,7 @@ class HydraulicOil(Liquid):
         self.nu.calc = self._nu
         self.mu.calc = self._mu
         self.c_p.calc = self._c_p
-        self.lambda_.calc = self._lambda
+        self.k.calc = self._k
 #        self.c_sound.calc = self._c_sound
 #        self.E.calc = self._E
 
@@ -166,7 +166,7 @@ class HydraulicOil(Liquid):
         f = interp2d(Tp, Pp, Up)
         return f(T, p)
 
-    def _lambda(self, T, p=1e5, x=0):
+    def _k(self, T, p=1e5, x=0):
         return 0.1279
 
     def _mu(self, T, p=1e5, x=0):
@@ -232,7 +232,7 @@ class Water(Liquid):
         self.nu.calc      = self._nu
         self.mu.calc      = self._mu
         self.c_p.calc     = self._c_p
-        self.lambda_.calc = self._lambda
+        self.k.calc = self._k
         self.c_sound.calc = self._c_sound
         self.E.calc       = self._E
 
@@ -350,7 +350,7 @@ class Water(Liquid):
         C = 140.
         return A * 10. ** (B / (T - C))
 
-    def _lambda(self, T, p=0., x=0.):
+    def _k(self, T, p=0., x=0.):
         return -0.5752 + (T * (6.397e-3 - T * 8.151e-6))
 
     def _c_sound(self, T, p=0., x=0.):

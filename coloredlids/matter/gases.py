@@ -29,16 +29,18 @@ from typing import Optional
 try:
     from coloredlids.property.conversion import atm, C2K, K2C
     from coloredlids.property.matter import Gas
+    from coloredlids.property.gasmix import GasMix
     from coloredlids.property.range import Range
 except:
-    from conversion import C2K, K2C
-    from generic import Gas
+    from conversion import atm, C2K, K2C
+    from matter import Gas
+    from gasmix import GasMix
     from range import Range
 
 try:
     import CoolProp as cp
 except:
-    print('!!! module CoolProp not loaded')
+    print('??? module CoolProp not imported')
 
 
 class Air_interpolated(Gas):
@@ -46,9 +48,8 @@ class Air_interpolated(Gas):
     Physical and chemical properties of air
     """
 
-    def __init__(self, identifier: str = 'Air', 
-                 latex: Optional[str] = None, 
-                 comment: Optional[str] = None):
+    def __init__(self, identifier: str = 'Air', latex: Optional[str] = None, 
+                 comment: Optional[str] = None) -> None:
         """
         Args:
             identifier:
@@ -63,11 +64,11 @@ class Air_interpolated(Gas):
         """
         super().__init__(identifier=identifier, latex=latex, comment=comment)
         self.version = '111220_dww'
-        self.comment = 'Composition: N2: 0.78, O2: 21, Ar+CO2: 0.01'
+        self.comment = 'Composition: N2: 78%, O2: 21%, Ar+CO2: 1%'
 
         # reference point and operational range
         self.T._ranges['operational'] = Range(C2K(0.), C2K(100.))
-        self.p._ranges['operational'] = Range(0. + atm(), 100e5 + atm())
+        self.p._ranges['operational'] = Range(0. + atm(), 10e5 + atm())
         self.T.ref = C2K(15.)
         self.T.val = self.T.ref
         self.p.ref = atm()
@@ -77,7 +78,7 @@ class Air_interpolated(Gas):
         self.E = 2.2e9
         self.h_melt = 334e3
         self.h_vap = 2270e3
-        self.M = 29e-3
+        self.M.calc = lambda T=0., p=0., x=0.: 29e-3
         self.T_liq = C2K(0.)
         self.T_boil = 83.
 
@@ -85,16 +86,18 @@ class Air_interpolated(Gas):
         self.beta.calc = self._beta
         self.c_p.calc = self._c_p
         self.c_sound.calc = self._c_sound
-        self.lambda_.calc = self._lambda
-        self.mu.calc = self._mu
+        self.k.calc = self._k
         self.nu.calc = self._nu
         self.rho.calc = self._rho
 
-    def _beta(self, T, p=1e5, x=0.):
-        assert T > 1e-10, str(T)
-        return 1. / T
+    def _beta(self, T: float, p: float = atm(), 
+              x: float = 0.) -> Optional[float]:
+        try:
+            return 1. / T
+        except:
+            return None
 
-    def _c_p(self, T, p=1e5, x=0.):
+    def _c_p(self, T: float, p: float = atm(), x: float = 0.) -> float:
         Tp = [100,   150,  200,  250,  300,  350,  400,
               450,   500,  550,  600,  650,  700,  750,
               800,   850,  900,  950, 1000, 1100, 1200,
@@ -107,10 +110,10 @@ class Air_interpolated(Gas):
               1.337e3, 1.372e3, 1.417e3, 1.478e3, 1.558e3, 1.665e3, 2.726e3]
         return np.interp(T, Tp, Up)
 
-    def _c_sound(self, T, p=1e5, x=0.):
+    def _c_sound(self, T: float, p: float = atm(), x: float = 0.) -> float:
         return 331.3 * np.sqrt(1 + K2C(T) / 273.15)
 
-    def _lambda(self, T, p=1e5, x=0.):
+    def _k(self, T: float, p: float = atm(), x: float = 0.) -> float:
         Tp = [100,   150,  200,  250,  300,  350,  400,
               450,   500,  550,  600,  650,  700,  750,
               800,   850,  900,  950, 1000, 1100, 1200,
@@ -123,10 +126,7 @@ class Air_interpolated(Gas):
               137e-3,   147e-3,  160e-3,  175e-3,  196e-3,  222e-3,  486e-3]
         return np.interp(T, Tp, Up)
 
-    def _mu(self, T, p=1e5, x=0.):
-        return self._nu(T, p, x) * self._rho(T, p, x)
-
-    def _nu(self, T, p=1e5, x=0.):
+    def _nu(self, T: float, p: float = atm(), x: float = 0.) -> float:
         Tp = [100,   150,  200,  250,  300,  350,  400,
               450,   500,  550,  600,  650,  700,  750,
               800,   850,  900,  950, 1000, 1100, 1200,
@@ -140,7 +140,7 @@ class Air_interpolated(Gas):
               506.0e-6, 547.0e-6, 589.0e-6, 841.0e-6]
         return np.interp(T, Tp, Up)
 
-    def _Pr(self, T, p=1e5, x=0.):
+    def _Pr(self, T: float, p: float = atm(), x: float = 0.) -> float:
         Tp = [100,   150,  200,  250,  300,  350,  400,
               450,   500,  550,  600,  650,  700,  750,
               800,   850,  900,  950, 1000, 1100, 1200,
@@ -153,7 +153,7 @@ class Air_interpolated(Gas):
               0.672, 0.667, 0.655, 0.647, 0.630, 0.613, 0.536]
         return np.interp(T, Tp, Up)
 
-    def _rho(self, T, p=1e5, x=0.):
+    def _rho(self, T: float, p: float = atm(), x: float = 0.) -> float:
         Tp = [100,   150,  200,  250,  300,  350,  400,
               450,   500,  550,  600,  650,  700,  750,
               800,   850,  900,  950, 1000, 1100, 1200,
@@ -174,7 +174,7 @@ class Ar_interpolated(Gas):
 
     def __init__(self, identifier: str = 'Ar', 
                  latex: Optional[str] = None, 
-                 comment: Optional[str] = None):
+                 comment: Optional[str] = None) -> None:
         """
         Args:
             identifier:
@@ -200,7 +200,7 @@ class Ar_interpolated(Gas):
 
         # constants
         self.composition['Ar'] = 100.
-        self.M = 39.948e-3
+        self.M.calc = lambda T=0., p=0., x=0.: 39.948e-3
         self.Z = 0.9994
 
         # functions of temperature, pressure and spare parameter 'x'
@@ -208,27 +208,24 @@ class Ar_interpolated(Gas):
         self.nu.calc = self._nu
         self.mu.calc = self._mu
         self.c_p.calc = self._c_p
-        self.lambda_.calc = self._lambda
+        self.k.calc = self._k
 
-    def _c_p(self, T, p=1e5, x=0.):
+    def _c_p(self, T: float, p: float = atm(), x: float = 0.) -> float:
         Tp = C2K([0, 100, 200, 300, 400, 500, 600, 700, 800])
         Up = [0.522, 0.521, 0.521, 0.521, 0.521, 0.520, 0.520, 0.520, 0.520]
         return np.interp(T, Tp, Up)
 
-    def _lambda(self, T, p=1e5, x=0.):
+    def _k(self, T: float, p: float = atm(), x: float = 0.) -> float:
         Tp = C2K([0, 100, 200, 300, 400, 500, 600])
         Up = np.array([16.51, 21.17, 25.59, 29.89, 33.96, 37.91, 39.43]) * 1e-3
         return np.interp(T, Tp, Up)
 
-    def _nu(self, T, p=1e5, x=0.):
-        return self._mu(T, p, x) / self._rho(T, p, x)
-
-    def _mu(self, T, p=1e5, x=0.):
+    def _mu(self, T: float, p: float = atm(), x: float = 0.) -> float:
         Tp = C2K([0, 100, 200, 300, 400, 500, 600])
         Up = np.array([21.2, 27.1, 32.1, 36.7, 41.0, 45.22, 48.7]) * 1e-6
         return np.interp(T, Tp, Up)
 
-    def _rho(self, T, p=1e5, x=0.):
+    def _rho(self, T: float, p: float = atm(), x: float = 0.) -> float:
         Tp = C2K([20, 20])
         Up = [1.6339, 1.6339]
         return np.interp(T, Tp, Up)
@@ -241,7 +238,7 @@ class _Generic(Gas):
 
     def __init__(self, identifier: str = '_Generic', 
                  latex: Optional[str] = None, 
-                 comment: Optional[str] = None):
+                 comment: Optional[str] = None) -> None:
         """
         Args:
             identifier:
@@ -252,50 +249,312 @@ class _Generic(Gas):
                 If None, latex is identical with identifier
 
             comment:
-                comment on matter
+                comment on matter                
         """
         super().__init__(identifier=identifier, latex=latex, comment=comment)
-        self.version = '151220_dww'
+        self.version = '151220_dww'            
 
         # reference point and operational range
-        self.T._ranges['operational'] = Range(273.16, 600)
+        self.T._ranges['operational'] = Range(C2K(0.01), C2K(300))
         self.T.ref = C2K(20)
         self.T.val = self.T.ref
-        self.p._ranges['operational'] = Range(0. + atm(), 100e5 + atm())
+        self.p._ranges['operational'] = Range(atm(), atm() + 100e5)
         self.p.ref = atm()
         self.p.val = self.p.ref
 
         # constants
-        self.composition[self.identifier] = 100.        
-        self.M = cp.CoolProp.PropsSI(self.identifier, 'molemass')
-
+        self.composition[self.identifier] = 100.    
+        
         # functions of temperature, pressure and spare parameter 'x'
         self.c_p.calc = self._c_p
-        self.lambda_.calc = self._lambda
+        self.k.calc = self._k
+        self.M.calc = self._M
         self.mu.calc = self._mu
-        self.nu.calc = self._nu
         self.rho.calc = self._rho
 
+    def _c_p(self, T: float, p: float = atm(), 
+             x: float = 0.) -> Optional[float]:
+        try:
+            return cp.CoolProp.PropsSI('C', 'T', T, 'P', p, self.identifier)
+        except:
+            return None
 
-    def _c_p(self, T, p=1e5, x=0.):
-        T = np.clip(T, 273.16, 600)
-        return cp.CoolProp.PropsSI('C', 'T', T, 'P', p, self.identifier)
+    def _rho(self, T: float, p: float = atm(), 
+             x: float = 0.) -> Optional[float]:
+        try:
+            return cp.CoolProp.PropsSI('Dmass', 'T', T, 'P', p, 
+                                       self.identifier)
+        except:
+            return None
 
-    def _rho(self, T, p=1e5, x=0.):
-        T = np.clip(T, 273.16, 600)
-        return cp.CoolProp.PropsSI('Dmass', 'T', T, 'P', p, self.identifier)
+    def _k(self, T: float, p: float = atm(), 
+           x: float = 0.) -> Optional[float]:
+        try:
+            return cp.CoolProp.PropsSI('conductivity', 'T', T, 'P', p, 
+                                       self.identifier)
+        except:
+            return None
 
-    def _lambda(self, T, p=1e5, x=0.):
-        T = np.clip(T, 273.16, 600)
-        return cp.CoolProp.PropsSI('conductivity', 'T', T, 'P', p, 
-                                                   self.identifier)
-    def _mu(self, T, p=1e5, x=0.):
-        T = np.clip(T, 273.16, 600)
-        return cp.CoolProp.PropsSI('viscosity', 'T', T, 'P', p, 
-                                                self.identifier)
-    def _nu(self, T, p=1e5, x=0.):
-        return self._mu(T, p, x) / self._rho(T, p, x)
+    def _M(self, T: float = C2K(20), p: float = atm(), 
+           x: float = 0.) -> Optional[float]:
+        try:
+            return cp.CoolProp.PropsSI('molemass', self.identifier)
+        except:
+            return None
 
+    def _mu(self, T: float, p: float = atm(), 
+            x: float = 0.) -> Optional[float]:
+        try:
+            return cp.CoolProp.PropsSI('viscosity', 'T', T, 'P', p, 
+                                       self.identifier)
+        except:
+            return None
+
+
+class HumidAir(_Generic):
+    """
+    Properties of humid air from CoolProp library
+    
+    Note:
+        Argument 'x' in the member functions represents relative humidity
+        in [0, 1]-range
+    
+    Reference:
+        http://www.coolprop.org/fluid_properties/HumidAir.html#molar-volume
+    """
+    def __init__(self, identifier: str = 'HumidAir', 
+                 latex: Optional[str] = None, 
+                 comment: Optional[str] = None,) -> None:
+        super().__init__(identifier=identifier, latex=latex, comment=comment)
+
+    def _M(self, T: float, p: float = atm(), x: float = 0.) -> float:
+        """
+        Args:
+            T:
+                temperature [K]
+            p:
+                pressure [Pa]
+            x:
+                relative humidity [0..1]
+        """
+        try:
+            psi_wat = self.RH_to_mol_frac(T, p, x)  # [mol water/mol humid air]
+        except:
+            return None
+        
+        if psi_wat is None:
+            psi_wat = 0.
+        M_air = cp.CoolProp.PropsSI('molemass', 'air')
+        M_h2o = (2*1 + 16) * 1e-3  # cp.CoolProp.PropsSI('molemass', 'H2O')
+        
+        return psi_wat * M_h2o + (1. - psi_wat) * M_air
+
+    def humidity_ratio(self, T: float, p: float = atm(),
+                       RH: float = 0.) -> Optional[float]:
+        """
+        Calculates vapor mass per unit MASS of dry air (specific humidity)
+        from relative humdity
+
+            T:
+                temperature [K]
+            p:
+                pressure [Pa]
+            RH:
+                relative humidity [/]
+        
+        Returns:
+            specific humidity (humidity ratio) [kg water/kg dry air]
+            OR
+            None if parameters out of range
+        """
+        try:
+            return cp.CoolProp.HAPropsSI('HumRat', 'T', T, 'P', p, 'RH', RH)
+        except:
+            return None
+
+    def RH_to_SH(self, T: float, p: float = atm(), 
+                 RH: float = 0.) -> Optional[float]:
+        """
+        Calculates vapor mass per unit MASS of dry air (specific humidity) 
+        from relative humdity
+
+            T:
+                temperature [K]
+            p:
+                pressure [Pa]
+            RH:
+                relative humidity [/]
+        
+        Returns:
+            specific humidity SH (humidity ratio) [kg water/kg dry air]
+            OR
+            None if parameters out of range
+        """
+        return self.humidity_ratio(T, p, RH)
+
+    def RH_to_AH(self, T: float, p: float = atm(), 
+                 RH: float = 0.) -> Optional[float]:
+        """
+        Calculates vapor mass per unit VOLUME of dry air
+        
+        Args:
+            T:
+                temperature [K]
+            p:
+                pressure [Pa]
+            RH:
+                relative humidity [/]
+                
+        Returns:
+            absolute humidity [kg water/m3 dry air]
+            OR
+            None if parameters out of range
+        """
+        return self.RH_to_SH(T, p, RH) * self.rho(T, p, RH)
+
+    def relative_humidity(self, T: float, p: float = atm(), 
+                          hum_ratio: float = 0.) -> Optional[float]:
+        """
+        Args:
+            T:
+                temperature [K]
+            p:
+                pressure [Pa]
+
+            hum_ratio:
+                humidity ratio [kg water/kg dry air]
+
+        Returns:
+            relative humidity [/]
+            OR
+            None if parameters out of range
+        """
+        try:
+            return cp.CoolProp.HAPropsSI('RH', 'T', T, 'P', p, 
+                                         'HumRat', hum_ratio)
+        except:
+            return None
+
+    def SH_to_RH(self, T: float, p: float = atm(), 
+                 SH: float = 0.) -> Optional[float]:
+        """
+        Args:
+            T:
+                temperature [K]
+            p:
+                pressure [Pa]
+
+            SH:
+                specific humidity [kg water/kg dry air]
+
+        Returns:
+            relative humidity [/]
+            OR
+            None if parameters out of range
+        """
+        return self.relative_humidity(T, p, hum_ratio=SH)
+
+    def RH_to_mol_frac(self, T: float, p: float = atm(), 
+                       RH: float = 0.) -> Optional[float]:
+        """
+        Args:
+            T:
+                temperature [K]
+            p:
+                pressure [Pa]
+            RH: 
+                relative humidity [/]
+
+        Returns:
+            Water mole fraction [mol water/mol humid air]
+            OR
+            None if parameters out of range
+
+        Note:
+            Water mole fraction equals the volumetric fraction if ideal gas
+        """
+        try:
+            return cp.CoolProp.HAPropsSI('psi_w', 'T', T, 'P', p, 'RH', RH)
+        except:
+            return None
+
+    def _c_p(self, T: float, p: float = atm(), 
+             x: float = 0.) -> Optional[float]:
+        """
+        Args:
+            T:
+                temperature [K]
+            p:
+                pressure [Pa]
+            x: 
+                relative humidity [/]
+
+        Returns:
+            Specific heat capacity [J/kg/K]
+        """
+        try:
+            return cp.CoolProp.HAPropsSI('cp_ha', 'T', T, 'P', p, 'RH', x)
+        except:
+            return None
+
+    def _rho(self, T: float, p: float = atm(), 
+             x: float = 0.) -> Optional[float]:
+        """
+        Args:
+            T:
+                temperature [K]
+            p:
+                pressure [Pa]
+            x: 
+                relative humidity [/]
+
+        Returns:
+            density [kg/m3]
+            
+        Note:
+            CoolProp's Vha-function returns mixture volume per unit humid 
+            air in [m3/kg] -> density is inverse value	
+        """
+        try:
+            return 1. / cp.CoolProp.HAPropsSI('Vha', 'T', T, 'P', p, 'RH', x)
+        except:
+            return None
+
+    def _k(self, T: float, p: float = atm(), x: float = 0.) -> Optional[float]:
+        """
+        Args:
+            T:
+                temperature [K]
+            p:
+                pressure [Pa]
+            x: 
+                relative humidity [/]
+
+        Returns:
+            thermal conductivity [W/m/K]
+        """
+        try:
+            return cp.CoolProp.HAPropsSI('k', 'T', T, 'P', p, 'RH', x)
+        except:
+            return None
+
+    def _mu(self, T: float, p: float = atm(), x:float = 0.) -> Optional[float]:
+        """
+        Args:
+            T:
+                temperature [K]
+            p:
+                pressure [Pa]
+            x: 
+                relative humidity [/]
+
+        Returns:
+            dynamic viscosity [Pa s]
+        """
+        try:
+            return cp.CoolProp.HAPropsSI('mu', 'T', T, 'P', p, 'RH', x)
+        except:
+            return None
 
 class Air(_Generic):
     def __init__(self, identifier: str = 'Air', latex: Optional[str] = None, 
@@ -366,6 +625,8 @@ class R1234yf(_Generic):
     def __init__(self, identifier: str = 'R1234yf', latex: Optional[str] = None, 
                  comment: Optional[str] = None):
         super().__init__(identifier=identifier, latex=latex, comment=comment)
+        #
+        self.D_in_air.calc = lambda T, p=atm(), x=0: 1.0e-5 * (T/C2K(20))**1.75
 
 class R13(_Generic):
     def __init__(self, identifier: str = 'R13', latex: Optional[str] = None, 
@@ -391,8 +652,34 @@ class R32(_Generic):
     def __init__(self, identifier: str = 'R32', latex: Optional[str] = None, 
                  comment: Optional[str] = None):
         super().__init__(identifier=identifier, latex=latex, comment=comment)
+        #
+        self.D_in_air.calc = lambda T, p=atm(), x=0: 1.5e-5 * (T/C2K(20))**1.75
 
 class R404A(_Generic):
     def __init__(self, identifier: str = 'R404A', latex: Optional[str] = None, 
                  comment: Optional[str] = None):
         super().__init__(identifier=identifier, latex=latex, comment=comment)
+        
+class R454A(GasMix):
+    def __init__(self, identifier: str = 'R454A', latex: Optional[str] = None, 
+                 comment: Optional[str] = None):
+        super().__init__(identifier=identifier, latex=latex, comment=comment)
+        c1 = 35e-2
+        self.add(R32, c1)
+        self.add(R1234yf, 1. - c1)
+
+class R454B(GasMix):
+    def __init__(self, identifier: str = 'R454B', latex: Optional[str] = None, 
+                 comment: Optional[str] = None):
+        super().__init__(identifier=identifier, latex=latex, comment=comment)
+        c1 = 31.1e-2
+        self.add(R32, c1)
+        self.add(R1234yf, 1. - c1)
+                                
+class R454C(GasMix):
+    def __init__(self, identifier: str = 'R454C', latex: Optional[str] = None, 
+                 comment: Optional[str] = None):
+        super().__init__(identifier=identifier, latex=latex, comment=comment)
+        c1 = 21.5e-2
+        self.add(R32, c1)
+        self.add(R1234yf, 1. - c1)

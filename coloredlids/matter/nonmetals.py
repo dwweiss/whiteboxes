@@ -44,11 +44,9 @@ class R4_230NA(NonMetal):
                 matguid=29b9c2bee27942209e3e3747639fbefe
     """
 
-    def __init__(self, 
-                 identifier: str = 'Ryton', 
+    def __init__(self, identifier: str = 'Ryton', 
                  latex: Optional[str] = None, 
-                 comment: Optional[str] = None
-                 ) -> None:                
+                 comment: Optional[str] = None) -> None:                
         """
         Args:
             identifier:
@@ -76,7 +74,7 @@ class R4_230NA(NonMetal):
         self.beta.calc    = lambda T=0, p=0, x=0: 15e-6
         self.c_p.calc     = lambda T=0, p=0, x=0: 1000
         # TODO difference between c_p of reference [2]:1003 and [3]:1000
-        self.lambda_.calc = lambda T=0, p=0, x=0: 3.63
+        self.k.calc       = lambda T=0, p=0, x=0: 3.63
         self.rho.calc     = lambda T=0, p=0, x=0: 1680
         self.rho_el.calc  = lambda T=0, p=0, x=0: 1e+12
 
@@ -84,11 +82,9 @@ class R4_230NA(NonMetal):
 
 
 class Concrete(NonMetal):
-    def __init__(self, 
-                 identifier: str = 'concrete', 
+    def __init__(self, identifier: str = 'concrete', 
                  latex: Optional[str] = None, 
-                 comment: Optional[str] = None
-                 ) -> None:
+                 comment: Optional[str] = None) -> None:
         """
         Args:
             identifier:
@@ -101,17 +97,15 @@ class Concrete(NonMetal):
                 comment on matter
         """
         super().__init__(identifier, latex=latex, comment=comment)
-        self.c_p.calc     = lambda T=0, p=0, x=0: 0.8
-        self.rho.calc     = lambda T=0, p=0, x=0: 2300
-        self.lambda_.calc = lambda T=0, p=0, x=0: 1.8
+        self.c_p.calc = lambda T=0, p=0, x=0: 0.8
+        self.rho.calc = lambda T=0, p=0, x=0: 2300
+        self.k.calc   = lambda T=0, p=0, x=0: 1.8
 
 
 class Ceramic(NonMetal):
-    def __init__(self, 
-                 identifier: str = 'ceramic', 
+    def __init__(self, identifier: str = 'ceramic', 
                  latex: Optional[str] = None, 
-                 comment: Optional[str] = None
-                 ) -> None:
+                 comment: Optional[str] = None) -> None:
         """
         Args:
             identifier:
@@ -124,6 +118,6 @@ class Ceramic(NonMetal):
                 comment on matter
         """
         super().__init__(identifier, latex=latex, comment=comment)
-        self.c_p.calc     = lambda T=0, p=0, x=0: 835
-        self.rho.calc     = lambda T=0, p=0, x=0: 1920
-        self.lambda_.calc = lambda T=0, p=0, x=0: 0.72
+        self.c_p.calc = lambda T=0, p=0, x=0: 835
+        self.rho.calc = lambda T=0, p=0, x=0: 1920
+        self.k.calc   = lambda T=0, p=0, x=0: 0.72
