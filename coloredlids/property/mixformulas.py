@@ -36,16 +36,17 @@ from typing import Iterable, Optional
             lambda = lambda1 * y1 + lambda2 * y2
     
     Generalization for multi-components mixture
-        y[i] is mole fraction of component i
-        Y[i] is mass fraction of component i
+        y_i is mole fraction of component i
+        Y_i is mass fraction of component i
+        p_i is partial pressure of component i
         
-        M = sum_j { y[j] * M[j] }     
-        Y[i] = y[i] * M[i] / M         
+        M = sum_j { y_j * M_j }     
+        Y_i = y_i * M_i / M         
     
-        c_p    = sum_i { c_p[i] * Y[i] }
-               = sum_i { c_p[i] * y[i] * M[i] / sum_j {y[j] * M[j]} }
-        lambda = sum_i {lambda[i] * y[i] }
-        rho    = sum_i {rho[i] * y[i]}
+        c_p = sum_i { c_p_i(T,p_i) * Y_i }
+            = sum_i { c_p_i(T,p_i) * y_i * M[i] / sum_j {y_j * M_j} }
+        k   = sum_i { k_i(T,p_i) * y_i] }
+        rho = sum_i { rho_i(T,p_i) * y_i }
 
     Example of binary mixture:
 
@@ -56,7 +57,7 @@ from typing import Iterable, Optional
             N2 = 1 mol
             N = 4 mol + 1 mol = 5 mol
         
-        mole fractions y:
+        mole fractions y_i:
             y1 = N1/N = 4 mol/5 mol = 0.8 mol/mol
             y2 = N2/N = 1 mol/5 mol = 0.2 mol/mol
         
@@ -68,7 +69,7 @@ from typing import Iterable, Optional
             m2 = N2 * M2 = 1 mol * 32 g/mol = 32 g
             m = m1 + m2 = 40 g
         
-        mass fractions Y:
+        mass fractions Y_i:
             Y1 = m1/m =  8g / 40g = 0.2 g/g
             Y2 = m2/m = 32g / 40g = 0.8 g/g
         
@@ -88,7 +89,7 @@ def mix_mole(y: Iterable[float],
     Calculates property of a mixture based on mole fractions of 
     mixture components. 
     
-        phi_mix = sum_i {phi_i * y_i}
+        phi = sum_i {phi_i * y_i}
     
     Args:
         y:
@@ -108,17 +109,17 @@ def mix_mole(y: Iterable[float],
         mole fraction N_i/N of ideal gas component equals its volumetric 
         fraction V_i/V and its partial pressure fraction p_i/p:
 
-            y_i = N_i/N_tot = p_i/p_tot = V_i/V_tot,   i=1..n_components
+            y_i = N_i/N = p_i/p = V_i/V,   i=1..n_components
             
     Literature:
         https://www.google.dk/url?sa=t&rct=j&q=&esrc=s&source=web&cd=&ved=2ahUKEwiFsdHTueHtAhUE6OAKHbJiDaYQFjACegQIAhAC&url=https%3A%2F%2Forbit.dtu.dk%2Ffiles%2F117984374%2FPL11b.pdf&usg=AOvVaw3RkR9HkVxRVFELaoby3Hi5
         https://www.researchgate.net/publication/257571187_Thermal_Conductivity_of_Humid_Air
     """
-    assert len(y) == len(M) == len(property_), str((y, M, property_))
+    assert len(y) == len(M) == len(property_), f'{y=}, {M=}, {property_=}'
 
     mole_fractions = np.asfarray(y)
-    property_ = np.asfarray(property_) 
-    return np.sum(mole_fractions * property_)
+    properties = np.asfarray(property_) 
+    return np.sum(mole_fractions * properties)
 
 
 def mix_mass(y: Iterable[float],
@@ -129,9 +130,9 @@ def mix_mass(y: Iterable[float],
     Calculates mass fractions Y_i from mole fractions y_i and estimates 
     property of a mixture based on mixture components. 
     
-        phi_mix = sum_i {phi_i * y_i * M_i / M_tot}
-                  M_tot = sum_j { y_j * M_j } 
-    
+        M = sum_j { y_j * M_j } 
+        phi = sum_i { phi_i * y_i * M_i / M }
+
     Args:
         y:
             mole fractions (equals volumetric fractions if ideal gas) 
@@ -147,19 +148,19 @@ def mix_mass(y: Iterable[float],
             if False, then print information
     
     Returns:
-        property of mixture [unit of 'property_']
+        property of mixture in [unit('property_')]
         
     Note:
-        mole fraction y_i=N_i/N of ideal gas component in an ideal 
+        mole fraction y_i = N_i/N of an ideal gas component in an ideal 
         gas mixture equals its volumetric fraction V_i/V and its 
-        partial pressure p_i/p:
+        partial pressure fraction p_i/p (Y is the mass fraction): 
 
-            Y[i] = m[i] / m = N[i]*M[i] / (N*M) 
-                 = N[i]/N * M[i]/M = y[i] * M[i] / M
-                                            with: M = sum_j {y[j] * M[j]}
-            Y[i] = y[i] * M[i] / M             
+            Y[i] = m_i / m = N_i*M_i / (N*M) 
+                 = N_i/N * M_i/M = y_i * M_i / M
+                                            with: M = sum_j { y_j * M_j }
+            Y_i = y_i * M_i / M             
     """
-    assert len(y) == len(M) == len(property_), str((y, M, property_))
+    assert len(y) == len(M) == len(property_), f'{y=}, {M=}, {property_=}'
 
     mole_fractions, M = np.asfarray(y), np.asfarray(M)
     properties = np.asfarray(property_)
@@ -171,7 +172,7 @@ def mix_mass(y: Iterable[float],
 
 def mix_mason(y: Iterable[float],
               M: Iterable[float], 
-              lambda_: Iterable[float], 
+              k: Iterable[float], 
               mu: Optional[Iterable[float]],
               silent: bool = False) -> float:
     """
@@ -180,12 +181,12 @@ def mix_mason(y: Iterable[float],
     
     Args:
         y:
-            mole fractions of components [mol/mol]
+            mole fractions of components [kmol/kmol]
             
         M:
-            molar masses of components [mol/kg]
+            molar masses of components [kmol/kg]
             
-        lambda_:
+        k:
             thermal conductivity of components [W/m/K]
             
         mu:
@@ -199,8 +200,11 @@ def mix_mason(y: Iterable[float],
     Note:
         y_i = p_i/p_tot = V_i/V_tot, i=1..n_components
     """    
-    assert len(y) == len(M) == len(lambda_), str((y, M, lambda_))
-    assert mu is None or len(y) == len(mu), str((y, mu))
+    assert len(y) == len(M) == len(k), f'{y=}, {M=}, {k=}'
+    assert mu is None or len(y) == len(mu), f'{y=}, {mu=}'
+    
+    if None in list(k):
+        return None
         
     c0 = 1.065  # TODO check correction for polyatomic gases: 1.065
     
@@ -215,13 +219,13 @@ def mix_mason(y: Iterable[float],
             mu12 = mu1 / mu2
         except:
             if not silent:
-                print('??? mu1 mu2', mu1, mu2, ' ==> correct to: mu1/mu2 = 1')
+                print('??? {mu1=}, {mu2=}, correct to: mu1/mu2 = 1')
             mu12 = 1.
 
         return c0 / (2. * np.sqrt(2)) / np.sqrt(1. + M12) \
             * (1. + np.sqrt(mu12 / M12) * M12**0.25)**2
             
-    lambda_mix = 0.
+    k_mix = 0.
     for i in range(len(y)):
         denom = 1.
         for j in range(len(y)):
@@ -229,7 +233,7 @@ def mix_mason(y: Iterable[float],
                 if mu is not None:
                     a = G(M[i], M[j], mu[i], mu[j])
                 else:
-                    a = 1
+                    a = 1.
                     if not silent:
                         print('!!! mu is None')
 
@@ -238,7 +242,7 @@ def mix_mason(y: Iterable[float],
                 except:
                     b = 1e20
                     if not silent:
-                        print('!!! y/y == 0')
+                        print('!!! y/y is 0.')
                 denom += a * b
-        lambda_mix += lambda_[i] / denom
-    return lambda_mix
+        k_mix += k[i] / denom
+    return k_mix

@@ -82,6 +82,7 @@ class Property(Parameter):
         self.p.accuracy = Range('-1%FS', '+1%FS')
 
         self.x = Parameter(identifier='x', unit='/', absolute=True)
+        self.x['operational'] = Range(0., 1.)
         self.x.ref = 0.
         
         self.accuracy = Range('-1%', '1%')
@@ -96,41 +97,43 @@ class Property(Parameter):
     def plot(self, title: str = '') -> None:
         if isinstance(self.T, Parameter):
             if self.T['operational'].lo != self.T['operational'].up:
-                plt.title(title)
+                plt.title(f'{title} p={self.p.ref}, x={self.x.ref}')
                 plt.xlabel(self.T.latex + ' ' + self.T.unit)
                 plt.ylabel(self.latex + ' ' + self.unit)
                 T = np.linspace(self.T['operational'].lo, 
                                 self.T['operational'].up)
-                plt.plot(T, [self.__call__(_T, self.p.ref, 0.) for _T in T])
+                plt.plot(T, [self.__call__(_T, self.p.ref, 
+                                           self.x.ref) for _T in T])
                 plt.grid()
                 plt.show()
         if isinstance(self.p, Parameter):
             if self.p['operational'].lo != self.p['operational'].up:
-                plt.title(title)
+                plt.title(f'{title} T={self.T.ref}, x={self.x.ref}')
                 plt.xlabel(self.p.latex + ' ' + self.p.unit)
                 plt.ylabel(self.latex + ' ' + self.unit)
                 p = np.linspace(self.p['operational'].lo, 
                                 self.p['operational'].up)
-                plt.plot(p, [self.__call__(self.T.ref, _p, 0.) for _p in p])
+                plt.plot(p, [self.__call__(self.T.ref, _p, 
+                                           self.x.ref) for _p in p])
                 plt.grid()
                 plt.show()
         if isinstance(self.x, Parameter):
             if self.x['operational'].lo != self.x['operational'].up:
-                plt.title(title)
+                plt.title(f'{title} T={self.T.ref}, p={self.p.ref}')
                 plt.xlabel(self.x.latex + ' ' + self.x.unit)
                 plt.ylabel(self.latex + ' ' + self.unit)
                 x = np.linspace(self.x['operational'].lo, 
                                 self.x['operational'].up)
-                plt.plot(x, [self.__call__(self.T.ref, self.p.ref, _x)
-                             for _x in x])
+                plt.plot(x, [self.__call__(self.T.ref, 
+                                           self.p.ref, _x) for _x in x])
                 plt.grid()
                 plt.show()
 
     def calc(self, 
              T: Optional[Union[float, Iterable[float]]] = 0., 
              p: Optional[Union[float, Iterable[float]]] = 0., 
-             x: Optional[Union[float, Iterable[float]]] = 0.) \
-                 -> Optional[Union[float, Iterable[float]]]:
+             x: Optional[Union[float, Iterable[float]]] = 0.
+    ) -> Optional[Union[float, Iterable[float]]]:
         """
         This function SHOULD be overwritten in derived classes.
         It returns the actual value(s) as a placeholder 
@@ -161,7 +164,7 @@ class Property(Parameter):
             p_range: Optional[Tuple[float, float]] = None,
             x_range: Optional[Tuple[float, float]] = None,
             order: Union[int, str] = 1,
-            ) -> List[float]:
+    ) -> List[float]:
         """
         Calculates regression coefficients:
             Order 1:
@@ -274,8 +277,8 @@ class Property(Parameter):
     def __call__(self, 
                  T: Optional[Union[float, Iterable[float]]] = None, 
                  p: Optional[Union[float, Iterable[float]]] = None, 
-                 x: Optional[Union[float, Iterable[float]]] = None) \
-                     -> Optional[Union[float, Iterable[float]]]:
+                 x: Optional[Union[float, Iterable[float]]] = None
+    ) -> Optional[Union[float, Iterable[float]]]:
         """
         This function MUST NOT be overwritten
 
@@ -313,8 +316,8 @@ class Property(Parameter):
             return False
 
         if plot:
-            s = r"poperty('" + self.identifier + "')"
-            print('\n+++ Simulate', s + ':')
+            s = f"property('{self.identifier}')"
+            print(rf'\n+++ Simulate {s}:')
         self.val = Parameter.simulate(self, range_key=range_key, size=size, 
                                       plot=plot)
         

@@ -16,10 +16,11 @@
   Software Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
-  Version:
+  Version: 
       2020-12-22 DWW
 """
 
+from collections import  OrderedDict
 import numpy as np
 from typing import Dict, Optional, Union
 
@@ -56,26 +57,27 @@ class Matter(Property):
         """
         super().__init__(identifier=identifier, latex=latex, comment=comment)
 
-        self.a = Property('a', 'm$^2$/s', comment='thermal diffusity')
-        self.a.calc = lambda T, p, x: self.lambda_.calc(T, p, x) / \
-                              (self.c_p.calc(T, p, x) * self.rho.calc(T, p, x))
-        self.beta = Property('beta', '1/K', latex=r'$\beta_{th}$')
-        self.c_p = Property('c_p', 'J/(kg K)',
+        self.a = Property('a', 'm$^2$/s', comment='thermal diffusity',
+                          calc = self._a)        
+        self.beta = Property('beta', '1/K', latex=r'$\beta_{th}$',
+                             comment='volumetric thermal expansion')
+        self.c_p = Property('c_p', 'J/kg/K',
                             comment='specific heat capacity')
         self.c_sound = Property('c_sound', 'm/s', latex='$c_{sound}$')
-        self.c_sound.calc = lambda T, p, x: 1.
-        self.composition: Dict[str, float] = {}
+        self.c_sound.calc = lambda T, p, x: None
+        self.composition: Dict[str, float] = OrderedDict()
         self.compressible: bool = False
         self.E = Property('E', 'Pa', comment="Young's (elastic) modulus")
-        self.h_melt: float = 0.
-        self.h_vap: float = 0.
-        self.lambda_ = Property('lambda', 'W/(m K)', latex=r'$\lambda$',
+        self.h_melt: float = None
+        self.h_vap: float = None
+        self.k = Property('k', 'W/m/K', latex='$k$',
                                 comment='thermal conductivity')
-        self.M: float = 0.                         # molar mass [kg/mol]
-        self.nu_mech: float = 0.
+        self.M = Property('M', 'kmol/kg', comment='molar mass')
+        self.M.calc = lambda T=0, p=0, x=0: None
+        self.nu_mech: float = None
         self.rho = Property('rho', 'kg/m$^3$', latex=r'$\varrho$', ref=1.,
                             comment='density')
-        self.rho.T.ref = C2K(20)
+        self.rho.T.ref = C2K(20.)
         self.rho.p.ref = atm()
         self.rho_el = Property('rho_el', r'$\Omega$', latex=r'$\varrho_{el}$',
                                comment='electric resistance')
@@ -93,20 +95,50 @@ class Matter(Property):
                 / (1. + (T - self.rho.T.ref) * self.beta()) \
                 / (1. - (p - self.rho.p.ref) / self.E())
 
+    def _a(self, T: float, p: float = atm(), x: float = 0.) -> Optional[float]:
+        try:
+            k = self.k(T, p, x)
+            c_p = self.c_p(T, p, x)
+            rho = self.rho(T, p, x)
+            if k is None or c_p is None or rho is None:
+                return None
+            c_p__rho = c_p * rho
+            if np.abs(c_p__rho) < 1e-10:
+                return None
+            return k / c_p__rho
+        except:
+            return None
+
+    def set_all_ref(self, T: float, p: float = atm(), x: float = 0.) -> bool:
+        none_set = True 
+        for attr in dir(self):
+            if not attr.startswith('_'):
+                val = getattr(self, attr)
+                if isinstance(val, Property):
+                    print(f'{attr=}, {val=}')
+                    none_set = False
+                    val.T.ref = T
+                    val.p.ref = p
+                    val.x.ref = x
+        return not none_set
+
 
     def plot(self, prop: Optional[Union[Property, str]] = None) -> None:
         if prop is None or prop.lower() == 'all':
             for key, val in self.__dict__.items():
+                
+                print(f'{val.T.ref=}, {val.p.ref=}, {val.x.ref=}')
+                
                 if isinstance(val, Property):
-                    print("+++ Plot matter:'" + self.identifier +
-                          "', property: '" + key + "'")
+                    print(f"+++ Plot matter: '{self.identifier}', "
+                          f"property: '{key}'")
                     val.plot()
         else:
-            if property in self.__dict__:
-                if property is not None:
-                    self.__dict__[property].plot(title=self.identifier)
+            if prop in self.__dict__:
+                if prop is not None:
+                    self.__dict__[prop].plot(title=self.identifier)
                 else:
-                    self.write('!!! No plot of property:', property)
+                    self.write('!!! No plot of property:', prop)
 
 class Solid(Matter):
     """
@@ -266,18 +298,45 @@ class Fluid(Matter):
         """
         super().__init__(identifier=identifier, latex=latex, comment=comment)
 
+        # self.a.calc = self._a
         self.mu = Property('mu', 'Pa s', latex=r'$\mu$',
-            comment='dynamic viscosity', 
-            calc = lambda T, p, x: self.nu.calc(T, p, x) \
-                                * self.rho.calc(T, p, x))
-        self.nu = Property('nu', 'm$^2$/s', latex=r'$\nu$',
-            comment='kinematic viscosity',
-            calc=lambda T, p, x: self.mu.calc(T, p, x) \
-                              / self.rho.calc(T, p, x))
-        self.Pr = Property('Pr', '/', comment='Prandtl number',
-            calc = lambda T, p, x: self.a.calc(T, p, x) \
-                                / self.nu.calc(T, p, x))
+                           comment='dynamic viscosity', calc = self._mu)
+        self.nu = Property('nu', 'm^2/s', latex=r'$\nu$',
+                           comment='kinematic viscosity', calc = self._nu)
 
+
+    # def _a(self, T: float, p: float = atm(), x: float = 0.) -> Optional[float]:
+    #     try:
+    #         lam = self.k(T, p, x)
+    #         c_p = self.c_p(T, p, x)
+    #         rho = self.rho(T, p, x)
+    #         if lam is None or c_p is None or rho is None:
+    #             return None
+    #         c_p__rho = c_p * rho
+    #         if np.abs(c_p__rho) < 1e-10:
+    #             return None
+    #         return lam / c_p__rho
+    #     except:
+    #         return None
+
+    def _mu(self, T: float, p: float = atm(), 
+            x: float = 0.) -> Optional[float]:
+        try:
+            return self.nu(T, p, x) * self.rho(T, p, x)
+        except:
+            return None
+
+    def _nu(self, T: float, p: float = atm(), 
+            x: float = 0.) -> Optional[float]:
+        try:
+            rho = self.rho(T, p, x)
+            if rho is None or np.abs(rho) < 1e-10:
+                return None
+            return self.mu(T, p, x) / rho
+        except:
+            return None
+
+            
 
 class Liquid(Fluid):
     """
@@ -363,4 +422,10 @@ class Gas(Fluid):
         """
         super().__init__(identifier=identifier, latex=latex, comment=comment)
 
-        self.T.ref = C2K(15.)
+        # self.a.calc = self._a
+        self.D_in_air = Property('D_in_air', 'm2/s', 
+                                 calc=lambda T, p=atm(), x=0.: None)
+        self.T.ref = C2K(15.)        
+
+
+        
