@@ -21,7 +21,6 @@ This package provides tools for the extension of the [_grayboxes_](https://githu
         mesh        Primitives for building geometries and meshes
         numerics    Numerical solution of differential and integral equations
         property    Parameters, ranges and properties
-        regression  regression analysis
         tools       Tools for data manipulation
         
     test
