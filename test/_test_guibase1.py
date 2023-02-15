@@ -38,8 +38,8 @@ def model_random_data(data: Dict[str, Any],
                       figure: Optional[Figure]=None, 
                       progress: Optional[Progressbar]=None) -> float:
     """
-    Implements user-defined model, plots otput on canvas, 
-        updates progress bar   
+    Implements user-defined model, plots model output on an existing figure, 
+    and updates progress bar    
     
     Args:
         data:
