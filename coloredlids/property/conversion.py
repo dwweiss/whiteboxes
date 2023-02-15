@@ -17,16 +17,134 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2020-12-22 DWW
+      2022-04-06  DWW
 """
 
-__all__ = ['deg2rad', 'rad2deg', 
+__all__ = ['arr',
+           'nano', 'micro', 'milli', 'centi', 'deci', 
+           'one',
+           'deka', 'hecto', 'kilo', 'mega', 'giga',
+           'deg2rad', 'rad2deg', 
            'Pa2bar', 'bar2Pa', 'ksi2Pa', 'msi2Pa', 'air_pressure', 'atm', 
            'C2K', 'K2C', 'F2C', 'C2F', 'F2K', 'K2F', 'is_probably_celsius',
-           'cal2J', 'cal_g2J_kg',]
+           'min2s', 's2min', 'cal2J', 'cal_g2J_kg',]
            
 import numpy as np
-from typing import Iterable, Union
+from typing import Iterable, Optional, Tuple, Union
+
+
+
+def arr(
+    x1: Union[float, int, Iterable[float], Iterable[int]],
+    x2: Optional[Union[float, int, Iterable[float], Iterable[int]]] = None,
+    x3: Optional[Union[float, int, Iterable[float], Iterable[int]]] = None,
+    x4: Optional[Union[float, int, Iterable[float], Iterable[int]]] = None,
+    x5: Optional[Union[float, int, Iterable[float], Iterable[int]]] = None,         
+) -> Union[np.ndarray,
+           Tuple[np.ndarray, np.ndarray], 
+           Tuple[np.ndarray, np.ndarray, np.ndarray],
+           Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray],
+           Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]
+]:
+    """
+    Converts scalars or arrays to numpy arrays of float 
+    """
+    x1 = np.asfarray(x1)
+    if x2 is None: 
+        return x1
+
+    x2 = np.asfarray(x2)
+    if x3 is None: 
+        return x1, x2
+
+    x3 = np.asfarray(x3)
+    if x4 is None: 
+        return x1, x2, x3
+
+    x4 = np.asfarray(x4)
+    if x5 is None: 
+        return x1, x2, x3, x4
+
+    x5 = np.asfarray(x5)
+    return x1, x2, x3, x4, x5
+
+
+def nano(x: Union[float, Iterable[float]]) -> np.ndarray:
+    """
+    Converts to prefix 'nano' : multiply with 1e9
+    eg: L_in_meter = 1. -> nano(L_in_meter) = 1e9
+    """
+    return np.asfarray(x) * 1e9
+
+def micro(x: Union[float, Iterable[float]]) -> np.ndarray:
+    """
+    Converts to prefix 'micro' : multiply with 1e6
+    eg: L_in_meter = 1. -> micro(L_in_meter) = 1e6
+    """
+    return np.asfarray(x) * 1e6
+
+def milli(x: Union[float, Iterable[float]]) -> np.ndarray:
+    """
+    Converts to prefix 'milli' : multiply with 1e3
+    eg: L_in_meter = 1. -> milli(L_in_meter) = 1e3
+    """
+    return np.asfarray(x) * 1e3
+
+def centi(x: Union[float, Iterable[float]]) -> np.ndarray:
+    """
+    Converts to prefix 'centi' : multiply with 1e2
+    eg: L_in_meter = 1. -> centi(L_in_meter) = 1e2
+    """
+    return np.asfarray(x) * 1e2
+
+def deci(x: Union[float, Iterable[float]]) -> np.ndarray:
+    """
+    Converts to prefix 'deci' : multiply with 1e1
+    eg: L_in_meter = 1. -> deci(L_in_meter) = 1e1
+    """
+    return np.asfarray(x) * 1e1
+
+def one(x: Union[float, Iterable[float]]) -> np.ndarray:
+    """
+    Does not convert x
+    eg: L_in_meter = 1. -> one(L_in_meter) = 1e0
+    """
+    return np.asfarray(x) * 1e0
+
+def deka(x: Union[float, Iterable[float]]) -> np.ndarray:
+    """
+    Converts to prefix 'deka' : multiply with 1e-1
+    eg: L_in_meter = 1. -> deka(L_in_meter) = 1e-1
+    """
+    return np.asfarray(x) * 1e-1
+
+def hecto(x: Union[float, Iterable[float]]) -> np.ndarray:
+    """
+    Converts to prefix 'hecto' : multiply with 1e-2
+    eg: L_in_meter = 1. -> hecto(L_in_meter) = 1e-2
+    """
+    return np.asfyarray(x) * 1e-2
+
+def kilo(x: Union[float, Iterable[float]]) -> np.ndarray:
+    """
+    Converts to prefix 'kilo' : multiply with 1e-3
+    eg: L_in_meter = 1. -> kilo(L_in_meter) = 1e-3
+    """
+    return np.asfarray(x) * 1e-3
+
+def mega(x: Union[float, Iterable[float]]) -> np.ndarray:
+    """
+    Converts to prefix 'mega' : multiply with 1e-6
+    eg: L_in_meter = 1. -> mega(L_in_meter) = 1e-6
+    """
+    return np.asfarray(x) * 1e-6
+
+def giga(x: Union[float, Iterable[float]]) -> np.ndarray:
+    """
+    Converts to prefix 'giga' : multiply with 1e-9
+    eg: L_in_meter = 1. -> giga(L_in_meter) = 1e-9
+    """
+    return np.asfarray(x) * 1e-9
 
 
 def deg2rad(deg: Union[float, Iterable[float]]) -> Union[float, np.ndarray]:
@@ -47,28 +165,28 @@ def C2K(C: Union[float, Iterable[float]]) -> np.ndarray:
     """
     Converts temperature from Celsius to Kelvin
     """
-    return np.asanyarray(C) + 273.15
+    return np.asfarray(C) + 273.15
 
 
 def K2C(K: Union[float, Iterable[float]]) -> np.ndarray:
     """
     Converts temperature from Kelvin to Celsius
     """
-    return np.asanyarray(K) - 273.15
+    return np.asfarray(K) - 273.15
 
 
 def F2C(F: Union[float, Iterable[float]]) -> np.ndarray:
     """
     Converts temperature from Fahrenheit to Celsius
     """
-    return (np.asanyarray(F) - 32.) / 1.8
+    return (np.asfarray(F) - 32.) / 1.8
 
 
 def C2F(C: Union[float, Iterable[float]]) -> np.ndarray:
     """
     Converts temperature from Celsius to Fahrenheit
     """
-    return 1.8 * np.asanyarray(C) + 32.
+    return 1.8 * np.asfarray(C) + 32.
 
 
 def F2K(F: Union[float, Iterable[float]]) -> np.ndarray:
@@ -78,58 +196,86 @@ def F2K(F: Union[float, Iterable[float]]) -> np.ndarray:
     return C2K(F2C(np.asanyarray(F)))
 
 
+def ft2m(ft: Union[float, Iterable[float]]) -> np.ndarray:
+    """
+    Converts length from foot to meter
+    """
+    return np.asfarray(ft) * 0.3048
+
+
+def m2ft(m: Union[float, Iterable[float]]) -> np.ndarray:
+    """
+    Converts length from meter to foot
+    """
+    return np.asfarray(m) / 0.3048
+
+
 def K2F(K: Union[float, Iterable[float]]) -> np.ndarray:
     """
     Converts temperature from Kelvin to Fahrenheit
     """
-    return C2F(K2C(np.asanyarray(K)))
+    return C2F(K2C(np.asfarray(K)))
 
 
 def Pa2bar(Pa: Union[float, Iterable[float]]) -> np.ndarray:
     """
     Converts pressure from [Pascal] to [bar]
     """
-    return np.asanyarray(Pa) * 1e-5
+    return np.asfarray(Pa) * 1e-5
 
 
 def bar2Pa(bar: Union[float, Iterable[float]]) -> np.ndarray:
     """
     Converts pressure from [bar] to [Pascal]
     """
-    return np.asanyarray(bar) * 1e5
+    return np.asfarray(bar) * 1e5
 
 
 def ksi2Pa(ksi: Union[float, Iterable[float]]) -> np.ndarray:
     """
     Converts pressure from [ksi] (pounds per square inch) to [Pascal]
     """
-    return np.asanyarray(ksi) * 6.894745e+6
+    return np.asfarray(ksi) * 6.894745e+6
 
 
 def msi2Pa(msi: Union[float, Iterable[float]]) -> np.ndarray:
     """
     Converts pressure from [msi] (megapounds per square inch) to [Pascal]
     """
-    return np.asanyarray(msi) * 6.894745e+9
+    return np.asfarray(msi) * 6.894745e+9
+
 
 def atm() -> float:
     """
     Returns:
         standard atmosphere pressure [Pa]
     """
-    return 101325.
+    return 101.325e3
 
-def air_pressure(altitude: float = 0.) -> float:
+
+def air_pressure(altitude: float = 0., T: float = C2K(20)) -> float:
     """
     Calculate air pressure above sea level at given altitude 
     
     Args:
-        altitude [m]
+        altitude:
+            altitude above sea level[m]
+        
+        T:
+            dummy paramter: temperature [K]
         
     Returns:
         air pressure [Pa]
+    
+    Literature:
+        engineeringtoolbox.com/air-altitude-pressure-d_462.html
+        
+    Example:
+        for h in [3200, ft2m(10500), ft2m(11000), ft2m(11500)]:
+            print(f'{h=:.0f}m={m2ft(h):.0f}ft -> p={air_pressure(h):.0f} Pa')
     """
     return 101325 * (1. - 2.25577e-5 * altitude)**5.25588
+
 
 def cal2J(cal: float) -> float:
     """
@@ -143,6 +289,20 @@ def cal_g2J_kg(cal_per_g: float) -> float:
     Converts specific heat from [cal/g] to [J/kg]
     """
     return cal_per_g * 4186.8
+
+
+def min2s(m: float) -> float:
+    """
+    Converts time in [min] to [s]
+    """
+    return m * 60.
+
+
+def s2min(s: float) -> float:
+    """
+    Converts time in [s] to [min]
+    """
+    return s / 60.
 
 
 def is_probably_celsius(T: Union[float, Iterable[float]], 
