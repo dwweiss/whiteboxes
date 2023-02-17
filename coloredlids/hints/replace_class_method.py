@@ -20,13 +20,8 @@
       2018-06-25 DWW
 """
 
-
-# Examples ####################################################################
-
-if __name__ == '__main__':
-
-    s = 'Assigns new method to class instance with access to self.* member'
-    print('-' * len(s) + '\n' + s + '\n' + '-' * len(s))
+def test():
+    print('Assigns new method to class instance with access to self.* member')
 
     class Test(object):
         def __init__(self, x=0):
@@ -45,5 +40,9 @@ if __name__ == '__main__':
     foo.execute()
     foo.execute = execute.__get__(foo, Test)
 
-    # call externally def. execute() assigned to instance 'test' of 'Test'
+    # call externally defined execute() assigned to instance 'test' of 'Test'
     foo.execute()
+    
+    
+    
+test()
