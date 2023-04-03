@@ -23,14 +23,13 @@
 __all__ = ['scale', 'batch_normalize', 'batch_denormalize'] 
 
 import numpy as np
-from nptyping import Array
-from typing import Dict, Optional, Union
+from typing import Dict, Iterable
 
            
-def scale(X: Array[float], 
+def scale(X: Iterable[float], 
           lo: float = 0., 
           hi: float = 1., 
-          axis: Optional[int] = None) -> Array[float]:
+          axis: int | None = None) -> np.ndarray:
     """
     Normalizes elements of array to [lo, hi] interval (linear)
 
@@ -51,16 +50,16 @@ def scale(X: Array[float],
     Returns:
         normalized 1D array
     """
-    np.asarray(X)
+    X = np.asfarray(X)
     max_ = np.max(X, axis=axis)
     delta = max_ - np.min(X, axis=axis)
-    assert not np.isclose(delta, 0), str(delta)
+    assert not np.isclose(delta, 0.), f'{X=}, {delta=}'
 
     return hi - (((hi - lo) * (max_ - X)) / delta)
 
 
-def batch_normalize(X: Array[float], 
-                    eps: float = 0) -> Dict[str, Array[float]]:
+def batch_normalize(X: Iterable[float], 
+                    eps: float = 0.) -> Dict[str, Iterable[float]]:
     """ 
     Normalizes elements of array, shifted by mean of X and scaled 
     by variance
@@ -87,10 +86,10 @@ def batch_normalize(X: Array[float],
     return {'val': X, 'mean': mean, 'var': var, 'eps': eps}
 
 
-def batch_denormalize(X: Union[Array[float], Dict[str, Array[float]]], 
+def batch_denormalize(X: Iterable[float] | Dict[str, Iterable[float]], 
                       mean: float = 0., 
                       var: float = 0.1, 
-                      eps: float = 0.) -> Array[float]:
+                      eps: float = 0.) -> Iterable[float]:
     """
     Denormalizes elements of array, shifted by mean of X and scaled 
     by variance
@@ -117,7 +116,7 @@ def batch_denormalize(X: Union[Array[float], Dict[str, Array[float]]],
     """
     if isinstance(X, dict):
         keys = ['val', 'mean', 'var', 'eps']
-        assert all([key in X for key in keys])
+        assert all([key in X for key in keys]), f'{X=}'
         val, mean, var, eps = (X[key] for key in keys)
     else:
         val = np.asfarray(X)
