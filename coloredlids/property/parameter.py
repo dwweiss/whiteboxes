@@ -69,7 +69,7 @@ class Parameter(object):
               ^                   |          |     | 
               :    .............. X VAL .... | c   | o
               t     ^             |          | a   | p
-              o     : diff.                  | l   | e
+              o     : diff.       |          | l   | e
               l     : between     |          | i   | r
               r     : val         |          | b   | a
               a     : and         |          | r   | t
@@ -83,52 +83,49 @@ class Parameter(object):
                                   |                v
                                   |------------------
                                   |
-        
-      Notes:
-          np.isscalar(x) returns True if x is of one of these types 
     """
 
     def __init__(self, identifier: str = 'Parameter',
                  unit: str = '/',
                  absolute: bool = True,
-                 latex: Optional[str] = None,
-                 val: Optional[Union[float, Iterable[float]]] = None,
-                 ref: Optional[Union[float, Iterable[float]]] = None,
-                 range_keys: Optional[Iterable[str]] = None,
-                 comment: Optional[str] = None) -> None:
+                 latex: str | None = None,
+                 val: float | Iterable[float] | None = None,
+                 ref: float | Iterable[float] | None = None,
+                 range_keys: Iterable[str] | None = None,
+                 comment: str | None = None) -> None:
         """
         Args:
             identifier:
                 parameter identifier (raw string)
-                
+
             unit:
                 measurement unit
-                
+
             absolute:
-                if True, values and tolerances are absolute 
+                if True, values and tolerances are absolute
                 (temperature in Kelvin & pressure is not gauge pressure)
-                
+
             latex:
-                parameter identifier (latex notation, e.g. r'\varrho') 
+                parameter identifier (latex notation, e.g. r'\varrho')
                 If None, latex is identical with indentifier
-                
+
             val:
                 actual value(s)
-                
+
             ref:
                 reference value(s)
-                
+
             range_keys:
                 list of keys of default ranges. If None, a list of
                 default ranges will be assigned.
-                
+
             comment:
-                comment text 
+                comment text
 
         Note:
-            Method __call__() returns self.val of type float or 
+            Method __call__() returns self.val of type float or
             Iterable[float]
-            
+
             Bounds og value ranges or of repeatability range can be:
                 - absolute (e.g. 1.2),
                 - relative to full scale (e.g. '1.2%FS')
@@ -145,10 +142,10 @@ class Parameter(object):
             self.unit = '[' + self.unit
         if self.unit[-1] != ']':
             self.unit = self.unit + ']'
-        self.absolute: bool = bool(absolute)        
-        
+        self.absolute: bool = bool(absolute)
+
         if latex:
-            self.latex: str = latex        # Latex symbol, e.g. '\alpha' 
+            self.latex: str = latex        # Latex symbol, e.g. '\alpha'
         else:
             self.latex: str = self.identifier
         if len(self.latex) > 0:
@@ -156,18 +153,18 @@ class Parameter(object):
                 self.latex = '$' + self.latex
             if self.latex[-1] != '$':
                 self.latex = self.latex + '$'
-        
-        self._val: Optional[Union[float, Iterable[float]]] = val
-        self._ref: Optional[Union[float, Iterable[float]]] = ref
-        
+
+        self._val: float | Iterable[float] | None = val
+        self._ref: float | Iterable[float] | None = ref
+
         if len(np.atleast_1d(self.val)) != len(np.atleast_1d(self.ref)):
             print("!!! 'val' and 'ref' are arrays of different size:",
                   (self.val.dim, self.ref.dim))
-        
+
         if range_keys is None:
             range_keys = ('calibrated', 'tolerated', 'full_scale', 'expected',
-                          'operational')
-                
+                          'operational', )
+
         self._ranges: Dict[str, Range] = {}
         if range_keys:
             for key in range_keys:
@@ -185,21 +182,25 @@ class Parameter(object):
         self.rate_of_change: float = 0.                # [(self.unit)/s]
         self.trust_score: int = 10  # confidence, 10: excellent, 0: poor
 
-    def __call__(self) -> Optional[Union[float, Iterable[float]]]:
+    def __call__(self) -> float | Iterable[float] | None:
         """
         Returns:
-            actual value 
+            actual value
         """
         return self.val
 
     def __copy__(self):
+        """
+        Returns:
+            deep copy of this dictionary
+        """
         obj = type(self).__new__(self.__class__)
         obj.__dict__.update(self.__dict__)
         return obj
 
     @property
     def ranges(self) -> Dict[str, Range]:
-        """          
+        """
         Returns:
             dictionary of ranges (lo, up, distr)
 
@@ -209,38 +210,37 @@ class Parameter(object):
 
             rng = foo.ranges['expected']
             print(rng)
-            # ==> (-1.2, '3%', None) 
+            # ==> (-1.2, '3%', None)
 
             rng = foo.ranges.get('unknown_key')
             print(rng)
             # ==> None
 
-            # add key to dictionary 
+            # add key to dictionary
             foo.ranges['critical'] = (-np.inf, np.inf, None)
             rng = foo.ranges.get('critical')
             print(rng)
             # ==> (-inf, inf, None)
         """
-        return self._ranges        
+        return self._ranges
 
-    def __getitem__(self, key: str) \
-            -> Union[None, float, Iterable[float], Range]:
+    def __getitem__(self, key: str) -> float | Iterable[float] | Range | None:
         """
         Args:
             key:
                 key of parameter range
-            
+
         Returns:
-            self._ranges[key] as tuple of lower/upper bound,distribution 
-            or 
+            self._ranges[key] as tuple of lower/upper bound,distribution
+            or
             self.val if key is 'val'
-            or 
-            self.ref if key is 'ref' 
-            or 
-            self.accuracy if key is 'accuracy' 
-            or 
-            self.repeatability if key is 'repeatability' 
-            or 
+            or
+            self.ref if key is 'ref'
+            or
+            self.accuracy if key is 'accuracy'
+            or
+            self.repeatability if key is 'repeatability'
+            or
             None if key is unknown
 
         Examples:
@@ -254,7 +254,7 @@ class Parameter(object):
             rng = foo['unknown_key']
             print(rng)
             # ==> None
-            
+
             foo.val = [3.45, 1.1, 2.2]
             # ...
             print(foo.val)
@@ -268,7 +268,7 @@ class Parameter(object):
             # ==> 3.45
             print(foo['ref'])
             # ==> 3.45
-            
+
             foo.accuracy = Range(-0.01, 0.01, '95%')
             print(foo.accuracy)
             # ==> (-0.01, 0.01, '95%')
@@ -276,74 +276,73 @@ class Parameter(object):
             # ==> (-0.01, 0.01, '95%')
         """
         return self.get_range(key)
-        
-    def __setitem__(self, key: str, 
-                    value: Union[None, float, Iterable[float], Range]) -> bool:
+
+    def __setitem__(self, key: str,
+                    value: float | Iterable[float] | Range | None) -> bool:
         """
         Args:
             key:
-                key of parameter range 
-            
+                key of parameter range
+
             value:
-                tuple of lower and upper bound of range + distribution 
+                tuple of lower and upper bound of range + distribution
                 If key is 'val', value is a float or an array of float
                 If key is 'ref', value is a float or an array of float
-    
-        Returns: 
+
+        Returns:
             False is key is unknown
-    
+
         Examples:
             foo = Parameter()
-            
+
             foo.set_range('val', [1.1, 2.2, 3.3])
             val = foo.val
             print(val)
-            # ==> [1.1, 2.2, 3.3]    
+            # ==> [1.1, 2.2, 3.3]
 
             foo.set_range('ref', 2.3456)
             ref = foo.ref
             print(ref)
-            # ==> 2.3456    
-            
+            # ==> 2.3456
+
             foo.set_range('expected', 3.4)
             rng = foo['expected']
             print(rng)
-            # ==> (0.0, 1.2) 
+            # ==> (0.0, 1.2)
 
-            foo.set_range('critical', -1.2) 
+            foo.set_range('critical', -1.2)
             rng = foo['critical']
             print(rng)
-            # ==> (-1.2, 0.0) 
+            # ==> (-1.2, 0.0)
 
-            foo.set_range('tolerated', -1.2, '5.6%') 
+            foo.set_range('tolerated', -1.2, '5.6%')
             rng = foo['tolerated']
             print(rng)
-            # ==> (-1.2, '5.6%')  
+            # ==> (-1.2, '5.6%')
         """
         return self.set_range(key, value)
 
-    def set_range(self, key: str, 
-                  value: Union[None, float, Iterable[float], Range])-> bool: 
+    def set_range(self, key: str,
+                  value: float | Iterable[float] | Range | None) -> bool:
 
-           
         if key.lower().startswith('val'):
             self.val = value
         elif key.lower().startswith('ref'):
             self.ref = value
         else:
-            if isinstance(value, (collections.Sequence,)):
+            if isinstance(value, (Iterable,)):
                 lo, up, distr = None, None, None
                 if len(value) > 0:
-                    lo = value[0] 
+                    lo = value[0]
                 if len(value) > 1:
-                    up = value[1] 
+                    up = value[1]
                 if len(value) > 2:
-                    distr = value[2] 
+                    distr = value[2]
                 self.ranges[key] = Range(lo, up, distr)
             elif isinstance(value, Range):
                 try:
                     self.ranges[key] = value
-                except:
+                except KeyError:
                     print('par 344', key, value, type(value))
                     print('par 345 self.ranges', self.ranges.keys())
                     print('par 346 self.ranges', self.ranges.values())
@@ -351,8 +350,7 @@ class Parameter(object):
                 assert 0
         return True
 
-    def get_range(self, key: str) \
-            -> Union[None, float, Iterable[float], Range]:
+    def get_range(self, key: str) -> float | Iterable[float] | Range | None:
         """
         See __getitem__()
         """
@@ -366,40 +364,39 @@ class Parameter(object):
             return self._ranges.get(key)
 
     @property
-    def val(self) -> Union[None, float, Iterable[float], Range]:
+    def val(self) -> float | Iterable[float] | Range | None:
         return self._val
 
     @val.setter
-    def val(self, value: Union[None, float, Iterable[float], Range]) -> None:
+    def val(self, value: float | Iterable[float] | Range | None) -> None:
         self._val = value
 
     @property
-    def value(self) -> Union[None, float, Iterable[float], Range]:
+    def value(self) -> float | Iterable[float] | Range | None:
         return self._val
 
     @value.setter
-    def value(self, value: Union[None, float, Iterable[float], Range]) -> None:
+    def value(self, value: float | Iterable[float] | Range | None) -> None:
         self._val = value
 
     @property
-    def ref(self) -> Union[None, float, Iterable[float], Range]:
+    def ref(self) -> float | Iterable[float] | Range | None:
         return self._ref
 
     @ref.setter
-    def ref(self, value: Union[None, float, Iterable[float], Range]) -> None:
+    def ref(self, value: float | Iterable[float] | Range | None) -> None:
         self._ref = value
 
     @property
-    def reference(self) -> Union[None, float, Iterable[float], Range]:
+    def reference(self) -> float | Iterable[float] | Range | None:
         return self._ref
 
     @reference.setter
-    def reference(self, value: Union[None, float, 
-                                     Iterable[float], Range]) -> None:
+    def reference(self, value: float | Iterable[float] | Range | None) -> None:
         self._ref = value
 
     @property
-    def full_scale(self) -> Optional[Range]:
+    def full_scale(self) -> Range | None:
         return self._ranges.get('full_scale')
 
     @full_scale.setter
@@ -407,7 +404,7 @@ class Parameter(object):
         self._ranges['full_scale'] = value
 
     @property
-    def calibrated(self) -> Optional[Range]:
+    def calibrated(self) -> Range | None:
         return self._ranges.get('calibrated')
 
     @calibrated.setter
@@ -415,7 +412,7 @@ class Parameter(object):
         self._ranges['calibrated'] = value
 
     @property
-    def accuracy(self) -> Optional[Range]:
+    def accuracy(self) -> Range | None:
         return self._ranges.get('accuracy')
 
     @accuracy.setter
@@ -423,33 +420,32 @@ class Parameter(object):
         self._ranges['accuracy'] = value
 
     @property
-    def repeatability(self) -> Optional[Range]: 
+    def repeatability(self) -> Range | None:
         return self._ranges.get('repeatability')
 
     @repeatability.setter
     def repeatability(self, value: Range) -> None:
         self._ranges['repeatability'] = value
 
-    def simulate(self, range_key: Optional[str] = None, 
-                 size: Optional[Union[int, Tuple[int]]] = None,
-                 plot: bool = False) \
-                     -> Union[None, float, Iterable[float], Range]:
+    def simulate(self, range_key: str | None = None,
+                 size: int | Tuple[int] | None = None,
+                 plot: bool = False) -> float | Iterable[float] | Range | None:
         """
-        Simulates values within absolute and relative 
-        (to full_scale/reading) ranges 
-        
-        Bounds relative to reading are calculated as percentages 
+        Simulates values within absolute and relative
+        (to full_scale/reading) ranges
+
+        Bounds relative to reading are calculated as percentages
         of the elements of an already assigned self.ref array
-        
+
         Args:
             range_key:
                 key of the range bounding the output
-                
+
             plot:
                 plot simulated array(s) if True
-                
+
         Returns:
-            False if range_key is invalid or self.ref is empty in case 
+            False if range_key is invalid or self.ref is empty in case
             that a bound is relative to reading, eg. (-1, '10%', None)
         """
         if range_key is None:
@@ -460,14 +456,14 @@ class Parameter(object):
             size = self.ref.size
 
         rng = self.ranges[range_key]
-        
-        if not is_bound_relative_to_reading(rng.lo) \
-               and not is_bound_relative_to_reading(rng.up):
-            
+
+        if (not is_bound_relative_to_reading(rng.lo) and
+            not is_bound_relative_to_reading(rng.up)):
+
             # None of the bounds is relative to reading
-            self.val = rng.simulate(size=size, 
+            self.val = rng.simulate(size=size,
                                     full_scale=self.full_scale, plot=plot)
-            # add random data to reference array if reference exists 
+            # add random data to reference array if reference exists
             if self.ref is not None:
                 self.val = self.ref + self.val
         else:
@@ -484,7 +480,7 @@ class Parameter(object):
                         lo = perc * ref_
                     else:
                         lo = np.abs(perc) * self.full_scale.lo
-            
+
                 if is_bound_absolute(rng.up):
                     up = float(rng.up)
                 else:
@@ -495,10 +491,10 @@ class Parameter(object):
                         up = np.abs(perc) * self.full_scale.up
                 val_ = Range(lo, up, rng.distr).simulate()
                 val.append(val_)
-                
-            # add random data to reference array 
+
+            # add random data to reference array
             self.val = self.ref + np.asfarray(val)
-            
+
             if plot:
                 plt.plot(self.val, label='val', linestyle='', marker='.')
                 if is_bound_relative_to_reading(rng.lo) or \
@@ -507,7 +503,7 @@ class Parameter(object):
                     plt.legend()
                 plt.grid()
                 plt.show()
-                
+
         return self.val
             
     def __str__(self) -> str:
