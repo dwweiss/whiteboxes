@@ -23,10 +23,10 @@
 __all__ = ['L2_norm', 'SSE', 'MSE']
 
 import numpy as np
-from typing import Sequence
+from typing import Iterable
 
 
-def L2_norm(y: Sequence[float], Y: Sequence[float]) -> float:
+def L2_norm(y: Iterable[float], Y: Iterable[float]) -> float:
     """
     Square root of mean squared difference between arrays y and Y
 
@@ -43,7 +43,7 @@ def L2_norm(y: Sequence[float], Y: Sequence[float]) -> float:
     return np.sqrt(np.mean(np.square(np.asfarray(y) - np.asfarray(Y))))
 
 
-def SSE(y: Sequence[float], Y: Sequence[float]) -> float:
+def SSE(y: Iterable[float], Y: Iterable[float]) -> float:
     """
     Sum of squared difference between arrays y and Y
 
@@ -63,7 +63,7 @@ def SSE(y: Sequence[float], Y: Sequence[float]) -> float:
     return 0.5 * np.sum(np.square(np.asfarray(y) - np.asfarray(Y)))
 
 
-def MSE(y: Sequence[float], Y: Sequence[float]) -> float:
+def MSE(y: Iterable[float], Y: Iterable[float]) -> float:
     """
     Mean squared difference between arrays y and Y
 
