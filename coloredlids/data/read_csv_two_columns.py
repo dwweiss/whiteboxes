@@ -26,16 +26,11 @@ import csv
 import os
 import matplotlib.pyplot as plt
 import numpy as np
-from nptyping import Array
-from typing import Tuple
+from typing import Iterable, Tuple
 
 
-def read_csv_two_columns(path: str, 
-                         file: str, 
-                         skip: int = 0,
-                         delimiter: str = ',',
-                         plot: bool = True) \
-                         -> Tuple[Array[float], Array[float]]:
+def read_csv_two_columns(path: str, file: str, skip: int = 0, delimiter: str = ',',
+                         plot: bool = True) -> Tuple[Iterable[float], Iterable[float]]:
     """
     Reads two colums with floating point numbers from comma separated file
     
@@ -70,7 +65,7 @@ def read_csv_two_columns(path: str,
     X, Y = [], []
     if os.path.isfile(full_path):
         with open(full_path, 'r') as csv_file:
-            reader = csv.reader(csv_file, delimiter=',')
+            reader = csv.reader(csv_file, delimiter=delimiter)
             for i_skip in range(skip):
                 next(reader)
             for row in reader:
@@ -80,7 +75,7 @@ def read_csv_two_columns(path: str,
         if plot:
             print('+++ plot:', full_path)
             plt.plot(X, Y)
-            plt.show()
+            plt.grid(); plt.show()
     else:
         print('??? file not found:', full_path)
         
