@@ -26,7 +26,6 @@ import os
 import csv
 import matplotlib.pyplot as plt
 import numpy as np
-from nptyping import Array
 from typing import List, Tuple
 
 
@@ -239,7 +238,7 @@ def _read_csv_two_columns(path: str,
                           skip: int = 0,
                           delimiter: str = ',',
                           plot: bool = True) \
-        -> Tuple[Array[float], Array[float]]:
+        -> Tuple[np.ndarray[float], np.ndarray[float]]:
     """
     Reads two colums with floating point numbers from comma separated file
     
