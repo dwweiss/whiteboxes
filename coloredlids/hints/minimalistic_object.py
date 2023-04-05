@@ -20,9 +20,6 @@
       2020-11-16 DWW
 """
 
-import unittest
-
-
 class Parent(object):
     """
     Demonstrates structuring of a task
