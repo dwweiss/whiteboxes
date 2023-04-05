@@ -30,7 +30,7 @@ from property import Property
 
 class Matter(Property):
     """
-    Collection of physical and chemical properties of generic matter
+    Collection of physical and chemical properties of matter
 
     Literature:
         https://dashamlav.com/difference-matter-vs-material/
