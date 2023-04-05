@@ -26,7 +26,7 @@ import unittest
 class Parent(object):
     """
     Demonstrates structuring of a task
-    
+
     Example:
         foo = Parent('parent_object')
         foo()
@@ -46,11 +46,11 @@ class Parent(object):
     def post(self):
         print('    data:', self.data, '       <=====')
         return True
-    
+
     def __call__(self):
         print()
         print('This is:', "'" + self.identifier + "'")
-        
+
         print('*** Pre-process')
         pre_ok = self.pre()
 
@@ -59,19 +59,19 @@ class Parent(object):
 
         print('*** Post-process')
         post_ok = self.post()
-        
+
         ok = pre_ok and res < 1e-3 and post_ok
         print('End of:', "'" + self.identifier + "', ok:", ok)
-        
+
         return res
-        
-    
+
+
 class Child1(Parent):
     """
     Demonstrates derivation of a child class from a parent class
 
-    In contrast to class Child2, the pre()-method of the Parent 
-    class will be overwritten with the pre()-method of this class 
+    In contrast to class Child2, the pre()-method of the Parent
+    class will be overwritten with the pre()-method of this class
     """
     def __init__(self, identifier: str = 'Child1'):
         super().__init__(identifier=identifier)
@@ -84,19 +84,19 @@ class Child1(Parent):
 class Child2(Parent):
     """
     Demonstrates derivation of a child class from a parent class
-    
-    The pre()-method of the Parent class will be called before 
-    executing the code in the pre()-method of this class 
+
+    The pre()-method of the Parent class will be called before
+    executing the code in the pre()-method of this class
     """
     def __init__(self, identifier: str = 'Child2'):
         super().__init__(identifier=identifier)
 
     def pre(self):
         super().pre()   # executes pre-process of parent class
-        
+
         self.data += 4
         return True
-                
+
 
 class TestUM(unittest.TestCase):
     def setUp(self):
@@ -118,5 +118,12 @@ class TestUM(unittest.TestCase):
         foo()
 
 
-if __name__ == '__main__':
-    unittest.main()
+if __name__ == '__main_':
+    foo = Parent()
+    foo()
+
+    foo = Child1()
+    foo()
+
+    foo = Child2()
+    foo()
