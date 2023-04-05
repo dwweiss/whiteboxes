@@ -17,51 +17,51 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2022-04-06  DWW
+      2023-04-05  DWW
 """
 
 __all__ = ['arr',
-           'nano', 'micro', 'milli', 'centi', 'deci', 
+           'nano', 'micro', 'milli', 'centi', 'deci',
            'one',
            'deka', 'hecto', 'kilo', 'mega', 'giga',
-           'deg2rad', 'rad2deg', 
-           'Pa2bar', 'bar2Pa', 'ksi2Pa', 'msi2Pa', 'air_pressure', 'atm', 
+           'deg2rad', 'rad2deg',
+           'Pa2bar', 'bar2Pa', 'ksi2Pa', 'msi2Pa', 'air_pressure', 'atm',
            'C2K', 'K2C', 'F2C', 'C2F', 'F2K', 'K2F', 'is_probably_celsius',
-           'min2s', 's2min', 'cal2J', 'cal_g2J_kg',]
-           
+           'min2s', 's2min', 'cal2J', 'cal_g2J_kg',
+           'scale', 'scale_min_max']
+
 import numpy as np
 from typing import Iterable, Tuple
 
 
 def arr(
-    x1: float | int | bool | Iterable[float] | Iterable[int] | Iterable[bool],
-    x2: float | int | bool | Iterable[float] | Iterable[int] | Iterable[bool] | None = None,
-    x3: float | int | bool | Iterable[float] | Iterable[int] | Iterable[bool] | None = None,
-    x4: float | int | bool | Iterable[float] | Iterable[int] | Iterable[bool] | None = None,
-    x5: float | int | bool | Iterable[float] | Iterable[int] | Iterable[bool] | None = None
-) -> Union[np.ndarray,
-           Tuple[np.ndarray, np.ndarray], 
-           Tuple[np.ndarray, np.ndarray, np.ndarray],
-           Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray],
-           Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]
-]:
+    x1: float | int | Iterable[float] | Iterable[int],
+    x2: float | int | Iterable[float] | Iterable[int] | None = None,
+    x3: float | int | Iterable[float] | Iterable[int] | None = None,
+    x4: float | int | Iterable[float] | Iterable[int] | None = None,
+    x5: float | int | Iterable[float] | Iterable[int] | None = None) -> \
+        np.ndarray | \
+        Tuple[np.ndarray, np.ndarray] | \
+        Tuple[np.ndarray, np.ndarray, np.ndarray] | \
+        Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray] | \
+        Tuple[np.ndarray, np.ndarray, np.ndarray, np.ndarray, np.ndarray]:
     """
-    Converts scalars or arrays to numpy arrays of float 
+    Converts scalars or arrays to numpy arrays of float
     """
     x1 = np.asfarray(x1)
-    if x2 is None: 
+    if x2 is None:
         return x1
 
     x2 = np.asfarray(x2)
-    if x3 is None: 
+    if x3 is None:
         return x1, x2
 
     x3 = np.asfarray(x3)
-    if x4 is None: 
+    if x4 is None:
         return x1, x2, x3
 
     x4 = np.asfarray(x4)
-    if x5 is None: 
+    if x5 is None:
         return x1, x2, x3, x4
 
     x5 = np.asfarray(x5)
@@ -75,12 +75,14 @@ def pico(x: float | Iterable[float]) -> np.ndarray:
     """
     return np.asfarray(x) * 1e12
 
+
 def nano(x: float | Iterable[float]) -> np.ndarray:
     """
     Converts to prefix 'nano' : multiply with 1e9
     eg: L_in_meter = 1. -> nano(L_in_meter) = 1e9
     """
     return np.asfarray(x) * 1e9
+
 
 def micro(x: float | Iterable[float]) -> np.ndarray:
     """
@@ -89,12 +91,14 @@ def micro(x: float | Iterable[float]) -> np.ndarray:
     """
     return np.asfarray(x) * 1e6
 
+
 def milli(x: float | Iterable[float]) -> np.ndarray:
     """
     Converts to prefix 'milli' : multiply with 1e3
     eg: L_in_meter = 1. -> milli(L_in_meter) = 1e3
     """
     return np.asfarray(x) * 1e3
+
 
 def centi(x: float | Iterable[float]) -> np.ndarray:
     """
@@ -103,12 +107,14 @@ def centi(x: float | Iterable[float]) -> np.ndarray:
     """
     return np.asfarray(x) * 1e2
 
+
 def deci(x: float | Iterable[float]) -> np.ndarray:
     """
     Converts to prefix 'deci' : multiply with 1e1
     eg: L_in_meter = 1. -> deci(L_in_meter) = 1e1
     """
     return np.asfarray(x) * 1e1
+
 
 def one(x: float | Iterable[float]) -> np.ndarray:
     """
@@ -117,6 +123,7 @@ def one(x: float | Iterable[float]) -> np.ndarray:
     """
     return np.asfarray(x) * 1e0
 
+
 def deka(x: float | Iterable[float]) -> np.ndarray:
     """
     Converts to prefix 'deka' : multiply with 1e-1
@@ -124,12 +131,14 @@ def deka(x: float | Iterable[float]) -> np.ndarray:
     """
     return np.asfarray(x) * 1e-1
 
-def hecto(x: Union[float, Iterable[float]]) -> np.ndarray:
+
+def hecto(x: float | Iterable[float]) -> np.ndarray:
     """
     Converts to prefix 'hecto' : multiply with 1e-2
     eg: L_in_meter = 1. -> hecto(L_in_meter) = 1e-2
     """
     return np.asfyarray(x) * 1e-2
+
 
 def kilo(x: float | Iterable[float]) -> np.ndarray:
     """
@@ -138,6 +147,7 @@ def kilo(x: float | Iterable[float]) -> np.ndarray:
     """
     return np.asfarray(x) * 1e-3
 
+
 def mega(x: float | Iterable[float]) -> np.ndarray:
     """
     Converts to prefix 'mega' : multiply with 1e-6
@@ -145,12 +155,14 @@ def mega(x: float | Iterable[float]) -> np.ndarray:
     """
     return np.asfarray(x) * 1e-6
 
+
 def giga(x: float | Iterable[float]) -> np.ndarray:
     """
     Converts to prefix 'giga' : multiply with 1e-9
     eg: L_in_meter = 1. -> giga(L_in_meter) = 1e-9
     """
     return np.asfarray(x) * 1e-9
+
 
 def tera(x: float | Iterable[float]) -> np.ndarray:
     """
@@ -174,7 +186,7 @@ def rad2deg(rad: float | Iterable[float]) -> float | np.ndarray:
     return np.degrees(rad)
 
 
-def C2K(C: Union[float, Iterable[float]]) -> np.ndarray:
+def C2K(C: float | Iterable[float]) -> np.ndarray:
     """
     Converts temperature from Celsius to Kelvin
     """
@@ -227,7 +239,7 @@ def K2F(K: float | Iterable[float]) -> np.ndarray:
     """
     Converts temperature from Kelvin to Fahrenheit
     """
-    return C2F(K2C(np.asfarray(K)))
+    return C2F(K2C(K))
 
 
 def Pa2bar(Pa: float | Iterable[float]) -> np.ndarray:
@@ -237,7 +249,7 @@ def Pa2bar(Pa: float | Iterable[float]) -> np.ndarray:
     return np.asfarray(Pa) * 1e-5
 
 
-def bar2Pa(bar: Union[float, Iterable[float]]) -> np.ndarray:
+def bar2Pa(bar: float | Iterable[float]) -> np.ndarray:
     """
     Converts pressure from [bar] to [Pascal]
     """
@@ -268,21 +280,21 @@ def atm() -> float:
 
 def air_pressure(altitude: float = 0., T: float = C2K(20)) -> float:
     """
-    Calculate air pressure above sea level at given altitude 
-    
+    Calculate air pressure above sea level at given altitude
+
     Args:
         altitude:
-            altitude above sea level[m]
-        
+            altitude above sea level [m]
+
         T:
             dummy paramter: temperature [K]
-        
+
     Returns:
         air pressure [Pa]
-    
+
     Literature:
         engineeringtoolbox.com/air-altitude-pressure-d_462.html
-        
+
     Example:
         for h in [3200, ft2m(10500), ft2m(11000), ft2m(11500)]:
             print(f'{h=:.0f}m={m2ft(h):.0f}ft -> p={air_pressure(h):.0f} Pa')
@@ -318,20 +330,91 @@ def s2min(s: float) -> float:
     return s / 60.
 
 
-def is_probably_celsius(T: float | Iterable[float], 
-                        low: float = 200.) -> bool:
-    """ 
+def is_probably_celsius(T: float | Iterable[float], low: float = 200.) -> bool:
+    """
     Checks temperature unit based on the assumption that a temperature
-    less than 'low' has probably the unit 'degrees Celsius' 
-    
+    less than 'low' has probably the unit 'degrees Celsius'
+
     Args:
         T:
             temperature, unit is unknown
-            
-        low: 
+
+        low:
             lower bound of assumed Celsius temperature range
-            
+
     Returns:
         False if T is less than lower bound 'low'
     """
     return np.less(T, low)
+
+
+def scale(x: Iterable[float], x_min: float = 0.,
+          x_max: float = 1.) -> np.ndarray:
+    """
+    Scale array x to [x_min, x_max] range
+
+    Args:
+        x:
+            array
+        x_min:
+            minimum of scaled array
+        x_max:
+            maximum of scaled array
+
+    Returns:
+        scaled array
+
+    Example:
+        x = np.linspace(-1.2, 3.4, 6)
+        X = scale(x, 0.1, 0.8)
+        print(f'{x=}\n{X=}')
+
+        Output:
+        $ x=array([-1.2 , -0.28,  0.64,  1.56,  2.48,  3.4 ])
+        $ X=array([0.1 , 0.24, 0.38, 0.52, 0.66, 0.8 ])
+    """
+    return scale_min_max(x, x_min, x_max)[0]
+
+
+def scale_min_max(x: Iterable[float], x_min: float = 0.,
+                  x_max: float = 1.) -> Tuple[np.ndarray, float, float]:
+    """
+    Scale array x to [x_min, x_max] range
+
+    Args:
+        x:
+            array
+        x_min:
+            minimum of scaled array
+        x_max:
+            maximum of scaled array
+
+    Returns:
+        scaled array
+        minimum of original array
+        maximum of original array
+
+    Example:
+        x = np.linspace(-1.2, 3.4, 6)
+        X, x1, x2 = scale_min_max(x, 0.13, 0.8)
+        print(f'{x=}\n{x1=} {x2=}\n{X=}')
+
+        # re-scale to original array
+        xx = scale(X, x1, x2)
+        print(f'{xx=}\n')
+        print(f'{(xx-x).ptp()=}\n')
+
+        Output:
+        $ x=array([-1.2 , -0.28,  0.64,  1.56,  2.48,  3.4 ])
+        $ x1=-1.2 x2=3.4
+        $ X=array([0.13 , 0.264, 0.398, 0.532, 0.666, 0.8  ])
+        $ xx=array([-1.2 , -0.28,  0.64,  1.56,  2.48,  3.4 ])
+
+    """
+    x = np.asfarray(x)
+    X_min, X_max = x.min(), x.max()
+    ptp = max(X_max - X_min, 1e-20)
+    x = (x - X_min) / ptp
+    x = x * (x_max - x_min) + x_min
+
+    return x, X_min, X_max
