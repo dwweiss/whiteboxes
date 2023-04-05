@@ -23,24 +23,24 @@
 __all__ = ['split_frame', 'select_frame', 'xy_to_frame', 'frame_to_xy',
            'excel_to_xy', 'xy_to_excel', 'ansys_csv_to_frame']
 
+
 from collections import OrderedDict
 import numpy as np
 from pandas import read_csv, read_excel, DataFrame, ExcelWriter
 from tempfile import gettempdir
-from typing import List, Optional, Sequence, Tuple, Union
-from nptyping import Array
+from typing import Dict, Iterable, Tuple
 
 
 def split_frame(df: DataFrame,
-                split_col: Optional[str] = None, 
-                sort_col: Optional[str] = None, 
-                min_sub_frame_size: int = 1) -> List[OrderedDict]:
+                split_col: str,
+                sort_col: str | None = None,
+                min_sub_frame_size: int = 1) -> Dict[str, DataFrame]:
     """
-    Splits data frame 'df' into an ordered dictionary of sub-data 
-    frames. In every sub-DataFrame the values in the column with the 
-    identifier 'split_col' are equal  
+    Splits data frame 'df' into an ordered dictionary of sub-data
+    frames. The values of the column with the identifier 'split_col' are
+    equal in every sub-DataFrame.
 
-    Sorts optionally the rows of every sub-DataFrame according to 
+    Sorts optionally the rows of every sub-DataFrame according to
         values in 'sort_col' column (ascending)
 
     Args:
@@ -55,14 +55,14 @@ def split_frame(df: DataFrame,
             no sorting if 'sort_col' is empty
 
         min_sub_frame_size:
-            minimum size of sub-data frame. Smaller sizes are excluded 
+            minimum size of sub-data frame. Smaller sizes are excluded
             from the returned dictionary of sub-DataFrames
 
     Returns:
-        dictionary of data frames with equal 'split_col' values 
+        dictionary of data frames (equal 'split_col' values i every frame)
 
     Note:
-        keys of the OrderedDict are of same type as values in 
+        keys of the OrderedDict are of same type as values in
         'split_col' column of 'df'
     """
     split_value_variations = df[split_col].unique().tolist()
@@ -74,15 +74,15 @@ def split_frame(df: DataFrame,
                 sub.sort_values(by=[sort_col], ascending=[True], inplace=True)
             sub.index = range(len(sub.index))
             subFrames[val] = sub
+
     return OrderedDict(sorted(subFrames.items()))
 
 
-def select_frame(df: DataFrame, 
-                 par_col: Union[str, Sequence[str]], 
-                 op_sel: Union[str, Sequence[str]], 
-                 val_sel: Union[str, float, int, 
-                                Sequence[Union[str, float, int]]],
-                 sort_col: Optional[str] = None) -> DataFrame:
+def select_frame(df: DataFrame,
+                 par_col: str | Iterable[str],
+                 op_sel: str | Iterable[str],
+                 val_sel: str | float | int | Iterable[str | float | int],
+                 sort_col: str | None = None) -> DataFrame:
     """
     Extract single sub-frame of given pandas.DataFrame; selection can be
     based on multiple conditions employing the
@@ -96,7 +96,7 @@ def select_frame(df: DataFrame,
             identifier of column used for selection
 
         op_sel:
-            operator for comparing elements of column 'df[par_col]' with 
+            operator for comparing elements of column 'df[par_col]' with
             'val_sel'
 
         val_sel:
@@ -106,12 +106,12 @@ def select_frame(df: DataFrame,
             column key used for sorting; no sorting if 'sort_col' is None
 
     Returns:
-        data frame with rows fulfilling the condition 
+        data frame with rows fulfilling the condition
             'df(i, par_sel)  <op_sel>  val_sel'
 
     Note:
         Length of 'par_sel' must not greater than length of 'val_sel'.
-        If 'par_sel' and 'val_sel' are lists or tuples, then the size of 
+        If 'par_sel' and 'val_sel' are lists or tuples, then the size of
         'op_sel' will be corrected if too short
     """
     if par_col is None:
@@ -137,7 +137,7 @@ def select_frame(df: DataFrame,
     assert len(par_col) == len(val_sel), 'len(par) != len(val)='
 
     for x in op_sel:
-        assert any([x == o for o in
+        assert any([x == op for op in
                    ['=', '==', '!=', '>', '>=', '<', '<=']]), \
                'invalid operator'
     assert len(par_col) == len(val_sel), 'incompatible parameters'
@@ -165,10 +165,10 @@ def select_frame(df: DataFrame,
     return subFrames
 
 
-def xy_to_frame(X : Array[float, ..., ...], 
-                Y : Array[float, ..., ...], 
-                x_keys: Optional[Sequence[str]] = None, 
-                y_keys: Optional[Sequence[str]] = None) -> DataFrame:
+def xy_to_frame(X: Iterable,
+                Y: Iterable,
+                x_keys: Iterable[str] | None = None,
+                y_keys: Iterable[str] | None = None) -> DataFrame:
     """
     Converts two 2D arrays to pandas.DataFrame
 
@@ -203,7 +203,7 @@ def xy_to_frame(X : Array[float, ..., ...],
             y_keys = ['y' + str(i) for i in range(Y.shape[1])]
         else:
             y_keys = []
-        
+
     dic = OrderedDict()
     for j in range(len(x_keys)):
         dic[x_keys[j]] = X[:, j]
@@ -212,10 +212,10 @@ def xy_to_frame(X : Array[float, ..., ...],
     return DataFrame(dic)
 
 
-def frame_to_xy(df: DataFrame, 
-                x_keys: Optional[Sequence[str]] = None, 
-                y_keys: Optional[Sequence[str]] = None) \
-        -> Tuple[Array[float, ..., ...], Array[float, ..., ...]]:
+def frame_to_xy(df: DataFrame,
+                x_keys: Iterable[str] | None = None,
+                y_keys: Iterable[str] | None = None
+                ) -> Tuple[np.ndarray, np.ndarray]:
     """
     Converts pandas.DataFrame to couple of 2D arrays
 
@@ -246,11 +246,11 @@ def frame_to_xy(df: DataFrame,
     return np.asfarray(df.loc[:, x_keys]), np.asfarray(df.loc[:, y_keys])
 
 
-def excel_to_xy(x_keys: Optional[Sequence[str]] = None, 
-                y_keys: Optional[Sequence[str]] = None, 
+def excel_to_xy(x_keys: Iterable[str] | None = None,
+                y_keys: Iterable[str] | None = None,
                 file: str = gettempdir(),
-                sheet_name: str = 'data', 
-                startcol: int = 0, 
+                sheet_name: str = 'data',
+                startcol: int = 0,
                 startrow: int = 0) -> Tuple[np.ndarray, np.ndarray]:
     """
     Reads data frame from excel file and converts it to two 2D arrays
@@ -286,23 +286,23 @@ def excel_to_xy(x_keys: Optional[Sequence[str]] = None,
     return frame_to_xy(df, x_keys, y_keys)
 
 
-def xy_to_excel(X: Array[float, ..., ...], 
-                Y: Optional[Array[float, ..., ...]] = None, 
-                x_keys: Optional[Sequence[str]] = None, 
-                y_keys: Optional[Sequence[str]] = None,
+def xy_to_excel(X: Iterable[float],
+                Y: Iterable[float] | None = None,
+                x_keys: Iterable[str] | None = None,
+                y_keys: Iterable[str] | None = None,
                 file: str = gettempdir(),
-                sheet_name: str = 'data', 
-                startcol: int = 0, 
+                sheet_name: str = 'data',
+                startcol: int = 0,
                 startrow: int = 0) -> bool:
     """
     Converts two 2D arrays to DataFrame and write it to excel file
 
     Args:
         X:
-            2D array of input 
+            2D array of input
 
         Y:
-            2D array of output 
+            2D array of output
 
         x_keys:
             list of input keys
@@ -336,12 +336,12 @@ def xy_to_excel(X: Array[float, ..., ...],
     return True
 
 
-def ansys_csv_to_frame(file: str, 
-                       sort_col: Optional[str] = None, 
-                       clean: bool = True, 
+def ansys_csv_to_frame(file: str,
+                       sort_col: str | None = None,
+                       clean: bool = True,
                        silent: bool = False) -> DataFrame:
     """
-    Reads csv-file of results from Ansys, removes 'Pxx - '-prefix from 
+    Reads csv-file of results from Ansys, removes 'Pxx - '-prefix from
     column names, and removes columns whose keys contain postfix '.FD'
 
     Args:
@@ -394,7 +394,7 @@ def ansys_csv_to_frame(file: str,
     for key in keys:
         key = key.split(' - ')[1]  # second part after '-'
         # remove multiple space
-        human_readable_keys.append(' '.join(key.split()))  
+        human_readable_keys.append(' '.join(key.split()))
 
     # read data frame with non-human readable column keys
     data = read_csv(file, comment='#', skiprows=n_header_lines)
@@ -411,12 +411,12 @@ def ansys_csv_to_frame(file: str,
     # sort data frame
     if sort_col:
         if not silent:
-            print("    Sort: '" + str(sort_col) + "'")
+            print(f"    Sort: '{sort_col}'")
         data.sort_values(by=[sort_col], ascending=[True], inplace=True)
 
-    l = list(data.columns)
-    d = set([x for x in l if l.count(x) > 1])
-    assert len(d) == 0, '\n\n??? Duplicated columns:\n\n' + str(d)
+    lst = list(data.columns)
+    d = set([x for x in lst if lst.count(x) > 1])
+    assert len(d) == 0, f'\n\n??? Duplicated columns:\n\n {d}'
 
     # remove NaN and duplicates
     if clean:
