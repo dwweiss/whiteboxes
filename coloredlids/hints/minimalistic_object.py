@@ -97,27 +97,7 @@ class Child2(Parent):
         self.data += 4
         return True
 
-
-class TestUM(unittest.TestCase):
-    def setUp(self):
-        pass
-
-    def tearDown(self):
-        pass
-
-    def test0(self):
-        foo = Parent()
-        foo()
-
-    def test1(self):
-        foo = Child1()
-        foo()
-
-    def test2(self):
-        foo = Child2()
-        foo()
-
-
+      
 if __name__ == '__main_':
     foo = Parent()
     foo()
