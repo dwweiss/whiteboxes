@@ -20,8 +20,10 @@
       2019-11-19 DWW
 """
 
-__all__ = ['split_frame', 'select_frame', 'xy_to_frame', 'frame_to_xy',
-           'excel_to_xy', 'xy_to_excel', 'ansys_csv_to_frame']
+__all__ = ['split_frame', 'select_frame',
+           'frame_to_xy', 'xy_to_frame',
+           'excel_to_xy', 'xy_to_excel',
+           'ansys_csv_to_frame']
 
 
 from collections import OrderedDict
