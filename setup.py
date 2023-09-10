@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
 
-setup(name='coloredlids',
+setup(name='whiteboxes',
       version='0.1',
-      description='Models of heat transfer, fluid flow and structural mechanics',
-      url='https://github.com/dwweiss/coloredlids',
+      description='Models of heat & mass transfer and fluid flow',
+      url='https://github.com/dwweiss/grayboxes',
       keywords='theoretical, modelling, modeling, white box, gray box, grey box',
       author='Dietmar Wilhelm Weiss',
       license='GLGP 3.0',
