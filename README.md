@@ -1,8 +1,8 @@
-# colored lids
+# White boxes
 
-This package provides tools for the extension of the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki) package with user-defined theoretical submodels.
+This package provides user-defined theoretical models which are compatible to the [_grayboxes_](https://github.com/dwweiss/grayBoxes/wiki) package.
 
-[[Link to coloredlids wiki]](https://github.com/dwweiss/coloredlids/wiki)
+[[Link to whiteboxes wiki]](https://github.com/dwweiss/whiteboxes/wiki)
 
 
 
@@ -10,7 +10,7 @@ This package provides tools for the extension of the [_grayboxes_](https://githu
 
 ### Content
 
-    coloredlids
+    whiteboxed
         data        Conversion of data, operations on data frames
         flow        Velocity and pressure distribution in flow of gases and liquids
         gui         Graphic user interfaces
@@ -30,10 +30,10 @@ This package provides tools for the extension of the [_grayboxes_](https://githu
 
 ### Installation
 
-    git clone https://github.com/dwweiss/coloredlids.git  
+    git clone https://github.com/dwweiss/whiteboxes.git  
     python3 setup.py install --user
 
 ### Dependencies
 
-This package is dependent on package _grayboxes_. This dependency is satisfied if _coloredlids_ is installed with the commands in section _Installation_.
+This package is dependent on package _grayboxes_. This dependency is satisfied if _whiteboxes_ is installed with the commands in section _Installation_.
 
