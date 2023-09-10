@@ -10,7 +10,7 @@ This package provides user-defined theoretical models which are compatible to th
 
 ### Content
 
-    whiteboxed
+    whiteboxes
         data        Conversion of data, operations on data frames
         flow        Velocity and pressure distribution in flow of gases and liquids
         gui         Graphic user interfaces
