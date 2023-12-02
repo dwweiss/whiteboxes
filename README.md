@@ -11,16 +11,12 @@ This package provides user-defined theoretical models which are compatible to th
 ### Content
 
     whiteboxes
-        data        Conversion of data, operations on data frames
-        flow        Velocity and pressure distribution in flow of gases and liquids
-        gui         Graphic user interfaces
-        heat        Heat transfer by conduction, convection and radiation
-        hints       Some python hints
+        flow        Velocity and pressure distribution in fluid flow
+        heat        Heat transfer by conduction, convection, and radiation
         instruments Tools for reading from instruments
-        matter      Properties of solids, liquids and gases
-        mesh        Primitives for building geometries and meshes
-        numerics    Numerical solution of differential and integral equations
-        tools       Tools for data manipulation
+        matter      Properties of solids and fluuids
+        mesh        Building geometries and meshes
+        tools       Data manipulation
         
     test
         Test cases
