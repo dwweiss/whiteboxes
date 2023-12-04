@@ -23,8 +23,8 @@
 import numpy as np
 from typing import Optional
 
-from coloredlids.matter.gases import Air
-from coloredlids.matter.generic import Fluid
+from whiteboxes.matter.gases import Air
+from whiteboxes.matter.generic import Fluid
 
 
 class FreeConvectionPlate(object):
