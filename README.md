@@ -13,7 +13,6 @@ This package provides user-defined theoretical models which are compatible to th
     whiteboxes
         flow        Velocity and pressure distribution in fluid flow
         heat        Heat transfer by conduction, convection, and radiation
-        instruments Tools for reading from instruments
         matter      Properties of solids and fluuids
         mesh        Building geometries and meshes
         tools       Data manipulation
