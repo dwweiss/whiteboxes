@@ -24,7 +24,7 @@ from time import clock
 import numpy as np
 import matplotlib.pyplot as plt
 
-from coloredlids.numerics.tdma import tdma
+from whiteboxes.numerics.tdma import tdma
 
 
 def fvm1d_conductivity(nVol=15, 
