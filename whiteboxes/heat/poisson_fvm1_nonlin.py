@@ -25,9 +25,6 @@ from numba import jit
 import numpy as np
 from typing import Callable, Dict, Iterable, Optional, Tuple, Union
 
-import initialize
-initialize.set_path()
-
 from whiteboxes.numerics.tdma import tdma
 
 __all__ = ['poisson_bc1_bc1_fvm1', 'poisson_bc1_bc1_nonlin_fvm1',
