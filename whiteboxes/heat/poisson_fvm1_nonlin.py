@@ -17,7 +17,7 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2018-09-19 DWW
+      2023-12-04 DWW
 """
 
 import matplotlib.pyplot as plt
@@ -67,8 +67,8 @@ def _fvm1_equation_system(i, x_cen, x_vrt, T, conductivity, source,
     return Lo, Di, Up, Rs
 
 
-def poisson_bc1_bc1_fvm1(T: Optional[np.ndarray] = None, **kwargs
-                      ) -> Optional[Tuple[np.array, np.ndarray, float, float]]:
+def poisson_bc1_bc1_fvm1(T: np.ndarray | None = None, 
+                         **kwargs: Any) -> Tuple[np.array, np.ndarray, float, float] | None:
     """
     Solves Poisson equation with 2 Dirichlet boundary conditions in 1D space
     The conductivity is not dependent solution T
@@ -178,8 +178,8 @@ def poisson_bc1_bc1_fvm1(T: Optional[np.ndarray] = None, **kwargs
     return np.asfarray(x_cen), np.asfarray(T), dTdx_west, dTdx_east
 
 
-def poisson_bc1_bc1_nonlin_fvm1(T: Optional[np.ndarray] = None, 
-        **kwargs) -> Optional[Dict[str, Union[float, np.ndarray]]]:
+def poisson_bc1_bc1_nonlin_fvm1(T: np.ndarray | None = None, **kwargs: Any
+) -> Dict[str, float | np.ndarray] | None:
     """
     Solves Poisson equation with 2 Dirichlet boundary conditions in 
     steady state and in 1D space
@@ -280,15 +280,15 @@ def poisson_bc1_bc1_nonlin_fvm1(T: Optional[np.ndarray] = None,
     return result
 
 
-def dqdt_for_bc1_seq(k_coeff: Optional[Iterable[float]] = None, 
-                     T_west: Union[float, Iterable[float]] = 0.,
-                     T_east: Union[float, Iterable[float]] = 1., 
-                     T_ref: Optional[float] = 0.,
+def dqdt_for_bc1_seq(k_coeff: Iterable[float] | None = None, 
+                     T_west: float | Iterable[float] = 0.,
+                     T_east: float | Iterable[float] = 1., 
+                     T_ref: float | None = 0.,
                      L: float = 1.0, 
                      n_vol: int = 1000,
                      mse: float = 1e-3,
-                     plot_scale: Optional[Tuple[Tuple[float, str], 
-                                                Tuple[float, str]]] = None,
+                     plot_scale: Tuple[Tuple[float, str], 
+                                       Tuple[float, str]] | None = None,
                      silent: bool = True,
                      ) -> Tuple[np.ndarray, np.ndarray]:
     """
