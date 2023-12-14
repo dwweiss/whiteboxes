@@ -19,10 +19,6 @@
   Version:
       2019-09-18 DWW
 """
-
-import __init__
-__init__.init_path()
-
 import unittest
 
 from doc.examples.fvm1d_conductivity import fvm1d_conductivity
