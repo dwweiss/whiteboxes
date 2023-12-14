@@ -25,7 +25,7 @@ from copy import deepcopy
 from grayboxes.base import Base
 from grayboxes.xyz import xyz
 from grayboxes.plot import plot_trajectory
-from coloredlids.mesh.cross_section import CrossSection
+from whiteboxes.mesh.cross_section import CrossSection
 
 
 class PipeworkBase(Base):
