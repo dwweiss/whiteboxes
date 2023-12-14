@@ -19,15 +19,11 @@
   Version:
       2019-09-27 DWW
 """
-
-import __init__
-__init__.init_path()
-
 import unittest
 
-from coloredlids.heat.free_convection import FreeConvectionPlate
-from coloredlids.matter.gases import Air
-from coloredlids.matter.generic import C2K
+from whiteboxes.heat.free_convection import FreeConvectionPlate
+from whiteboxes.matter.gases import Air
+from whiteboxes.matter.generic import C2K
 
 
 class TestUM(unittest.TestCase):
