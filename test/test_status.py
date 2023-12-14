@@ -19,13 +19,9 @@
   Version:
       2019-09-18 DWW
 """
-
-import __init__
-__init__.init_path()
-
 import unittest
 
-from coloredlids.property.status import Status
+from whiteboxes.property.status import Status
 
 
 class TestUM(unittest.TestCase):
