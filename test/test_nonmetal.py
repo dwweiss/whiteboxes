@@ -19,13 +19,9 @@
   Version:
       2018-09-17 DWW
 """
-
-import initialize
-initialize.set_path()
-
 import unittest
 
-import coloredlids.property.nonmetals as module_under_test
+import whiteboxes.property.nonmetals as module_under_test
 
 
 class TestUM(unittest.TestCase):
