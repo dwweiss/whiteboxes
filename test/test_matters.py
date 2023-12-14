@@ -19,14 +19,10 @@
   Version:
       2018-09-17 DWW
 """
-
-import initialize
-initialize.set_path()
-
 import unittest
 
-from coloredlids.matter.matters import Matters
-from coloredlids.property.conversion import C2K
+from whiteboxes.matter.matters import Matters
+from whiteboxes.property.conversion import C2K
 
 
 class TestUM(unittest.TestCase):
