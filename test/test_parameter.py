@@ -19,16 +19,12 @@
   Version:
       2019-11-27 DWW
 """
-
-import initialize
-initialize.set_path()
-
 import matplotlib.pyplot as plt
 import numpy as np
 import unittest
 
-from coloredlids.property.parameter import Parameter, Range
-from coloredlids.property.conversion import deg2rad, rad2deg
+from whiteboxes.property.parameter import Parameter, Range
+from whiteboxes.property.conversion import deg2rad, rad2deg
 
 
 class TestUM(unittest.TestCase):
