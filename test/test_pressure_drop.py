@@ -19,15 +19,11 @@
   Version:
       2018-09-27 DWW
 """
-
-import __init__
-__init__.init_path()
-
 import unittest
 import numpy as np
 import matplotlib.pyplot as plt
 
-from coloredlids.flow.pressure_drop import (pressure_drop, resistance_pipe, 
+from whiteboxes.flow.pressure_drop import (pressure_drop, resistance_pipe, 
     poiseulle_colebrook, resistance_pipe_bend, 
     resistance_tapered_pipe_reduction, resistance_square_pipe_expansion,
     resistance_square_pipe_reduction, resistance_tapered_pipe_expansion,
