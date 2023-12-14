@@ -17,18 +17,14 @@
   02110-1301 USA, or see the FSF site: http://www.fsf.org.
 
   Version:
-      2019-11-19 DWW
+      2023-12-14 DWW
 """
-
-import initialize
-initialize.set_path()
-
 import unittest
 
-from coloredlids.property.matter import Fluid, Metal, Solid
-from coloredlids.property.matter import Matter
-from coloredlids.property.parameter import Parameter
-from coloredlids.property.property import Property
+from whiteboxes.property.matter import Fluid, Metal, Solid
+from whiteboxes.property.matter import Matter
+from whiteboxes.property.parameter import Parameter
+from whiteboxes.property.property import Property
 
 
 class TestUM(unittest.TestCase):
