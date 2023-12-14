@@ -19,13 +19,9 @@
   Version:
       2019-11-25 DWW
 """
-
-import initialize
-initialize.set_path()
-
 import unittest
 
-import coloredlids.property.gases as module_under_test
+import whiteboxes.property.gases as module_under_test
 
 
 class TestUM(unittest.TestCase):
