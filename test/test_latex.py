@@ -19,13 +19,9 @@
   Version:
       2018-10-15 DWW
 """
-
-import __init__
-__init__.init_path()
-
 import unittest
 
-from coloredlids.tools.latex import from_latex, to_latex, guess_unit
+from whiteboxes.tools.latex import from_latex, to_latex, guess_unit
 
 
 class TestUM(unittest.TestCase):
