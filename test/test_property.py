@@ -19,15 +19,11 @@
   Version:
       2019-11-27 DWW
 """
-
-import initialize
-initialize.set_path()
-
 import numpy as np
 import unittest
 
-from coloredlids.property.range import Range
-from coloredlids.property.property import Property
+from whiteboxes.property.range import Range
+from whiteboxes.property.property import Property
 
 
 class TestUM(unittest.TestCase):
