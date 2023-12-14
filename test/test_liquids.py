@@ -19,14 +19,10 @@
   Version:
       2018-09-27 DWW
 """
-
-import initialize
-initialize.set_path()
-
 import unittest
 
-import coloredlids.property.liquids as module_under_test
-from coloredlids.property.liquids import HydraulicOil
+import whiteboxes.property.liquids as module_under_test
+from whiteboxes.property.liquids import HydraulicOil
 
 
 class TestUM(unittest.TestCase):
